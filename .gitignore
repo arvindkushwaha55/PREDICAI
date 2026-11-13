@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Rust
+edge/target/
+
+# NASA C-MAPSS raw data — licence: do NOT redistribute (download script instead)
+ml/data/raw/
+ml/data/processed/
+
+# Local databases (synthetic demo data is re-seeded by code)
+*.db
+*.db-journal
+
+# OS / editor
+.DS_Store
