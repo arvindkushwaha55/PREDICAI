@@ -1,0 +1,258 @@
+{
+  "part": "PREDICAI Part 6 \u2014 Explainability (Phase A5)",
+  "model": {
+    "weights": "ml/artifacts/best_model.pt",
+    "architecture": "LSTMRULRegressor(14 -> 128 -> 64 -> head 32)",
+    "trained_on": "Kaggle (owner run); see metrics.json",
+    "test_rmse_cycles": 13.728736877441406
+  },
+  "data": {
+    "split": "validation \u2014 engine-wise holdout, all windows",
+    "n_val_windows": 3272,
+    "features": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21"
+    ]
+  },
+  "honesty_note": "Attributions describe ASSOCIATION: which sensors the trained model relies on when it predicts RUL. They do not show that a sensor causes degradation or failure. Permutation importance measures reliance for accuracy on the validation split; Integrated Gradients measures how each sensor's deviation from the train-mean operating point moves an individual prediction. Sensors are correlated in C-MAPSS, so credit can be shared or shifted between correlated sensors.",
+  "methods": {
+    "permutation_importance": {
+      "seed": 123,
+      "n_repeats": 1,
+      "n_windows": 3272,
+      "shuffle_unit": "whole sensor trace across windows"
+    },
+    "integrated_gradients": {
+      "seed": 123,
+      "n_windows": 200,
+      "ig_steps": 50,
+      "baseline": "zero vector in normalized (z-score) space = the train-split mean of every sensor, i.e. the average engine's operating point; the model's raw prediction at that baseline is reported below",
+      "baseline_prediction_cycles": 113.7186279296875,
+      "attribution_units": "cycles of predicted RUL (attributions sum to prediction minus baseline prediction)"
+    }
+  },
+  "permutation_importance": {
+    "rmse_baseline": 13.013211250305176,
+    "ranking": [
+      {
+        "sensor": "sensor_14",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 18.190780639648438,
+        "rmse_increase": 5.177569389343262
+      },
+      {
+        "sensor": "sensor_9",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 17.59572410583496,
+        "rmse_increase": 4.582512855529785
+      },
+      {
+        "sensor": "sensor_2",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 15.849610328674316,
+        "rmse_increase": 2.8363990783691406
+      },
+      {
+        "sensor": "sensor_11",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 15.67360782623291,
+        "rmse_increase": 2.6603965759277344
+      },
+      {
+        "sensor": "sensor_4",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 15.494240760803223,
+        "rmse_increase": 2.481029510498047
+      },
+      {
+        "sensor": "sensor_8",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 15.433560371398926,
+        "rmse_increase": 2.42034912109375
+      },
+      {
+        "sensor": "sensor_12",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 14.323678016662598,
+        "rmse_increase": 1.3104667663574219
+      },
+      {
+        "sensor": "sensor_7",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 14.229726791381836,
+        "rmse_increase": 1.2165155410766602
+      },
+      {
+        "sensor": "sensor_13",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 14.028111457824707,
+        "rmse_increase": 1.0149002075195312
+      },
+      {
+        "sensor": "sensor_21",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 13.793082237243652,
+        "rmse_increase": 0.7798709869384766
+      },
+      {
+        "sensor": "sensor_20",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 13.720144271850586,
+        "rmse_increase": 0.7069330215454102
+      },
+      {
+        "sensor": "sensor_15",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 13.695137977600098,
+        "rmse_increase": 0.6819267272949219
+      },
+      {
+        "sensor": "sensor_3",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 13.537084579467773,
+        "rmse_increase": 0.5238733291625977
+      },
+      {
+        "sensor": "sensor_17",
+        "rmse_baseline": 13.013211250305176,
+        "rmse_permuted": 13.457450866699219,
+        "rmse_increase": 0.44423961639404297
+      }
+    ]
+  },
+  "integrated_gradients": {
+    "ranking": [
+      {
+        "sensor": "sensor_11",
+        "mean_abs_attribution": 0.5331255656628536,
+        "mean_signed_attribution": -0.11176218728001519
+      },
+      {
+        "sensor": "sensor_12",
+        "mean_abs_attribution": 0.5319152529222471,
+        "mean_signed_attribution": -0.08763209349657093
+      },
+      {
+        "sensor": "sensor_8",
+        "mean_abs_attribution": 0.5059092591209576,
+        "mean_signed_attribution": -0.1078862763519043
+      },
+      {
+        "sensor": "sensor_7",
+        "mean_abs_attribution": 0.5002272787452142,
+        "mean_signed_attribution": -0.09308919575403464
+      },
+      {
+        "sensor": "sensor_4",
+        "mean_abs_attribution": 0.4875588572913166,
+        "mean_signed_attribution": -0.05739818511558587
+      },
+      {
+        "sensor": "sensor_13",
+        "mean_abs_attribution": 0.4788976014631068,
+        "mean_signed_attribution": -0.10385328025616036
+      },
+      {
+        "sensor": "sensor_2",
+        "mean_abs_attribution": 0.4185828116781516,
+        "mean_signed_attribution": -0.10522177649930321
+      },
+      {
+        "sensor": "sensor_9",
+        "mean_abs_attribution": 0.4136587959167834,
+        "mean_signed_attribution": -0.08151216052077506
+      },
+      {
+        "sensor": "sensor_14",
+        "mean_abs_attribution": 0.3952877151933764,
+        "mean_signed_attribution": -0.08118444948164764
+      },
+      {
+        "sensor": "sensor_20",
+        "mean_abs_attribution": 0.30732252229502893,
+        "mean_signed_attribution": -0.06399208142718878
+      },
+      {
+        "sensor": "sensor_15",
+        "mean_abs_attribution": 0.3030021958632932,
+        "mean_signed_attribution": -0.038077340868072386
+      },
+      {
+        "sensor": "sensor_17",
+        "mean_abs_attribution": 0.26950270140859783,
+        "mean_signed_attribution": -0.005767389525827336
+      },
+      {
+        "sensor": "sensor_21",
+        "mean_abs_attribution": 0.26848245084597816,
+        "mean_signed_attribution": 0.011538772747523277
+      },
+      {
+        "sensor": "sensor_3",
+        "mean_abs_attribution": 0.23148091792869702,
+        "mean_signed_attribution": -0.04358604721418942
+      }
+    ],
+    "per_timestep_mean_abs_attribution": [
+      0.18477280637003138,
+      0.28262130913938305,
+      0.3633183609745018,
+      0.41438273513067025,
+      0.4409835809584391,
+      0.4454064860730016,
+      0.4377056488585991,
+      0.4051600865094224,
+      0.37096546785333234,
+      0.3379173446680657,
+      0.29606218727338796,
+      0.25904508682693633,
+      0.21912693144114462,
+      0.17668502719076448,
+      0.13617190355725597,
+      0.10721136362223953,
+      0.09561407416009039,
+      0.10475945878380181,
+      0.1369564771085561,
+      0.19136251586313197,
+      0.2669969834591835,
+      0.34415743513229247,
+      0.4301954190631139,
+      0.5370827881044118,
+      0.6481471357747276,
+      0.7312398277342436,
+      0.8456630194755053,
+      0.9406889493069113,
+      0.9812619241918686,
+      0.9646675075427057
+    ],
+    "mean_prediction_on_sampled_windows": 84.63829803466797
+  },
+  "sanity_checks": {
+    "permutation_baseline_rmse": 13.013211250305176,
+    "metrics_json_val_rmse": 13.013209342956543,
+    "baseline_abs_diff": 1.9073486328125e-06,
+    "baseline_matches_metrics_json": true,
+    "ig_completeness_mean_abs_error_cycles": 0.0038714774418622255,
+    "ig_completeness_mean_rel_error": 0.00011498533317300001,
+    "sensors_in_permutation_ranking": 14,
+    "sensors_in_ig_ranking": 14,
+    "all_14_sensors_in_both_rankings": true,
+    "no_nans": true,
+    "top5_overlap_between_methods": [
+      "sensor_11",
+      "sensor_4"
+    ]
+  }
+}
