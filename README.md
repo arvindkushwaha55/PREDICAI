@@ -104,12 +104,10 @@ will be added from real runs only.*
 Rust API ↔ Kaggle PyTorch prediction for test engine 1 identical to 5
 decimal places (117.60932 cycles).*
 
-*Inference benchmark (Rust API, local, 1,000 requests): p50 `—` ms · p95 `—` ms
-— measured in Phase D, reported as measured.*
+*Inference benchmark — MEASURED 13 Nov 2026 (Rust API release build, this machine, localhost, 1,000 sequential requests, each including prediction + SQLite log write): **p50 1.36 ms · p95 2.23 ms** (mean 1.51 ms). Local development-machine numbers, not a production guarantee.*
 
 ## Tech stack
 
-| Layer | Technology |
 |---|---|
 | ML lab | Python 3.11, PyTorch, NumPy, Pandas, scikit-learn, Matplotlib, Captum |
 | Model exchange | ONNX (opset 17), ONNX Runtime |
