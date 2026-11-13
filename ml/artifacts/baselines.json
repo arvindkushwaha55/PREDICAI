@@ -1,0 +1,29 @@
+{
+  "protocol": "cap=125 labels, seed 42 split, test=last window/engine",
+  "mean_predictor": {
+    "val_all_windows": {
+      "rmse": 41.65510559082031,
+      "mae": 36.51126480102539,
+      "nasa_score": 752072.159264582
+    },
+    "test_last_window": {
+      "rmse": 40.6854362487793,
+      "mae": 35.00188446044922,
+      "nasa_score": 19887.15374991011
+    },
+    "constant_value": 81.48115539550781
+  },
+  "ridge_flattened": {
+    "val_all_windows": {
+      "rmse": 16.61272430419922,
+      "mae": 13.56177043914795,
+      "nasa_score": 16589.091221212242
+    },
+    "test_last_window": {
+      "rmse": 15.31093692779541,
+      "mae": 12.4323091506958,
+      "nasa_score": 407.7963189636188
+    },
+    "alpha": 1.0
+  }
+}

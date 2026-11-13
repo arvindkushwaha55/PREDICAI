@@ -1,0 +1,42 @@
+{
+  "question": "does the RUL label cap change test performance?",
+  "reference_cap_125": {
+    "rmse": 13.728736877441406,
+    "mae": 9.885571479797363,
+    "nasa_score": 431.2853960321513,
+    "n": 100,
+    "source": "owner Kaggle GPU run (shipped model)"
+  },
+  "variants": [
+    {
+      "cap": 150,
+      "device": "cpu (local ablation run)",
+      "minutes": 3.2,
+      "val_all_windows": {
+        "rmse": 16.991249084472656,
+        "mae": 12.400822639465332,
+        "nasa_score": 29383.287552425503
+      },
+      "test_last_window": {
+        "rmse": 16.511140823364258,
+        "mae": 12.302000999450684,
+        "nasa_score": 941.3045759945676
+      }
+    },
+    {
+      "cap": null,
+      "device": "cpu (local ablation run)",
+      "minutes": 3.1,
+      "val_all_windows": {
+        "rmse": 23.800077438354492,
+        "mae": 17.373931884765625,
+        "nasa_score": 159685.44465351303
+      },
+      "test_last_window": {
+        "rmse": 26.237213134765625,
+        "mae": 19.29523277282715,
+        "nasa_score": 23109.346176547075
+      }
+    }
+  ]
+}
