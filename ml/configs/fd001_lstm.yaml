@@ -1,0 +1,30 @@
+# PREDICAI — FD001 LSTM training configuration (Part 4, Kaggle run)
+# Every number the training run uses lives here, not inside code.
+seed: 42
+
+data:
+  subset: FD001
+  seq_len: 30
+  rul_cap: 125
+  val_fraction: 0.2
+  # features are fixed by preprocessing.py (14 sensors) — see docs/DATASET.md
+
+model:
+  hidden_1: 128
+  hidden_2: 64
+  head_dim: 32
+  dropout: 0.2
+
+training:
+  epochs: 60            # early stopping decides the real stop point
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  early_stopping_patience: 10   # on validation RMSE
+  lr_scheduler: plateau         # ReduceLROnPlateau on val RMSE
+  loss: mse
+
+export:
+  onnx_opset: 17
+  parity_tolerance: 0.0001      # PyTorch vs ONNX max abs diff must be <= this
