@@ -1,0 +1,32 @@
+{
+  "config": {
+    "seq_len": 30,
+    "rul_cap": 125,
+    "val_fraction": 0.2,
+    "hidden_1": 128,
+    "hidden_2": 64,
+    "head_dim": 32,
+    "dropout": 0.2,
+    "epochs": 60,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "grad_clip": 1.0,
+    "patience": 10,
+    "opset": 17
+  },
+  "seed": 42,
+  "val_all_windows": {
+    "rmse": 13.013209342956543,
+    "mae": 9.016759872436523,
+    "nasa_score": 13812.230028140435,
+    "n": 3272
+  },
+  "test_last_window_per_engine": {
+    "rmse": 13.728736877441406,
+    "mae": 9.885571479797363,
+    "nasa_score": 431.2853960321513,
+    "n": 100
+  },
+  "best_val_rmse_during_training": 13.013209778751367
+}

@@ -1,0 +1,78 @@
+{
+  "train_shape": [
+    20631,
+    26
+  ],
+  "test_shape": [
+    13096,
+    26
+  ],
+  "train_engines": 100,
+  "test_engines": 100,
+  "rul_values": 100,
+  "rul_min": 7,
+  "rul_max": 145,
+  "train_missing_total": 0,
+  "test_missing_total": 0,
+  "train_life_min": 128,
+  "train_life_max": 362,
+  "train_life_mean": 206.31,
+  "test_observed_life_min": 31,
+  "test_observed_life_max": 303,
+  "test_engines_shorter_than_30": 0,
+  "train_engines_shorter_than_30": 0,
+  "constant_sensors_std_le_1e-6": [
+    "sensor_1",
+    "sensor_5",
+    "sensor_10",
+    "sensor_16",
+    "sensor_18",
+    "sensor_19"
+  ],
+  "near_constant_sensors_std_le_1e-3": [],
+  "kept_sensors": [
+    "sensor_2",
+    "sensor_3",
+    "sensor_4",
+    "sensor_6",
+    "sensor_7",
+    "sensor_8",
+    "sensor_9",
+    "sensor_11",
+    "sensor_12",
+    "sensor_13",
+    "sensor_14",
+    "sensor_15",
+    "sensor_17",
+    "sensor_20",
+    "sensor_21"
+  ],
+  "setting_std": {
+    "setting_1": 0.002187313449015146,
+    "setting_2": 0.00029306212456614496,
+    "setting_3": 0.0
+  },
+  "sensor_std": {
+    "sensor_1": 0.0,
+    "sensor_2": 0.500053,
+    "sensor_3": 6.13115,
+    "sensor_4": 9.000605,
+    "sensor_5": 0.0,
+    "sensor_6": 0.001389,
+    "sensor_7": 0.885092,
+    "sensor_8": 0.070985,
+    "sensor_9": 22.08288,
+    "sensor_10": 0.0,
+    "sensor_11": 0.267087,
+    "sensor_12": 0.737553,
+    "sensor_13": 0.071919,
+    "sensor_14": 19.076176,
+    "sensor_15": 0.037505,
+    "sensor_16": 0.0,
+    "sensor_17": 1.548763,
+    "sensor_18": 0.0,
+    "sensor_19": 0.0,
+    "sensor_20": 0.180746,
+    "sensor_21": 0.108251
+  }
+}

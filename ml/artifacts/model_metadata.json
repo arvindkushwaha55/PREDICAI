@@ -1,0 +1,29 @@
+{
+  "project": "PREDICAI",
+  "model_file": "cmapss_lstm.onnx",
+  "weights": "best_model.pt",
+  "architecture": "LSTM(14->128) -> Dropout 0.2 -> LSTM(128->64) -> Linear(64->32) -> ReLU -> Linear(32->1)",
+  "dataset": "NASA C-MAPSS FD001",
+  "seq_len": 30,
+  "num_features": 14,
+  "rul_cap": 125,
+  "seed": 42,
+  "onnx_opset": 17,
+  "trained_on": "Kaggle GPU (owner run, 13 Nov 2026)",
+  "metrics_test_last_window_per_engine": {
+    "rmse": 13.728736877441406,
+    "mae": 9.885571479797363,
+    "nasa_score": 431.2853960321513,
+    "n": 100
+  },
+  "metrics_val_all_windows": {
+    "rmse": 13.013209342956543,
+    "mae": 9.016759872436523,
+    "nasa_score": 13812.230028140435,
+    "n": 3272
+  },
+  "parity": {
+    "pytorch_vs_onnx_max_abs_diff": 1.53e-05,
+    "rust_vs_python_onnx": "parity test passed (tol 1e-3); live API matched Kaggle torch prediction for engine 1 to 5 decimal places"
+  }
+}
