@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  python-tests:
+    name: Python tests (ML + maintenance + simulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy scikit-learn pytest onnx onnxruntime
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Download NASA C-MAPSS data (not stored in this repo)
+        run: |
+          mkdir -p ml/data/raw
+          curl -sL -o /tmp/CMAPSSData.zip https://data.nasa.gov/docs/legacy/CMAPSSData.zip
+          unzip -q -o /tmp/CMAPSSData.zip -d /tmp/cmapss
+          find /tmp/cmapss -name "*.txt" -exec cp {} ml/data/raw/ \;
+          ls ml/data/raw/
+      - name: Run pytest
+        run: PYTHONPATH=ml/src python -m pytest ml/tests maintenance simulator -q
+
+  rust-tests:
+    name: Rust edge API tests (incl. ONNX parity)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Provide ONNX Runtime library (load-dynamic build)
+        run: |
+          pip install onnxruntime
+          echo "ORT_DYLIB_PATH=$(python3 -c "import onnxruntime, glob, os; print(glob.glob(os.path.join(os.path.dirname(onnxruntime.__file__), 'capi', 'libonnxruntime.so*'))[0])")" >> "$GITHUB_ENV"
+      - name: Run cargo test
+        working-directory: edge
+        run: cargo test
+
+  dashboard-build:
+    name: Dashboard build (TypeScript strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install and build
+        working-directory: dashboard
+        run: |
+          npm ci
+          npm run build
