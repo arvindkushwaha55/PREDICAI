@@ -370,11 +370,9 @@ export default function App() {
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <span>
               Demo build: FD001 replay data; not connected to real machines.
-              · Data exported {data.generated_at} by dashboard/data_export.py
-              from simulator/demo.db and ml/artifacts/. · Platform data
-              exported {platform.generated_at} by
-              dashboard/platform_export.py from platform/experiments/ and
-              the dataset registry.
+              · Data exported {data.generated_at}. · Platform data exported{" "}
+              {platform.generated_at} from the experiment records and the
+              dataset registry.
             </span>
             <span className="flex shrink-0 items-center gap-3">
               <button
