@@ -1,0 +1,1575 @@
+{
+ "generated_at": "2026-11-15T09:33:15+00:00",
+ "source": "platform/experiments/INDEX.json + the record JSONs it lists (read at export time) and platform/DATASET_REGISTRY.md (dataset facts transcribed in platform_export.py). No placeholder numbers.",
+ "counts": {
+  "records": 37,
+  "transfers": 6,
+  "explainability": 3,
+  "trained_model_records": 28,
+  "datasets_integrated": 10,
+  "datasets_registry_entries": 20,
+  "tasks": {
+   "A": 16,
+   "C": 4,
+   "B": 17
+  }
+ },
+ "datasets": [
+  {
+   "id": "cmapss_fd001",
+   "name": "C-MAPSS FD001 \u2014 Turbofan Degradation",
+   "source": "NASA Ames PCoE (PHM mirror)",
+   "licence": "NASA research use; formal licence text not confirmed",
+   "tasks": [
+    "B"
+   ],
+   "status": "integrated",
+   "adapter": "CMapssAdapter + ml/ pipeline",
+   "note": "1 operating condition, 1 fault mode (HPC). Train 20,631 rows / 100 engines. The original PREDICAI system (LSTM \u2192 ONNX \u2192 Rust API) serves this subset.",
+   "records": 1
+  },
+  {
+   "id": "cmapss_fd002",
+   "name": "C-MAPSS FD002 \u2014 Turbofan Degradation",
+   "source": "NASA Ames PCoE (PHM mirror)",
+   "licence": "NASA research use; formal licence text not confirmed",
+   "tasks": [
+    "B"
+   ],
+   "status": "integrated",
+   "adapter": "CMapssAdapter",
+   "note": "6 operating conditions, 1 fault mode. Train 53,759 rows / 260 engines; 23 features after derivation.",
+   "records": 4
+  },
+  {
+   "id": "cmapss_fd003",
+   "name": "C-MAPSS FD003 \u2014 Turbofan Degradation",
+   "source": "NASA Ames PCoE (PHM mirror)",
+   "licence": "NASA research use; formal licence text not confirmed",
+   "tasks": [
+    "B"
+   ],
+   "status": "integrated",
+   "adapter": "CMapssAdapter",
+   "note": "1 operating condition, 2 fault modes (HPC + fan). Train 24,720 rows / 100 engines; 15 features (sensor_6 kept, unlike FD001).",
+   "records": 3
+  },
+  {
+   "id": "cmapss_fd004",
+   "name": "C-MAPSS FD004 \u2014 Turbofan Degradation",
+   "source": "NASA Ames PCoE (PHM mirror)",
+   "licence": "NASA research use; formal licence text not confirmed",
+   "tasks": [
+    "B"
+   ],
+   "status": "integrated",
+   "adapter": "CMapssAdapter",
+   "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. On FD004 the LSTM wins RMSE/MAE but loses the NASA score to Ridge \u2014 recorded as measured.",
+   "records": 2
+  },
+  {
+   "id": "ai4i2020",
+   "name": "AI4I 2020 Predictive Maintenance",
+   "source": "UCI ML Repository",
+   "licence": "CC BY 4.0",
+   "tasks": [
+    "A",
+    "C"
+   ],
+   "status": "integrated",
+   "adapter": "AI4IAdapter",
+   "note": "10,000 \u00d7 14; binary machine-failure label (339 failures, \u22483.4%). Data is SYNTHETIC (rule-generated failures) \u2014 the 5 failure-mode flags define the target and are declared leakage columns, never features.",
+   "records": 8
+  },
+  {
+   "id": "secom",
+   "name": "SECOM Manufacturing",
+   "source": "UCI ML Repository",
+   "licence": "CC BY 4.0",
+   "tasks": [
+    "A",
+    "C"
+   ],
+   "status": "integrated",
+   "adapter": "SECOMAdapter",
+   "note": "1,567 rows \u00d7 590 anonymised sensor columns; 104 fails (\u22486.6%). Heavy missingness \u2192 450 features survive the wave-1 pipeline. Features are anonymised \u2014 explanations cite sensor indices only.",
+   "records": 5
+  },
+  {
+   "id": "cwru",
+   "name": "CWRU Bearing",
+   "source": "Case Western Reserve University",
+   "licence": "Not stated on official page",
+   "tasks": [
+    "A"
+   ],
+   "status": "integrated",
+   "adapter": "CWRUAdapter",
+   "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation (accuracy 0.665) \u2014 see Research view.",
+   "records": 2
+  },
+  {
+   "id": "paderborn",
+   "name": "Paderborn Bearing",
+   "source": "KAt-DataCenter, Paderborn University",
+   "licence": "CC BY-NC 4.0 (confirmed on official page)",
+   "tasks": [
+    "A"
+   ],
+   "status": "integrated",
+   "adapter": "PaderbornAdapter",
+   "note": "Integrated scope: 3 of 32 bearings (K001 healthy, KA01 outer-race, KI01 inner-race) \u2192 30,022 windows. Non-commercial licence. One physical bearing per class \u2014 no unseen-bearing generalisation claim.",
+   "records": 2
+  },
+  {
+   "id": "ims",
+   "name": "IMS Bearing (Run-to-Failure)",
+   "source": "NASA PCoE / University of Cincinnati",
+   "licence": "Not stated on PCoE page",
+   "tasks": [
+    "C",
+    "B"
+   ],
+   "status": "integrated",
+   "adapter": "IMSAdapter",
+   "note": "Test 1 integrated (wave 5, after the user approved the 1.08 GB download): 2,156 snapshots \u00d7 8 channels at 20 kHz. Teardown ground truth: bearing 3 inner-race + bearing 4 roller defects. No per-snapshot labels \u2014 evaluation is alarm timing only.",
+   "records": 1
+  },
+  {
+   "id": "nasa_battery",
+   "name": "NASA Li-ion Battery Aging",
+   "source": "NASA Ames PCoE",
+   "licence": "No named licence; acknowledgement requested",
+   "tasks": [
+    "B"
+   ],
+   "status": "integrated",
+   "adapter": "NASABatteryAdapter",
+   "note": "4 room-temperature run-to-failure batteries (B0005/6/7/18), 636 discharge-cycle rows. EOL = capacity < 1.4 Ah; B0007 never crosses (censored) and is excluded from LOBO scoring.",
+   "records": 3
+  },
+  {
+   "id": "femto_pronostia",
+   "name": "FEMTO-ST / PRONOSTIA Bearing",
+   "source": "FEMTO-ST / NASA PCoE mirrors",
+   "licence": "Not confirmed",
+   "tasks": [
+    "B"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "17 run-to-failure bearings (IEEE PHM 2012). Researched-only: ingestion effort (thousands of small CSVs) and mirror provenance pinning put it behind current priorities.",
+   "records": 0
+  },
+  {
+   "id": "xjtu_sy",
+   "name": "XJTU-SY Bearing",
+   "source": "Xi'an Jiaotong University (researcher page)",
+   "licence": "Not stated",
+   "tasks": [
+    "B"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "15 run-to-failure bearings, \u22484.4 GB. Researched-only: mirror-only distribution (provenance risk) and unstated licence.",
+   "records": 0
+  },
+  {
+   "id": "mfpt",
+   "name": "MFPT Bearing Fault Data",
+   "source": "MFPT Society (mfpt.org)",
+   "licence": "Not stated (live page gone)",
+   "tasks": [
+    "A"
+   ],
+   "status": "blocked",
+   "adapter": null,
+   "note": "BLOCKED \u2014 the official site is gone: mfpt.org redirects domain-wide to ASNT, which offers no dataset, download or licence. No unofficial mirror was substituted.",
+   "records": 0
+  },
+  {
+   "id": "mimii",
+   "name": "MIMII Industrial Machine Sound",
+   "source": "Hitachi / Zenodo",
+   "licence": "CC BY-SA 4.0",
+   "tasks": [
+    "C"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "Researched-only BY DECISION: 100.2 GB of audio (12 zips) is disproportionate to the platform's current stage. A future wave could take one machine type at one SNR (\u22487\u201311 GB).",
+   "records": 0
+  },
+  {
+   "id": "bosch",
+   "name": "Bosch Production Line Performance",
+   "source": "Kaggle (Bosch)",
+   "licence": "Kaggle competition rules",
+   "tasks": [
+    "A"
+   ],
+   "status": "blocked",
+   "adapter": null,
+   "note": "BLOCKED \u2014 no direct download exists; access requires a Kaggle account and acceptance of competition rules (\u224814.3 GB, 4,264 anonymised features, \u22480.58% failures).",
+   "records": 0
+  },
+  {
+   "id": "milling",
+   "name": "Milling Tool Wear",
+   "source": "UC Berkeley BEST Lab / NASA",
+   "licence": "NASA portal; formal licence text not confirmed",
+   "tasks": [
+    "A",
+    "B"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "167 milling runs; label = measured flank wear VB (mm). Some runs have missing VB and a few are flagged corrupted in the dataset's own notes \u2014 to be excluded and documented, never silently repaired.",
+   "records": 0
+  },
+  {
+   "id": "hydraulic",
+   "name": "Hydraulic Condition Monitoring",
+   "source": "University of Duisburg-Essen / UCI",
+   "licence": "CC BY 4.0",
+   "tasks": [
+    "A"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "2,205 cycles \u00d7 17 sensors; multi-output graded condition classes (cooler / valve / pump leakage / accumulator) \u2014 condition grades, not failure events. Not run-to-failure.",
+   "records": 0
+  },
+  {
+   "id": "metropt3",
+   "name": "MetroPT-3 (Lisbon Metro APU)",
+   "source": "Metro do Porto / UCI",
+   "licence": "CC BY 4.0",
+   "tasks": [
+    "C"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "1,516,948 rows \u00d7 15 features, Jan\u2013Aug 2020. Ground truth = timestamped maintenance reports only, no per-row labels \u2014 evaluation must be event-based.",
+   "records": 0
+  },
+  {
+   "id": "automotive_engine",
+   "name": "Automotive Engine Health",
+   "source": "\u2014",
+   "licence": "\u2014",
+   "tasks": [],
+   "status": "not-found",
+   "adapter": null,
+   "note": "No verified public sensor/time-series automotive engine-health dataset with a clear licence was found (searched 2026-11-15). The category is recorded as unfilled rather than inventing an entry.",
+   "records": 0
+  },
+  {
+   "id": "motor_electrical",
+   "name": "Motor Electrical Faults (candidates)",
+   "source": "UCI / Mendeley / 4TU.ResearchData",
+   "licence": "CC BY 4.0 / CC0 (verified per candidate)",
+   "tasks": [
+    "A"
+   ],
+   "status": "researched",
+   "adapter": null,
+   "note": "No single canonical dataset. Licence-verified candidates researched: UCI Sensorless Drive Diagnosis (CC BY 4.0), KAIST PMSM stator faults (CC BY 4.0), UOEMD-VAFCVS (CC BY 4.0), NLN-EMP (CC0). None downloaded yet.",
+   "records": 0
+  }
+ ],
+ "experiments": [
+  {
+   "id": "ai4i2020__taskA__logistic_regression__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "logistic_regression",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:28+00:00",
+   "headline": {
+    "f1": 0.2424,
+    "roc_auc": 0.9069,
+    "recall": 0.8235
+   },
+   "train_s": 0.0153,
+   "infer_ms_per_row": 0.00038,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "ai4i2020__taskA__random_forest__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "random_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:28+00:00",
+   "headline": {
+    "f1": 0.6078,
+    "roc_auc": 0.9636,
+    "recall": 0.4559
+   },
+   "train_s": 1.9077,
+   "infer_ms_per_row": 0.0317,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "ai4i2020__taskA__hist_gradient_boosting__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "hist_gradient_boosting",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:36+00:00",
+   "headline": {
+    "f1": 0.7162,
+    "roc_auc": 0.9691,
+    "recall": 0.7794
+   },
+   "train_s": 0.8675,
+   "infer_ms_per_row": 0.02555,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "ai4i2020__taskA__xgboost__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "xgboost",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:38+00:00",
+   "headline": {
+    "f1": 0.7571,
+    "roc_auc": 0.9709,
+    "recall": 0.7794
+   },
+   "train_s": 0.8925,
+   "infer_ms_per_row": 0.00515,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "ai4i2020__taskA__lightgbm__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "lightgbm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:39+00:00",
+   "headline": {
+    "f1": 0.782,
+    "roc_auc": 0.9703,
+    "recall": 0.7647
+   },
+   "train_s": 0.824,
+   "infer_ms_per_row": 0.02553,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "secom__taskA__logistic_regression__s42",
+   "dataset": "secom",
+   "task": "A",
+   "model": "logistic_regression",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:43+00:00",
+   "headline": {
+    "f1": 0.1379,
+    "recall": 0.1905,
+    "roc_auc": 0.6203
+   },
+   "train_s": 0.0421,
+   "infer_ms_per_row": 0.00707,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Only 104 fails in the full dataset (~21 in test), so recall/F1 estimates are high-variance. Features are anonymised; no physical interpretation is possible."
+  },
+  {
+   "id": "secom__taskA__random_forest__s42",
+   "dataset": "secom",
+   "task": "A",
+   "model": "random_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:43+00:00",
+   "headline": {
+    "f1": 0.0,
+    "recall": 0.0,
+    "roc_auc": 0.8019
+   },
+   "train_s": 3.9208,
+   "infer_ms_per_row": 0.18576,
+   "protocol": "stratified 80/20, seed 42",
+   "notes": "Only 104 fails in the full dataset (~21 in test), so recall/F1 estimates are high-variance. Features are anonymised; no physical interpretation is possible."
+  },
+  {
+   "id": "secom__taskC__isolation_forest__s42",
+   "dataset": "secom",
+   "task": "C",
+   "model": "isolation_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:48+00:00",
+   "headline": {
+    "f1": 0.2439,
+    "recall": 0.2381,
+    "false_alarm_rate": 0.0512
+   },
+   "train_s": 0.3924,
+   "infer_ms_per_row": 0.02927,
+   "protocol": "stratified 80/20, seed 42 (same split as Task A)",
+   "notes": "Anomaly view: model never sees fail labels in fitting; labels are used only to evaluate. Contamination = observed dataset fail rate 104/1567."
+  },
+  {
+   "id": "cmapss_fd003__taskB__ridge_flat__s42",
+   "dataset": "cmapss_fd003",
+   "task": "B",
+   "model": "ridge_flat",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:21:54+00:00",
+   "headline": {
+    "test_rmse": 16.358,
+    "test_mae": 13.832,
+    "test_nasa": 476.9
+   },
+   "train_s": 0.1123,
+   "infer_ms_per_row": 0.00192,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD003 = 1 operating condition, 2 fault modes (HPC + fan). All 3 settings fell below the near-constant threshold and were dropped by the data-derived rule; sensor_6 was KEPT (unlike FD001) because its FD003 std is ~0.018. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd003__taskB__lstm__s42",
+   "dataset": "cmapss_fd003",
+   "task": "B",
+   "model": "lstm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-13T17:22:13+00:00",
+   "headline": {
+    "test_rmse": 15.043,
+    "test_mae": 10.512,
+    "test_nasa": 451.8
+   },
+   "train_s": 475.2,
+   "infer_ms_per_row": 0.20541,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD003 = 1 operating condition, 2 fault modes (HPC + fan). All 3 settings fell below the near-constant threshold and were dropped by the data-derived rule; sensor_6 was KEPT (unlike FD001) because its FD003 std is ~0.018. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd004__taskB__ridge_flat__s42",
+   "dataset": "cmapss_fd004",
+   "task": "B",
+   "model": "ridge_flat",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:38:16+00:00",
+   "headline": {
+    "test_rmse": 19.425,
+    "test_mae": 15.708,
+    "test_nasa": 1779.1
+   },
+   "train_s": 0.617,
+   "infer_ms_per_row": 0.00061,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD004 = 6 operating conditions, 2 fault mode(s). Feature set derived from FD004's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd001_to_fd003__taskB__transfer_lstm__s42",
+   "dataset": "cmapss_fd001_to_fd003",
+   "task": "B",
+   "model": "transfer_lstm",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:38:24+00:00",
+   "headline": {
+    "test_rmse": 48.8,
+    "test_mae": 30.673,
+    "test_nasa": 956059.4
+   },
+   "train_s": 0.0,
+   "infer_ms_per_row": 0.17526,
+   "protocol": "zero-shot cross-dataset transfer: shipped FD001 model applied to the official FD003 test set, last window per engine; FD003 data used for scoring only",
+   "notes": "Zero-shot FD001 -> FD003 transfer. FD003 adds a second fault mode (fan) that FD001 training never contains, and FD003 sensor distributions differ; degradation vs both in-domain references is the expected and reportable result. train_s = 0.0 because no training was performed in this run."
+  },
+  {
+   "id": "cmapss_fd002__taskB__ridge_flat__s42",
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "model": "ridge_flat",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:38:37+00:00",
+   "headline": {
+    "test_rmse": 16.582,
+    "test_mae": 13.268,
+    "test_nasa": 1267.2
+   },
+   "train_s": 0.8199,
+   "infer_ms_per_row": 0.00046,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Feature set derived from FD002's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "ai4i2020__taskA__shap_lightgbm__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "shap_lightgbm",
+   "kind": "explainability",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:44:17+00:00",
+   "headline": {
+    "f1": 0.782,
+    "top_feature": "Torque [Nm]",
+    "top5_overlap_with_permutation": 5
+   },
+   "train_s": 134.778,
+   "infer_ms_per_row": 0.08932,
+   "protocol": "stratified 80/20, seed 42 (identical to wave-1 AI4I records)",
+   "notes": "Explainability record (Phase 7): the LightGBM model was retrained with the exact wave-1 config and split so the attributions belong to a real, scored model; `metrics` are that retrained model's test metrics. SHAP values are TreeExplainer attributions for the failure class on the model's raw (log-odds) output scale."
+  },
+  {
+   "id": "cwru__taskA__random_forest__s42",
+   "dataset": "cwru",
+   "task": "A",
+   "model": "random_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:45:41+00:00",
+   "headline": {
+    "accuracy": 1.0,
+    "f1_macro": 1.0
+   },
+   "train_s": 1.5028,
+   "infer_ms_per_row": 3.63227,
+   "protocol": "stratified 80/20 over WINDOWS, seed 42 \u2014 windows from the same recording appear in both splits (see notes; this inflates the score vs a recording-wise split)",
+   "notes": "LIMITATION (binding): the split is over windows, not recordings \u2014 adjacent windows of one recording share its fault signature, so these scores are optimistic relative to a recording-wise split and must not be quoted as generalisation performance. Only 4 recordings (one per class, 0 hp load, 0.007-inch faults) are integrated in this wave. real test-rig recordings; faults are EDM-seeded single-point defects on a 2 hp motor rig, not field failures"
+  },
+  {
+   "id": "cmapss_fd002__taskB__lstm__s42",
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "model": "lstm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:38:41+00:00",
+   "headline": {
+    "test_rmse": 16.236,
+    "test_mae": 11.933,
+    "test_nasa": 1099.8
+   },
+   "train_s": 931.2,
+   "infer_ms_per_row": 0.20523,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Feature set derived from FD002's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd004__taskB__lstm__s42",
+   "dataset": "cmapss_fd004",
+   "task": "B",
+   "model": "lstm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:59:34+00:00",
+   "headline": {
+    "test_rmse": 18.809,
+    "test_mae": 13.538,
+    "test_nasa": 2141.5
+   },
+   "train_s": 742.6,
+   "infer_ms_per_row": 0.18556,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD004 = 6 operating conditions, 2 fault mode(s). Feature set derived from FD004's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd001__taskB__gru__s42",
+   "dataset": "cmapss_fd001",
+   "task": "B",
+   "model": "gru",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T07:59:20+00:00",
+   "headline": {
+    "test_rmse": 13.224,
+    "test_mae": 9.671,
+    "test_nasa": 305.9
+   },
+   "train_s": 583.2,
+   "infer_ms_per_row": 0.37444,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 identical to the shipped FD001 LSTM evaluation",
+   "notes": "Architecture comparison on identical data/protocol: GRU vs the shipped LSTM (owner Kaggle GPU run, test RMSE 13.73). simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd003__taskB__cnn_lstm__s42",
+   "dataset": "cmapss_fd003",
+   "task": "B",
+   "model": "cnn_lstm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T08:09:24+00:00",
+   "headline": {
+    "test_rmse": 13.169,
+    "test_mae": 9.099,
+    "test_nasa": 290.5
+   },
+   "train_s": 391.7,
+   "infer_ms_per_row": 0.25921,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD003 = 1 operating conditions, 2 fault mode(s). Feature set derived from FD003's own train split by the std<0.005 rule: settings kept = none; dropped = ['setting_1', 'setting_2', 'setting_3', 'sensor_1', 'sensor_5', 'sensor_10', 'sensor_16', 'sensor_18', 'sensor_19']. simulated (C-MAPSS tool), not real engines Checkpoint saved to platform/artifacts/fd003_cnn_lstm.pt (best-val state) for wave 5."
+  },
+  {
+   "id": "cmapss_fd002__taskB__random_forest_reg__s42",
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "model": "random_forest_reg",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T08:57:52+00:00",
+   "headline": {
+    "test_rmse": 18.44,
+    "test_mae": 14.897,
+    "test_nasa": 1979.2
+   },
+   "train_s": 294.7749,
+   "infer_ms_per_row": 0.09759,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Feature set derived from FD002's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd002__taskB__xgboost_reg__s42",
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "model": "xgboost_reg",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:02:48+00:00",
+   "headline": {
+    "test_rmse": 17.485,
+    "test_mae": 13.695,
+    "test_nasa": 1710.2
+   },
+   "train_s": 75.2013,
+   "infer_ms_per_row": 0.01724,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+   "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Feature set derived from FD002's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "ai4i2020__taskA__svm__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "svm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:06:17+00:00",
+   "headline": {
+    "f1": 0.4276,
+    "roc_auc": 0.961,
+    "recall": 0.9118
+   },
+   "train_s": 5.1831,
+   "infer_ms_per_row": 0.15428,
+   "protocol": "stratified 80/20, seed 42 (identical to wave-1 AI4I records)",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "ai4i2020__taskA__mlp__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "mlp",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:06:26+00:00",
+   "headline": {
+    "f1": 0.7101,
+    "roc_auc": 0.9757,
+    "recall": 0.7206
+   },
+   "train_s": 44.1847,
+   "infer_ms_per_row": 0.00468,
+   "protocol": "stratified 80/20, seed 42 (identical to wave-1 AI4I records)",
+   "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage)."
+  },
+  {
+   "id": "secom__taskC__one_class_svm__s42",
+   "dataset": "secom",
+   "task": "C",
+   "model": "one_class_svm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:07:15+00:00",
+   "headline": {
+    "f1": 0.1111,
+    "recall": 0.1429,
+    "false_alarm_rate": 0.1024
+   },
+   "train_s": 0.0381,
+   "infer_ms_per_row": 0.05051,
+   "protocol": "stratified 80/20, seed 42 (same split as wave-1 SECOM records); model fitted on PASS rows of the train split only \u2014 fail labels used only to evaluate",
+   "notes": "Anomaly view: the model never sees fail labels in fitting. Only 104 fails exist in the full dataset (~21 in test), so recall/F1 estimates are high-variance. Features are anonymised; no physical interpretation is possible."
+  },
+  {
+   "id": "secom__taskC__autoencoder__s42",
+   "dataset": "secom",
+   "task": "C",
+   "model": "autoencoder",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:07:26+00:00",
+   "headline": {
+    "f1": 0.0488,
+    "recall": 0.0476,
+    "false_alarm_rate": 0.0648
+   },
+   "train_s": 3.1757,
+   "infer_ms_per_row": 0.00814,
+   "protocol": "stratified 80/20, seed 42 (same split as wave-1 SECOM records); model fitted on PASS rows of the train split only \u2014 fail labels used only to evaluate",
+   "notes": "Anomaly view: the model never sees fail labels in fitting. Only 104 fails exist in the full dataset (~21 in test), so recall/F1 estimates are high-variance. Features are anonymised; no physical interpretation is possible."
+  },
+  {
+   "id": "cwru__taskA__random_forest_recordingwise__s42",
+   "dataset": "cwru",
+   "task": "A",
+   "model": "random_forest_recordingwise",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:07:55+00:00",
+   "headline": {
+    "accuracy": 0.6649,
+    "f1_macro": 0.4214
+   },
+   "train_s": 15.2075,
+   "infer_ms_per_row": 0.92935,
+   "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over 12 recordings; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions.",
+   "notes": "The leakage-safe counterpart of the wave-2 CWRU record. Wave 2 split WINDOWS of 4 recordings (one per class) stratified 80/20, so every test window's recording was also in training \u2014 its accuracy/F1 of 1.000 measures within-recording separability only. Here, 12 recordings (3 per class: Normal at 0/1/2 hp; InnerRace/Ball/OuterRace at 0.007/0.014/0.021 inch, 0 hp) are evaluated leave-one-recording-out, so the score below is the first CWRU number in this project that speaks about unseen recordings. It still does NOT cover unseen fault diameters combined with unseen loads jointly, nor different machines. Data note: 99.mat as served by the official host bundles the X098 variable alongside X099; the self-identified X099_DE_time series (2 hp normal) is the one used."
+  },
+  {
+   "id": "battery__taskB__random_forest_lobo__s42",
+   "dataset": "nasa_battery",
+   "task": "B",
+   "model": "random_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:08:12+00:00",
+   "headline": {
+    "pooled_rmse": 9.266,
+    "pooled_mae": 6.896
+   },
+   "train_s": 2.0702,
+   "infer_ms_per_row": 0.28316,
+   "protocol": "LEAVE-ONE-BATTERY-OUT (LOBO): each of B0005, B0006, B0018 is held out in turn and predicted by a model fitted on the other two batteries only; no cycle of the test battery is in training. B0007 is EXCLUDED: it is censored \u2014 its capacity never crosses the 1.4 Ah end-of-life threshold (last recorded 1.432 Ah), so it has no observed EOL label.",
+   "notes": "Real laboratory battery-aging data (NASA Ames PCoE, Saha & Goebel 2007). LOBO over 3 batteries is a small-sample evaluation: per-battery numbers are reported individually, not hidden in the pooled score. "
+  },
+  {
+   "id": "battery__taskB__lstm_lobo__s42",
+   "dataset": "nasa_battery",
+   "task": "B",
+   "model": "lstm",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:08:19+00:00",
+   "headline": {
+    "pooled_rmse": 14.92,
+    "pooled_mae": 9.075
+   },
+   "train_s": 11.6178,
+   "infer_ms_per_row": 0.02256,
+   "protocol": "LEAVE-ONE-BATTERY-OUT (LOBO): each of B0005, B0006, B0018 is held out in turn and predicted by a model fitted on the other two batteries only; no cycle of the test battery is in training. B0007 is EXCLUDED: it is censored \u2014 its capacity never crosses the 1.4 Ah end-of-life threshold (last recorded 1.432 Ah), so it has no observed EOL label.",
+   "notes": "Real laboratory battery-aging data (NASA Ames PCoE, Saha & Goebel 2007). LOBO over 3 batteries is a small-sample evaluation: per-battery numbers are reported individually, not hidden in the pooled score. "
+  },
+  {
+   "id": "paderborn__taskA__random_forest__s42",
+   "dataset": "paderborn",
+   "task": "A",
+   "model": "random_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:09:10+00:00",
+   "headline": {
+    "accuracy": 0.9499,
+    "f1_macro": 0.952
+   },
+   "train_s": 27.5466,
+   "infer_ms_per_row": 0.03316,
+   "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 no measurement file contributes windows to both sides. NOTE: there is only ONE physical bearing per class in this scope, so train and test still share bearings (different measurements of them).",
+   "notes": "Caveat (binding): one physical bearing per class (K001 healthy, KA01 outer-race EDM, KI01 inner-race EDM). The measurement-grouped split removes the window-level leakage of a naive split, but the score measures within-bearing separability across measurements and operating conditions \u2014 NOT generalisation to unseen bearings. CC BY-NC 4.0 data: non-commercial use only. real test-rig recordings; KA01/KI01 damage is artificially EDM-seeded in this scope (the full dataset also contains real fatigue damage, not integrated here)"
+  },
+  {
+   "id": "cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42",
+   "dataset": "cmapss_fd003_to_fd001",
+   "task": "B",
+   "model": "transfer_cnn_lstm",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:14:22+00:00",
+   "headline": {
+    "test_rmse": 15.816,
+    "test_mae": 11.42,
+    "test_nasa": 395.0
+   },
+   "train_s": 0.0,
+   "infer_ms_per_row": 0.17893,
+   "protocol": "zero-shot cross-dataset transfer: wave-4 FD003 CNN-LSTM applied to the official FD001 test set, last window per engine; FD001 data used for scoring only",
+   "notes": "Zero-shot FD003 -> FD001 transfer, the mirror of wave 2's FD001 -> FD003 (RMSE 48.80). Asymmetry is expected and is itself the finding: the FD003 model was trained on TWO fault modes (HPC + fan) and a feature set that keeps sensor_6, while FD001 contains only the HPC mode \u2014 transferring INTO the narrower domain is not the same problem as transferring out of it. train_s = 0.0 because no training was performed in this run."
+  },
+  {
+   "id": "cmapss_fd002_to_fd004__taskB__transfer_ridge__s42",
+   "dataset": "cmapss_fd002_to_fd004",
+   "task": "B",
+   "model": "transfer_ridge",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:15:03+00:00",
+   "headline": {
+    "test_rmse": 51.38,
+    "test_mae": 36.071,
+    "test_nasa": 7095957.4
+   },
+   "train_s": 0.2722,
+   "infer_ms_per_row": 0.0005,
+   "protocol": "zero-shot cross-subset transfer: FD002 Ridge (refit, identical config) applied to the official FD004 test set, last window per engine; FD004 data used for scoring only",
+   "notes": "Zero-shot FD002 -> FD004 Ridge transfer. Both subsets have six operating conditions; FD002 has 1 fault mode(s), FD004 has 2. The shared 23-feature space makes this the cleanest C-MAPSS transfer pair in the platform; any degradation is therefore attributable to distribution / fault-mode shift, not to feature misalignment. train_s is the deterministic refit time on the source subset."
+  },
+  {
+   "id": "cmapss_fd004_to_fd002__taskB__transfer_ridge__s42",
+   "dataset": "cmapss_fd004_to_fd002",
+   "task": "B",
+   "model": "transfer_ridge",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:15:06+00:00",
+   "headline": {
+    "test_rmse": 18.069,
+    "test_mae": 15.182,
+    "test_nasa": 1266.0
+   },
+   "train_s": 0.3968,
+   "infer_ms_per_row": 0.00044,
+   "protocol": "zero-shot cross-subset transfer: FD004 Ridge (refit, identical config) applied to the official FD002 test set, last window per engine; FD002 data used for scoring only",
+   "notes": "Zero-shot FD004 -> FD002 Ridge transfer. Both subsets have six operating conditions; FD004 has 2 fault mode(s), FD002 has 1. The shared 23-feature space makes this the cleanest C-MAPSS transfer pair in the platform; any degradation is therefore attributable to distribution / fault-mode shift, not to feature misalignment. train_s is the deterministic refit time on the source subset."
+  },
+  {
+   "id": "cwru_to_paderborn__taskA__transfer_rf__s42",
+   "dataset": "cwru_to_paderborn",
+   "task": "A",
+   "model": "transfer_rf",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:15:52+00:00",
+   "headline": {
+    "accuracy": 0.2531,
+    "f1_macro": 0.2048
+   },
+   "train_s": 0.6374,
+   "infer_ms_per_row": 0.00639,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']",
+   "notes": "Zero-shot cwru -> paderborn bearing-fault transfer. Known shift factors, all documented rather than corrected: sampling rate 12 kHz (CWRU) vs 64 kHz (Paderborn) so identical 2048-sample windows cover 170.7 ms vs 32.0 ms of shaft rotation; different test rigs, bearing geometries, sensor mounting and load/speed regimes; CWRU faults are EDM-seeded single-point defects, Paderborn's are EDM/drilling/engraving defects on a different bearing type. Time-domain statistics (RMS, kurtosis, ...) are amplitude- and rate-sensitive, so degradation vs the in-domain references is the expected result \u2014 this record measures it instead of assuming it."
+  },
+  {
+   "id": "paderborn_to_cwru__taskA__transfer_rf__s42",
+   "dataset": "paderborn_to_cwru",
+   "task": "A",
+   "model": "transfer_rf",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:17:00+00:00",
+   "headline": {
+    "accuracy": 0.1249,
+    "f1_macro": 0.1558
+   },
+   "train_s": 35.7915,
+   "infer_ms_per_row": 0.04545,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']",
+   "notes": "Zero-shot paderborn -> cwru bearing-fault transfer. Known shift factors, all documented rather than corrected: sampling rate 12 kHz (CWRU) vs 64 kHz (Paderborn) so identical 2048-sample windows cover 170.7 ms vs 32.0 ms of shaft rotation; different test rigs, bearing geometries, sensor mounting and load/speed regimes; CWRU faults are EDM-seeded single-point defects, Paderborn's are EDM/drilling/engraving defects on a different bearing type. Time-domain statistics (RMS, kurtosis, ...) are amplitude- and rate-sensitive, so degradation vs the in-domain references is the expected result \u2014 this record measures it instead of assuming it."
+  },
+  {
+   "id": "battery__taskB__shap_random_forest__s42",
+   "dataset": "nasa_battery",
+   "task": "B",
+   "model": "shap_random_forest",
+   "kind": "explainability",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:17:14+00:00",
+   "headline": {
+    "in_sample_rmse": 1.093,
+    "top_feature": "soh"
+   },
+   "train_s": 1.0363,
+   "infer_ms_per_row": 0.11071,
+   "protocol": "EXPLANATION MODEL \u2014 deliberately NOT the wave-4 leave-one-battery-out protocol: the forest is fitted on every cycle of B0005, B0006 and B0018 so the attributions describe the fullest model of the three EOL batteries. Its metrics below are IN-SAMPLE and must not be quoted as generalisation \u2014 the honest generalisation estimate is the wave-4 LOBO record (pooled RMSE 9.27).",
+   "notes": "Explainability record (wave 6): SHAP TreeExplainer attributions of the all-batteries Random Forest for B0005's discharge cycles, on the RUL (cycles) output scale. Attributions describe what THIS model uses \u2014 dominated, expectedly, by the capacity trajectory features \u2014 not a physical ageing mechanism. The LOBO record remains the performance reference for this dataset."
+  },
+  {
+   "id": "paderborn__taskA__permutation_rf__s42",
+   "dataset": "paderborn",
+   "task": "A",
+   "model": "permutation_rf",
+   "kind": "explainability",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:18:36+00:00",
+   "headline": {
+    "accuracy": 0.9499,
+    "top_feature": "kurtosis"
+   },
+   "train_s": 27.2906,
+   "infer_ms_per_row": 0.03347,
+   "protocol": "MEASUREMENT-GROUPED split identical to wave 4: GroupShuffleSplit by source_file, 80/20, seed 42; importance measured on the held-out measurements only",
+   "notes": "Explainability record (wave 6): permutation importance of the wave-4 Paderborn forest, measured as accuracy drop on its grouped test split. The refit reproduces the wave-4 model (same config, split and seed), so the importances belong to that scored model. Caveat carried from wave 4: one physical bearing per class \u2014 importances describe within-scope separability, not unseen bearings."
+  },
+  {
+   "id": "ims__taskC__isolation_forest__s42",
+   "dataset": "ims",
+   "task": "C",
+   "model": "isolation_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:26:58+00:00",
+   "headline": {
+    "n_snapshots": 2156,
+    "bearing3_first_sustained_alarm": 1819,
+    "bearing4_first_sustained_alarm": 1433
+   },
+   "train_s": 1.3086,
+   "infer_ms_per_row": 0.01147,
+   "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology.",
+   "notes": "IMS Test 1 integrated in wave 5 after the user approved the 1.08 GB official download that wave 3's size gate had blocked. Detectors see only their own bearing's channels. A sustained alarm on bearings 3/4 late in the run, with bearings 1/2 quiet or much later, is the success pattern this design can honestly show; whatever the measured pattern is, it is reported as measured in EXPERIMENTS_REPORT.md. Data is real run-to-failure rig data (not field data); licence not stated on the PCoE page."
+  }
+ ],
+ "transfers": [
+  {
+   "id": "cmapss_fd001_to_fd003__taskB__transfer_lstm__s42",
+   "dataset": "cmapss_fd001_to_fd003",
+   "task": "B",
+   "model": "transfer_lstm",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:38:24+00:00",
+   "headline": {
+    "test_rmse": 48.8,
+    "test_mae": 30.673,
+    "test_nasa": 956059.4
+   },
+   "train_s": 0.0,
+   "infer_ms_per_row": 0.17526,
+   "protocol": "zero-shot cross-dataset transfer: shipped FD001 model applied to the official FD003 test set, last window per engine; FD003 data used for scoring only",
+   "notes": "Zero-shot FD001 -> FD003 transfer. FD003 adds a second fault mode (fan) that FD001 training never contains, and FD003 sensor distributions differ; degradation vs both in-domain references is the expected and reportable result. train_s = 0.0 because no training was performed in this run.",
+   "source_dataset": "cmapss_fd001",
+   "target_dataset": "cmapss_fd003",
+   "cross_metrics": {
+    "rmse": 48.800132751464844,
+    "mae": 30.672740936279297,
+    "nasa_score": 956059.3639758674
+   },
+   "in_domain_references": [
+    {
+     "label": "fd001 in domain",
+     "rmse": 13.728736877441406,
+     "mae": 9.885571479797363,
+     "nasa_score": 431.2853960321513
+    },
+    {
+     "label": "fd003 in domain lstm",
+     "rmse": 15.04255199432373,
+     "mae": 10.51198959350586,
+     "nasa_score": 451.76100997094403
+    }
+   ],
+   "degradation": {
+    "label": "degradation_vs_fd003_in_domain",
+    "rmse_delta": 33.75758075714111,
+    "rmse_pct_increase": 224.41392105461526,
+    "mae_delta": 20.160751342773438,
+    "nasa_delta": 955607.6029658965
+   },
+   "verdict": "Not deployable \u2014 cross-domain RMSE 48.80 vs 15.04 in-domain on FD003 (+224%). FD003's second (fan) fault mode was never seen in FD001 training."
+  },
+  {
+   "id": "cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42",
+   "dataset": "cmapss_fd003_to_fd001",
+   "task": "B",
+   "model": "transfer_cnn_lstm",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:14:22+00:00",
+   "headline": {
+    "test_rmse": 15.816,
+    "test_mae": 11.42,
+    "test_nasa": 395.0
+   },
+   "train_s": 0.0,
+   "infer_ms_per_row": 0.17893,
+   "protocol": "zero-shot cross-dataset transfer: wave-4 FD003 CNN-LSTM applied to the official FD001 test set, last window per engine; FD001 data used for scoring only",
+   "notes": "Zero-shot FD003 -> FD001 transfer, the mirror of wave 2's FD001 -> FD003 (RMSE 48.80). Asymmetry is expected and is itself the finding: the FD003 model was trained on TWO fault modes (HPC + fan) and a feature set that keeps sensor_6, while FD001 contains only the HPC mode \u2014 transferring INTO the narrower domain is not the same problem as transferring out of it. train_s = 0.0 because no training was performed in this run.",
+   "source_dataset": "cmapss_fd003",
+   "target_dataset": "cmapss_fd001",
+   "cross_metrics": {
+    "rmse": 15.816073417663574,
+    "mae": 11.420226097106934,
+    "nasa_score": 394.9987089930513
+   },
+   "in_domain_references": [
+    {
+     "label": "fd003 in domain cnn lstm",
+     "rmse": 13.168869972229004,
+     "mae": 9.098997116088867,
+     "nasa_score": 290.5232215798337
+    },
+    {
+     "label": "fd001 in domain shipped lstm",
+     "rmse": 13.728736877441406,
+     "mae": 9.885571479797363,
+     "nasa_score": 431.2853960321513
+    }
+   ],
+   "degradation": {
+    "label": "degradation_vs_fd001_in_domain",
+    "rmse_delta": 2.087336540222168,
+    "rmse_pct_increase": 15.204141202910005,
+    "mae_delta": 1.5346546173095703,
+    "nasa_delta": -36.2866870391
+   },
+   "verdict": "Near in-domain \u2014 RMSE 15.82 vs 13.73 shipped in-domain (+15%). Wide\u2192narrow transfer (2 fault modes \u2192 1) largely works; the reverse direction does not."
+  },
+  {
+   "id": "cmapss_fd002_to_fd004__taskB__transfer_ridge__s42",
+   "dataset": "cmapss_fd002_to_fd004",
+   "task": "B",
+   "model": "transfer_ridge",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:15:03+00:00",
+   "headline": {
+    "test_rmse": 51.38,
+    "test_mae": 36.071,
+    "test_nasa": 7095957.4
+   },
+   "train_s": 0.2722,
+   "infer_ms_per_row": 0.0005,
+   "protocol": "zero-shot cross-subset transfer: FD002 Ridge (refit, identical config) applied to the official FD004 test set, last window per engine; FD004 data used for scoring only",
+   "notes": "Zero-shot FD002 -> FD004 Ridge transfer. Both subsets have six operating conditions; FD002 has 1 fault mode(s), FD004 has 2. The shared 23-feature space makes this the cleanest C-MAPSS transfer pair in the platform; any degradation is therefore attributable to distribution / fault-mode shift, not to feature misalignment. train_s is the deterministic refit time on the source subset.",
+   "source_dataset": "cmapss_fd002",
+   "target_dataset": "cmapss_fd004",
+   "cross_metrics": {
+    "rmse": 51.379669189453125,
+    "mae": 36.07050323486328,
+    "nasa_score": 7095957.415125308
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain ridge",
+     "rmse": 19.425004959106445,
+     "mae": 15.708367347717285,
+     "nasa_score": 1779.1453175774552
+    },
+    {
+     "label": "source in domain ridge",
+     "rmse": 16.581666946411133,
+     "mae": 13.268168449401855,
+     "nasa_score": 1267.1963340696525
+    }
+   ],
+   "degradation": {
+    "label": "degradation_vs_target_in_domain",
+    "rmse_delta": 31.95466423034668,
+    "rmse_pct_increase": 164.50273396386615,
+    "mae_delta": 20.362135887145996,
+    "nasa_delta": 7094178.26980773
+   },
+   "verdict": "Fails \u2014 RMSE 51.38 vs 19.43 in-domain Ridge on FD004 (+165%), despite an identical 23-feature space. The shift is in the distributions / fault modes, not the features."
+  },
+  {
+   "id": "cmapss_fd004_to_fd002__taskB__transfer_ridge__s42",
+   "dataset": "cmapss_fd004_to_fd002",
+   "task": "B",
+   "model": "transfer_ridge",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:15:06+00:00",
+   "headline": {
+    "test_rmse": 18.069,
+    "test_mae": 15.182,
+    "test_nasa": 1266.0
+   },
+   "train_s": 0.3968,
+   "infer_ms_per_row": 0.00044,
+   "protocol": "zero-shot cross-subset transfer: FD004 Ridge (refit, identical config) applied to the official FD002 test set, last window per engine; FD002 data used for scoring only",
+   "notes": "Zero-shot FD004 -> FD002 Ridge transfer. Both subsets have six operating conditions; FD004 has 2 fault mode(s), FD002 has 1. The shared 23-feature space makes this the cleanest C-MAPSS transfer pair in the platform; any degradation is therefore attributable to distribution / fault-mode shift, not to feature misalignment. train_s is the deterministic refit time on the source subset.",
+   "source_dataset": "cmapss_fd004",
+   "target_dataset": "cmapss_fd002",
+   "cross_metrics": {
+    "rmse": 18.068967819213867,
+    "mae": 15.182138442993164,
+    "nasa_score": 1265.9970976611453
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain ridge",
+     "rmse": 16.581666946411133,
+     "mae": 13.268168449401855,
+     "nasa_score": 1267.1963340696525
+    },
+    {
+     "label": "source in domain ridge",
+     "rmse": 19.425004959106445,
+     "mae": 15.708367347717285,
+     "nasa_score": 1779.1453175774552
+    }
+   ],
+   "degradation": {
+    "label": "degradation_vs_target_in_domain",
+    "rmse_delta": 1.4873008728027344,
+    "rmse_pct_increase": 8.969549790195487,
+    "mae_delta": 1.9139699935913086,
+    "nasa_delta": -1.199236408507204
+   },
+   "verdict": "Near in-domain \u2014 RMSE 18.07 vs 16.58 in-domain Ridge on FD002 (+9%). Again the wide\u2192narrow direction (2 fault modes \u2192 1)."
+  },
+  {
+   "id": "cwru_to_paderborn__taskA__transfer_rf__s42",
+   "dataset": "cwru_to_paderborn",
+   "task": "A",
+   "model": "transfer_rf",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:15:52+00:00",
+   "headline": {
+    "accuracy": 0.2531,
+    "f1_macro": 0.2048
+   },
+   "train_s": 0.6374,
+   "infer_ms_per_row": 0.00639,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']",
+   "notes": "Zero-shot cwru -> paderborn bearing-fault transfer. Known shift factors, all documented rather than corrected: sampling rate 12 kHz (CWRU) vs 64 kHz (Paderborn) so identical 2048-sample windows cover 170.7 ms vs 32.0 ms of shaft rotation; different test rigs, bearing geometries, sensor mounting and load/speed regimes; CWRU faults are EDM-seeded single-point defects, Paderborn's are EDM/drilling/engraving defects on a different bearing type. Time-domain statistics (RMS, kurtosis, ...) are amplitude- and rate-sensitive, so degradation vs the in-domain references is the expected result \u2014 this record measures it instead of assuming it.",
+   "source_dataset": "cwru",
+   "target_dataset": "paderborn",
+   "cross_metrics": {
+    "accuracy": 0.2530810738791553,
+    "f1_macro": 0.20477562327107987
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain",
+     "accuracy": 0.9499001331557922,
+     "f1_macro": 0.9519874629693527
+    },
+    {
+     "label": "source in domain",
+     "accuracy": 0.6648841354723708,
+     "f1_macro": 0.4214028868431701
+    }
+   ],
+   "degradation": {
+    "accuracy_delta_vs_target_in_domain": -0.696819059276637
+   },
+   "verdict": "Fails \u2014 accuracy 0.253 vs 0.950 in-domain. The Normal class is never recognised on the target rig (recall 0.0): 'Normal' is rig-specific with time-domain features."
+  },
+  {
+   "id": "paderborn_to_cwru__taskA__transfer_rf__s42",
+   "dataset": "paderborn_to_cwru",
+   "task": "A",
+   "model": "transfer_rf",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:17:00+00:00",
+   "headline": {
+    "accuracy": 0.1249,
+    "f1_macro": 0.1558
+   },
+   "train_s": 35.7915,
+   "infer_ms_per_row": 0.04545,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']",
+   "notes": "Zero-shot paderborn -> cwru bearing-fault transfer. Known shift factors, all documented rather than corrected: sampling rate 12 kHz (CWRU) vs 64 kHz (Paderborn) so identical 2048-sample windows cover 170.7 ms vs 32.0 ms of shaft rotation; different test rigs, bearing geometries, sensor mounting and load/speed regimes; CWRU faults are EDM-seeded single-point defects, Paderborn's are EDM/drilling/engraving defects on a different bearing type. Time-domain statistics (RMS, kurtosis, ...) are amplitude- and rate-sensitive, so degradation vs the in-domain references is the expected result \u2014 this record measures it instead of assuming it.",
+   "source_dataset": "paderborn",
+   "target_dataset": "cwru",
+   "cross_metrics": {
+    "accuracy": 0.12486772486772486,
+    "f1_macro": 0.15577010495745386
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain",
+     "accuracy": 0.6648841354723708,
+     "f1_macro": 0.4214028868431701
+    },
+    {
+     "label": "source in domain",
+     "accuracy": 0.9499001331557922,
+     "f1_macro": 0.9519874629693527
+    }
+   ],
+   "degradation": {
+    "accuracy_delta_vs_target_in_domain": -0.5400164106046459
+   },
+   "verdict": "Fails \u2014 accuracy 0.125 vs 0.665 recording-wise in-domain. Normal recall 0.0 again; 12 kHz vs 64 kHz sampling also makes the same 2048-sample window cover 170.7 ms vs 32.0 ms."
+  }
+ ],
+ "xai": [
+  {
+   "id": "ai4i2020__taskA__shap_lightgbm__s42",
+   "dataset": "ai4i2020",
+   "task": "A",
+   "model": "shap_lightgbm",
+   "kind": "explainability",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T04:44:17+00:00",
+   "headline": {
+    "f1": 0.782,
+    "top_feature": "Torque [Nm]",
+    "top5_overlap_with_permutation": 5
+   },
+   "train_s": 134.778,
+   "infer_ms_per_row": 0.08932,
+   "protocol": "stratified 80/20, seed 42 (identical to wave-1 AI4I records)",
+   "notes": "Explainability record (Phase 7): the LightGBM model was retrained with the exact wave-1 config and split so the attributions belong to a real, scored model; `metrics` are that retrained model's test metrics. SHAP values are TreeExplainer attributions for the failure class on the model's raw (log-odds) output scale.",
+   "method": "SHAP",
+   "ranking": [
+    {
+     "feature": "Torque [Nm]",
+     "value": 1.3619783489785742,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Tool wear [min]",
+     "value": 1.2604292978793277,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Air temperature [K]",
+     "value": 1.1442815155585073,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Rotational speed [rpm]",
+     "value": 0.9427059860583727,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Process temperature [K]",
+     "value": 0.9045630548443511,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Type_M",
+     "value": 0.21952417900813023,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Type_H",
+     "value": 0.21785434009090737,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "Type_L",
+     "value": 0.09853261693868967,
+     "value_label": "mean_abs_shap"
+    }
+   ],
+   "ranking_key": "shap_mean_abs_ranking"
+  },
+  {
+   "id": "battery__taskB__shap_random_forest__s42",
+   "dataset": "nasa_battery",
+   "task": "B",
+   "model": "shap_random_forest",
+   "kind": "explainability",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:17:14+00:00",
+   "headline": {
+    "in_sample_rmse": 1.093,
+    "top_feature": "soh"
+   },
+   "train_s": 1.0363,
+   "infer_ms_per_row": 0.11071,
+   "protocol": "EXPLANATION MODEL \u2014 deliberately NOT the wave-4 leave-one-battery-out protocol: the forest is fitted on every cycle of B0005, B0006 and B0018 so the attributions describe the fullest model of the three EOL batteries. Its metrics below are IN-SAMPLE and must not be quoted as generalisation \u2014 the honest generalisation estimate is the wave-4 LOBO record (pooled RMSE 9.27).",
+   "notes": "Explainability record (wave 6): SHAP TreeExplainer attributions of the all-batteries Random Forest for B0005's discharge cycles, on the RUL (cycles) output scale. Attributions describe what THIS model uses \u2014 dominated, expectedly, by the capacity trajectory features \u2014 not a physical ageing mechanism. The LOBO record remains the performance reference for this dataset.",
+   "method": "SHAP",
+   "ranking": [
+    {
+     "feature": "soh",
+     "value": 15.990604213705824,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "capacity_ah",
+     "value": 15.054028259792407,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "duration_s",
+     "value": 7.290904593567076,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "voltage_mean",
+     "value": 1.3740812557678894,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "temp_mean",
+     "value": 1.3368014181580437,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "cycle_index",
+     "value": 0.9794767004031619,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "current_measured_mean",
+     "value": 0.6952381582010264,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "temp_max",
+     "value": 0.5454502293833672,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "voltage_min",
+     "value": 0.19100079906872883,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "voltage_max",
+     "value": 0.18802546532105027,
+     "value_label": "mean_abs_shap"
+    },
+    {
+     "feature": "ambient_temperature",
+     "value": 0.0,
+     "value_label": "mean_abs_shap"
+    }
+   ],
+   "ranking_key": "shap_mean_abs_ranking"
+  },
+  {
+   "id": "paderborn__taskA__permutation_rf__s42",
+   "dataset": "paderborn",
+   "task": "A",
+   "model": "permutation_rf",
+   "kind": "explainability",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T09:18:36+00:00",
+   "headline": {
+    "accuracy": 0.9499,
+    "top_feature": "kurtosis"
+   },
+   "train_s": 27.2906,
+   "infer_ms_per_row": 0.03347,
+   "protocol": "MEASUREMENT-GROUPED split identical to wave 4: GroupShuffleSplit by source_file, 80/20, seed 42; importance measured on the held-out measurements only",
+   "notes": "Explainability record (wave 6): permutation importance of the wave-4 Paderborn forest, measured as accuracy drop on its grouped test split. The refit reproduces the wave-4 model (same config, split and seed), so the importances belong to that scored model. Caveat carried from wave 4: one physical bearing per class \u2014 importances describe within-scope separability, not unseen bearings.",
+   "method": "Permutation importance",
+   "ranking": [
+    {
+     "feature": "kurtosis",
+     "value": 0.19570572569906788,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "skewness",
+     "value": 0.16384820239680423,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "std",
+     "value": 0.03821571238348866,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "rms",
+     "value": 0.037616511318242306,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "crest_factor",
+     "value": 0.022802929427430074,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "min",
+     "value": 0.02180426098535282,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "mean",
+     "value": 0.015479360852197033,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "peak",
+     "value": 0.002396804260985297,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "peak_to_peak",
+     "value": 0.0009653794940079452,
+     "value_label": "importance_mean"
+    },
+    {
+     "feature": "max",
+     "value": -0.001564580559254325,
+     "value_label": "importance_mean"
+    }
+   ],
+   "ranking_key": "permutation_importance_test_accuracy"
+  }
+ ],
+ "best_results": [
+  {
+   "dataset": "ai4i2020",
+   "task": "A",
+   "experiment_id": "ai4i2020__taskA__lightgbm__s42",
+   "model": "lightgbm",
+   "metric_label": "F1 (test)",
+   "metric_value": 0.782,
+   "metric_display": null,
+   "protocol": "stratified 80/20, seed 42"
+  },
+  {
+   "dataset": "secom",
+   "task": "A",
+   "experiment_id": "secom__taskA__logistic_regression__s42",
+   "model": "logistic_regression",
+   "metric_label": "F1 (test)",
+   "metric_value": 0.1379,
+   "metric_display": null,
+   "protocol": "stratified 80/20, seed 42"
+  },
+  {
+   "dataset": "cwru",
+   "task": "A",
+   "experiment_id": "cwru__taskA__random_forest_recordingwise__s42",
+   "model": "random_forest_recordingwise",
+   "metric_label": "F1-macro",
+   "metric_value": 0.4214,
+   "metric_display": null,
+   "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over 12 recordings; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions."
+  },
+  {
+   "dataset": "paderborn",
+   "task": "A",
+   "experiment_id": "paderborn__taskA__random_forest__s42",
+   "model": "random_forest",
+   "metric_label": "F1-macro",
+   "metric_value": 0.952,
+   "metric_display": null,
+   "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 no measurement file contributes windows to both sides. NOTE: there is only ONE physical bearing per class in this scope, so train and test still share bearings (different measurements of them)."
+  },
+  {
+   "dataset": "cmapss_fd001",
+   "task": "B",
+   "experiment_id": "cmapss_fd001__taskB__gru__s42",
+   "model": "gru",
+   "metric_label": "Test RMSE (cycles)",
+   "metric_value": 13.224,
+   "metric_display": null,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 identical to the shipped FD001 LSTM evaluation"
+  },
+  {
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "experiment_id": "cmapss_fd002__taskB__lstm__s42",
+   "model": "lstm",
+   "metric_label": "Test RMSE (cycles)",
+   "metric_value": 16.236,
+   "metric_display": null,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine"
+  },
+  {
+   "dataset": "cmapss_fd003",
+   "task": "B",
+   "experiment_id": "cmapss_fd003__taskB__cnn_lstm__s42",
+   "model": "cnn_lstm",
+   "metric_label": "Test RMSE (cycles)",
+   "metric_value": 13.169,
+   "metric_display": null,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine"
+  },
+  {
+   "dataset": "cmapss_fd004",
+   "task": "B",
+   "experiment_id": "cmapss_fd004__taskB__lstm__s42",
+   "model": "lstm",
+   "metric_label": "Test RMSE (cycles)",
+   "metric_value": 18.809,
+   "metric_display": null,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine"
+  },
+  {
+   "dataset": "nasa_battery",
+   "task": "B",
+   "experiment_id": "battery__taskB__random_forest_lobo__s42",
+   "model": "random_forest",
+   "metric_label": "Pooled LOBO RMSE (cycles)",
+   "metric_value": 9.266,
+   "metric_display": null,
+   "protocol": "LEAVE-ONE-BATTERY-OUT (LOBO): each of B0005, B0006, B0018 is held out in turn and predicted by a model fitted on the other two batteries only; no cycle of the test battery is in training. B0007 is EXCLUDED: it is censored \u2014 its capacity never crosses the 1.4 Ah end-of-life threshold (last recorded 1.432 Ah), so it has no observed EOL label."
+  },
+  {
+   "dataset": "secom",
+   "task": "C",
+   "experiment_id": "secom__taskC__isolation_forest__s42",
+   "model": "isolation_forest",
+   "metric_label": "F1 (test)",
+   "metric_value": 0.2439,
+   "metric_display": null,
+   "protocol": "stratified 80/20, seed 42 (same split as Task A)"
+  },
+  {
+   "dataset": "ims",
+   "task": "C",
+   "experiment_id": "ims__taskC__isolation_forest__s42",
+   "model": "isolation_forest",
+   "metric_label": "Alarm timing (no per-snapshot labels exist)",
+   "metric_value": null,
+   "metric_display": "Bearing 3 (inner-race defect): first sustained alarm 337 snapshots before run end \u00b7 Bearing 4 (roller defect): 723 snapshots before end \u00b7 Bearings 1\u20132 (no defect): no sustained alarm",
+   "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology."
+  }
+ ],
+ "ims_alarms": {
+  "experiment_id": "ims__taskC__isolation_forest__s42",
+  "n_snapshots": 2156,
+  "framing": "ALARM TIMING ONLY. IMS Test 1 has no per-snapshot labels; the only ground truth is the teardown finding (bearing 3 inner-race defect, bearing 4 roller-element defect, bearings 1-2 none reported). Precision/recall/F1 are therefore NOT computable and are not reported.",
+  "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology.",
+  "bearings": [
+   {
+    "bearing": "bearing 1",
+    "documented_defect": null,
+    "first_sustained_alarm_index": null,
+    "first_sustained_alarm_timestamp": null,
+    "snapshots_of_warning_before_run_end": 0,
+    "fraction_of_run_before_alarm": null,
+    "last_decile_exceedance_rate": 0.10185185185185185
+   },
+   {
+    "bearing": "bearing 2",
+    "documented_defect": null,
+    "first_sustained_alarm_index": null,
+    "first_sustained_alarm_timestamp": null,
+    "snapshots_of_warning_before_run_end": 0,
+    "fraction_of_run_before_alarm": null,
+    "last_decile_exceedance_rate": 0.19444444444444445
+   },
+   {
+    "bearing": "bearing 3",
+    "documented_defect": "inner-race defect (found at teardown)",
+    "first_sustained_alarm_index": 1819,
+    "first_sustained_alarm_timestamp": "2003-11-22 14:16:56",
+    "snapshots_of_warning_before_run_end": 337,
+    "fraction_of_run_before_alarm": 0.8437,
+    "last_decile_exceedance_rate": 1.0
+   },
+   {
+    "bearing": "bearing 4",
+    "documented_defect": "roller-element defect (found at teardown)",
+    "first_sustained_alarm_index": 1433,
+    "first_sustained_alarm_timestamp": "2003-11-18 19:02:30",
+    "snapshots_of_warning_before_run_end": 723,
+    "fraction_of_run_before_alarm": 0.6647,
+    "last_decile_exceedance_rate": 1.0
+   }
+  ]
+ }
+}
