@@ -1,17 +1,17 @@
 {
- "generated_at": "2026-11-15T12:24:09+00:00",
+ "generated_at": "2026-11-15T13:30:14+00:00",
  "source": "platform/experiments/INDEX.json + the record JSONs it lists (read at export time) and platform/DATASET_REGISTRY.md (dataset facts transcribed in platform_export.py). No placeholder numbers.",
  "counts": {
-  "records": 46,
-  "transfers": 8,
+  "records": 50,
+  "transfers": 10,
   "explainability": 3,
-  "trained_model_records": 35,
+  "trained_model_records": 37,
   "datasets_integrated": 10,
   "datasets_registry_entries": 20,
   "tasks": {
-   "A": 20,
+   "A": 23,
    "C": 6,
-   "B": 20
+   "B": 21
   }
  },
  "datasets": [
@@ -64,8 +64,8 @@
    ],
    "status": "integrated",
    "adapter": "CMapssAdapter",
-   "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. On FD004 the LSTM wins RMSE/MAE but loses the NASA score to Ridge \u2014 recorded as measured.",
-   "records": 3
+   "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. With global normalisation the LSTM wins RMSE/MAE but loses the NASA score to Ridge; the per-regime LSTM (Wave 12, RMSE 15.37) is FD004's best and retakes the NASA lead \u2014 recorded as measured.",
+   "records": 4
   },
   {
    "id": "ai4i2020",
@@ -105,8 +105,8 @@
    ],
    "status": "integrated",
    "adapter": "CWRUAdapter",
-   "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation (accuracy 0.665) \u2014 see Research view.",
-   "records": 3
+   "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation with order-domain features (accuracy 0.802, Wave 12; time-domain features scored 0.665) \u2014 see Research view.",
+   "records": 4
   },
   {
    "id": "paderborn",
@@ -1094,6 +1094,78 @@
    "infer_ms_per_row": 0.14556,
    "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)",
    "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Wave-10 per-regime normalisation re-run of the wave-2 lstm experiment; split, features, cap, windowing and model are unchanged \u2014 only the scaling differs, so the delta vs the comparison block is the normalisation effect as measured. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cwru__taskA__random_forest_order_recordingwise__s42",
+   "dataset": "cwru",
+   "task": "A",
+   "model": "random_forest_order_recordingwise",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T13:09:54+00:00",
+   "headline": {
+    "accuracy": 0.8021,
+    "f1_macro": 0.6889,
+    "innerrace_correct": 109
+   },
+   "train_s": 20.9533,
+   "infer_ms_per_row": 1.29057,
+   "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over the SAME 12 recordings as waves 4/9; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions. Protocol, recordings, model config and seed are identical to waves 4/9 \u2014 the ONLY change is the feature set.",
+   "notes": "Wave-12 counterpart of the wave-4/9 recording-wise records: identical protocol, recordings, model and seed; the only change is the feature set (10 time-domain -> 19 combined time + order-domain). The three-way comparison lives in extra.comparison_previous_feature_sets. Recording-wise evaluation still does NOT cover unseen fault diameters combined with unseen loads jointly, nor different machines. Data note (as wave 4): 99.mat as served bundles X098 alongside X099; the self-identified X099_DE_time series (2 hp normal) is the one used, read at the catalogue's 1750 rpm for its load (the file ships no RPM scalar)."
+  },
+  {
+   "id": "cwru_to_paderborn__taskA__transfer_rf_order__s42",
+   "dataset": "cwru_to_paderborn",
+   "task": "A",
+   "model": "transfer_rf_order",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T13:14:53+00:00",
+   "headline": {
+    "accuracy": 0.3347,
+    "f1_macro": 0.1692,
+    "normal_f1": 0.0
+   },
+   "train_s": 2.0278,
+   "infer_ms_per_row": 0.01899,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5/9 transfer protocols \u2014 the ONLY change is the feature set (19 combined time + order).",
+   "notes": "Zero-shot cwru -> paderborn bearing-fault transfer with the wave-12 order-domain feature set \u2014 the wave-5/9 transfer re-run with the feature set as the only changed variable. The order features align the characteristic defect frequencies of the two DIFFERENT bearings (6205 vs 6203) in shaft-speed-relative units, which neither the time-domain nor the rate-free spectral sets attempted. What remains unaligned, documented rather than corrected: rig transfer functions, sensor placement and mounting; load regimes; fault sizes/geometries; and \u2014 binding on the Paderborn side \u2014 a 2048-sample window holds less than one shaft revolution, so the true order resolution there (1.25-2.08 orders) is coarser than the order spacing. Both earlier baselines are carried in extra; the result is reported as measured, whether or not it improves."
+  },
+  {
+   "id": "paderborn_to_cwru__taskA__transfer_rf_order__s42",
+   "dataset": "paderborn_to_cwru",
+   "task": "A",
+   "model": "transfer_rf_order",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T13:16:22+00:00",
+   "headline": {
+    "accuracy": 0.163,
+    "f1_macro": 0.2061,
+    "normal_f1": 0.0
+   },
+   "train_s": 86.3662,
+   "infer_ms_per_row": 0.20146,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5/9 transfer protocols \u2014 the ONLY change is the feature set (19 combined time + order).",
+   "notes": "Zero-shot paderborn -> cwru bearing-fault transfer with the wave-12 order-domain feature set \u2014 the wave-5/9 transfer re-run with the feature set as the only changed variable. The order features align the characteristic defect frequencies of the two DIFFERENT bearings (6205 vs 6203) in shaft-speed-relative units, which neither the time-domain nor the rate-free spectral sets attempted. What remains unaligned, documented rather than corrected: rig transfer functions, sensor placement and mounting; load regimes; fault sizes/geometries; and \u2014 binding on the Paderborn side \u2014 a 2048-sample window holds less than one shaft revolution, so the true order resolution there (1.25-2.08 orders) is coarser than the order spacing. Both earlier baselines are carried in extra; the result is reported as measured, whether or not it improves."
+  },
+  {
+   "id": "cmapss_fd004__taskB__lstm_perregime__s42",
+   "dataset": "cmapss_fd004",
+   "task": "B",
+   "model": "lstm_perregime",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T13:09:31+00:00",
+   "headline": {
+    "test_rmse": 15.372,
+    "test_mae": 10.864,
+    "test_nasa": 1457.4
+   },
+   "train_s": 841.2,
+   "infer_ms_per_row": 0.14141,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)",
+   "notes": "FD004 = 6 operating conditions, 2 fault mode(s). Wave-12 execution of the wave-10 per-regime protocol for the FD004 LSTM \u2014 the item wave 10 deliberately skipped for CPU budget; protocol, features, cap, windowing and model are the wave-10 per-regime ones, unchanged; split, features, cap, windowing and model are unchanged \u2014 only the scaling differs, so the delta vs the comparison block is the normalisation effect as measured. simulated (C-MAPSS tool), not real engines"
   }
  ],
  "transfers": [
@@ -1442,6 +1514,86 @@
     "accuracy_delta_vs_target_in_domain": -0.4775825481707835
    },
    "verdict": "Still fails \u2014 accuracy 0.187 vs 0.665 recording-wise in-domain, though better than the time-domain run (0.125; F1-macro 0.286 vs 0.156). Normal F1 remains 0.000. Spectral features did not fix cross-rig transfer."
+  },
+  {
+   "id": "cwru_to_paderborn__taskA__transfer_rf_order__s42",
+   "dataset": "cwru_to_paderborn",
+   "task": "A",
+   "model": "transfer_rf_order",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T13:14:53+00:00",
+   "headline": {
+    "accuracy": 0.3347,
+    "f1_macro": 0.1692,
+    "normal_f1": 0.0
+   },
+   "train_s": 2.0278,
+   "infer_ms_per_row": 0.01899,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5/9 transfer protocols \u2014 the ONLY change is the feature set (19 combined time + order).",
+   "notes": "Zero-shot cwru -> paderborn bearing-fault transfer with the wave-12 order-domain feature set \u2014 the wave-5/9 transfer re-run with the feature set as the only changed variable. The order features align the characteristic defect frequencies of the two DIFFERENT bearings (6205 vs 6203) in shaft-speed-relative units, which neither the time-domain nor the rate-free spectral sets attempted. What remains unaligned, documented rather than corrected: rig transfer functions, sensor placement and mounting; load regimes; fault sizes/geometries; and \u2014 binding on the Paderborn side \u2014 a 2048-sample window holds less than one shaft revolution, so the true order resolution there (1.25-2.08 orders) is coarser than the order spacing. Both earlier baselines are carried in extra; the result is reported as measured, whether or not it improves.",
+   "source_dataset": "cwru",
+   "target_dataset": "paderborn",
+   "cross_metrics": {
+    "accuracy": 0.3346545866364666,
+    "f1_macro": 0.16916087277350478
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain",
+     "accuracy": 0.9499001331557922,
+     "f1_macro": 0.9519874629693527
+    },
+    {
+     "label": "source in domain",
+     "accuracy": 0.6648841354723708,
+     "f1_macro": 0.4214028868431701
+    }
+   ],
+   "degradation": {
+    "accuracy_delta_vs_target_in_domain": -0.6152455465193256
+   },
+   "verdict": "Still fails \u2014 accuracy 0.335 is the best of the three feature families in this direction (time-domain 0.253, spectral 0.210), but F1-macro fell to 0.169 and Normal F1 is back to 0.000 (spectral had reached 0.195). Aligning the characteristic defect frequencies in shaft-speed-relative units did not transfer 'Normal' across rigs."
+  },
+  {
+   "id": "paderborn_to_cwru__taskA__transfer_rf_order__s42",
+   "dataset": "paderborn_to_cwru",
+   "task": "A",
+   "model": "transfer_rf_order",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T13:16:22+00:00",
+   "headline": {
+    "accuracy": 0.163,
+    "f1_macro": 0.2061,
+    "normal_f1": 0.0
+   },
+   "train_s": 86.3662,
+   "infer_ms_per_row": 0.20146,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5/9 transfer protocols \u2014 the ONLY change is the feature set (19 combined time + order).",
+   "notes": "Zero-shot paderborn -> cwru bearing-fault transfer with the wave-12 order-domain feature set \u2014 the wave-5/9 transfer re-run with the feature set as the only changed variable. The order features align the characteristic defect frequencies of the two DIFFERENT bearings (6205 vs 6203) in shaft-speed-relative units, which neither the time-domain nor the rate-free spectral sets attempted. What remains unaligned, documented rather than corrected: rig transfer functions, sensor placement and mounting; load regimes; fault sizes/geometries; and \u2014 binding on the Paderborn side \u2014 a 2048-sample window holds less than one shaft revolution, so the true order resolution there (1.25-2.08 orders) is coarser than the order spacing. Both earlier baselines are carried in extra; the result is reported as measured, whether or not it improves.",
+   "source_dataset": "paderborn",
+   "target_dataset": "cwru",
+   "cross_metrics": {
+    "accuracy": 0.16296296296296298,
+    "f1_macro": 0.2060968660968661
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain",
+     "accuracy": 0.6648841354723708,
+     "f1_macro": 0.4214028868431701
+    },
+    {
+     "label": "source in domain",
+     "accuracy": 0.9499001331557922,
+     "f1_macro": 0.9519874629693527
+    }
+   ],
+   "degradation": {
+    "accuracy_delta_vs_target_in_domain": -0.5019211725094078
+   },
+   "verdict": "Still fails \u2014 accuracy 0.163, between the time-domain (0.125) and spectral (0.187) runs; F1-macro 0.206. Normal F1 is 0.000 \u2014 as in the time-domain family \u2014 so the third hand-crafted feature family closes the cross-rig question negatively: order features transform in-domain diagnosis (0.802 recording-wise) but do not cross rigs."
   }
  ],
  "xai": [
@@ -1679,12 +1831,12 @@
   {
    "dataset": "cwru",
    "task": "A",
-   "experiment_id": "cwru__taskA__random_forest_recordingwise__s42",
-   "model": "random_forest_recordingwise",
+   "experiment_id": "cwru__taskA__random_forest_order_recordingwise__s42",
+   "model": "random_forest_order_recordingwise",
    "metric_label": "F1-macro",
-   "metric_value": 0.4214,
+   "metric_value": 0.6889,
    "metric_display": null,
-   "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over 12 recordings; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions."
+   "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over the SAME 12 recordings as waves 4/9; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions. Protocol, recordings, model config and seed are identical to waves 4/9 \u2014 the ONLY change is the feature set."
   },
   {
    "dataset": "paderborn",
@@ -1739,12 +1891,12 @@
   {
    "dataset": "cmapss_fd004",
    "task": "B",
-   "experiment_id": "cmapss_fd004__taskB__lstm__s42",
-   "model": "lstm",
+   "experiment_id": "cmapss_fd004__taskB__lstm_perregime__s42",
+   "model": "lstm_perregime",
    "metric_label": "Test RMSE (cycles)",
-   "metric_value": 18.809,
+   "metric_value": 15.372,
    "metric_display": null,
-   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine"
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)"
   },
   {
    "dataset": "nasa_battery",
