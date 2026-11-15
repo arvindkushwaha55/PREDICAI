@@ -9,17 +9,30 @@ import {
   YAxis,
 } from "recharts";
 import { data, fmt, policyForRul } from "../lib/data";
-import { Card, LevelChip, SectionTitle, SourceTag, Stat } from "../components/ui";
+import { Card, CountUp, LevelChip, SectionTitle, SourceTag, Stat } from "../components/ui";
+
+const MONO_TICK = {
+  fontSize: 11,
+  fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+};
 
 export function MachineView({
   engine,
   onSelect,
+  dark,
 }: {
   engine: number;
   onSelect: (engine: number) => void;
+  dark: boolean;
 }) {
   const eng = data.engines.find((e) => e.engine === engine) ?? data.engines[0];
   const policy = policyForRul(eng.final.predicted_rul);
+  const gridStroke = dark ? "#334155" : "#e2e8f0";
+  const axisFill = dark ? "#94a3b8" : "#64748b";
+  const predictedStroke = dark ? "#22d3ee" : "#0891b2";
+  const reducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const chartData = eng.series.map((p) => ({
     cycle: p.end_cycle ?? p.step,
     predicted: Number(p.predicted_rul.toFixed(3)),
@@ -27,7 +40,7 @@ export function MachineView({
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="stagger-cards space-y-6">
       <div className="flex flex-wrap items-center gap-2">
         {data.engines.map((e) => (
           <button
@@ -36,7 +49,7 @@ export function MachineView({
             className={
               e.engine === eng.engine
                 ? "rounded bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white"
-                : "rounded border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:border-slate-500"
+                : "rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:border-slate-500"
             }
           >
             {e.machine_id}
@@ -47,9 +60,9 @@ export function MachineView({
         </span>
       </div>
 
-      <Card className="p-5">
+      <Card className="p-5" ticks>
         <SectionTitle
-          title={`${eng.machine_id} — predicted RUL across the replay`}
+          title={`${eng.machine_id}: predicted RUL across the replay`}
           source={eng.source}
         />
         <div className="h-80 w-full">
@@ -58,7 +71,7 @@ export function MachineView({
               data={chartData}
               margin={{ top: 8, right: 16, bottom: 8, left: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
               <XAxis
                 dataKey="cycle"
                 type="number"
@@ -69,9 +82,9 @@ export function MachineView({
                   position: "insideBottom",
                   offset: -2,
                   fontSize: 12,
-                  fill: "#64748b",
+                  fill: axisFill,
                 }}
-                tick={{ fontSize: 12, fill: "#64748b" }}
+                tick={{ ...MONO_TICK, fill: axisFill }}
               />
               <YAxis
                 label={{
@@ -79,11 +92,22 @@ export function MachineView({
                   angle: -90,
                   position: "insideLeft",
                   fontSize: 12,
-                  fill: "#64748b",
+                  fill: axisFill,
                 }}
-                tick={{ fontSize: 12, fill: "#64748b" }}
+                tick={{ ...MONO_TICK, fill: axisFill }}
               />
               <Tooltip
+                contentStyle={
+                  dark
+                    ? {
+                        backgroundColor: "#020617",
+                        border: "1px solid #334155",
+                        color: "#e2e8f0",
+                      }
+                    : undefined
+                }
+                itemStyle={dark ? { color: "#e2e8f0" } : undefined}
+                labelStyle={dark ? { color: "#94a3b8" } : undefined}
                 formatter={(value, name) => [
                   `${fmt(Number(value))} cycles`,
                   name === "predicted" ? "Predicted RUL" : "True RUL",
@@ -97,7 +121,7 @@ export function MachineView({
                 label={{
                   value: "Inspection ≤ 50",
                   fontSize: 11,
-                  fill: "#b45309",
+                  fill: dark ? "#fbbf24" : "#b45309",
                   // Was "insideTopRight": the label ran past the chart's
                   // right edge and rendered clipped. Anchoring it inside
                   // the top-left keeps the full text within the plot area.
@@ -111,17 +135,20 @@ export function MachineView({
                 label={{
                   value: "Review ≤ 30",
                   fontSize: 11,
-                  fill: "#be123c",
+                  fill: dark ? "#fda4af" : "#be123c",
                   position: "insideBottomRight",
                 }}
               />
               <Line
                 type="monotone"
                 dataKey="predicted"
-                stroke="#0891b2"
+                stroke={predictedStroke}
                 strokeWidth={2}
                 dot={chartData.length <= 5}
                 activeDot={{ r: 4 }}
+                isAnimationActive={!reducedMotion}
+                animationDuration={800}
+                animationEasing="ease-out"
               />
               <Line
                 type="monotone"
@@ -130,11 +157,14 @@ export function MachineView({
                 strokeWidth={1.5}
                 strokeDasharray="6 4"
                 dot={false}
+                isAnimationActive={!reducedMotion}
+                animationDuration={800}
+                animationEasing="ease-out"
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-2 flex gap-4 text-xs text-slate-500">
+        <div className="mt-2 flex gap-4 text-xs text-slate-500 dark:text-slate-400">
           <span>
             <span className="mr-1 inline-block h-0.5 w-4 bg-cyan-600 align-middle" />
             Predicted RUL (Rust edge API, logged during replay)
@@ -145,11 +175,11 @@ export function MachineView({
           </span>
         </div>
         {eng.predictions_logged <= 5 && (
-          <p className="mt-2 text-xs text-amber-700">
+          <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">
             This test engine has only {eng.total_recorded_cycles} recorded
             cycles, so the replay produced just {eng.predictions_logged}{" "}
             predictions (one per full 30-cycle window). The chart shows
-            exactly those points — nothing is interpolated.
+            exactly those points; nothing is interpolated.
           </p>
         )}
       </Card>
@@ -180,7 +210,7 @@ export function MachineView({
               value={
                 eng.stats.mean_abs_error_vs_true != null
                   ? `${fmt(eng.stats.mean_abs_error_vs_true)} cycles`
-                  : "—"
+                  : "-"
               }
               sub="mean |predicted − true| over all replayed windows"
             />
@@ -197,7 +227,7 @@ export function MachineView({
           <div className="grid grid-cols-2 gap-4">
             <Stat
               label="Final predicted RUL"
-              value={`${fmt(eng.final.predicted_rul)} cycles`}
+              value={<CountUp value={eng.final.predicted_rul} format={(n) => `${fmt(n)} cycles`} />}
             />
             <Stat
               label="Final true RUL"
@@ -208,20 +238,20 @@ export function MachineView({
               value={`${fmt(eng.final.abs_error)} cycles`}
             />
             <div>
-              <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              <div className="text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400 uppercase">
                 Policy status (RUL band)
               </div>
               <div className="mt-1.5 flex items-center gap-2">
                 <LevelChip level={policy.level} />
-                <span className="text-sm text-slate-600">{policy.action}</span>
+                <span className="text-sm text-slate-600 dark:text-slate-400">{policy.action}</span>
               </div>
             </div>
           </div>
-          <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">
+          <p className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-500 dark:text-slate-400">
             No per-cycle sensor panel is shown for this machine: the API's
             predictions log stores predictions only, not the sensor windows
             behind them. The raw 30 × 14 windows live in the FD001 test file
-            (and one is bundled for the live prediction in Model Info) —
+            (and one is bundled for the live prediction in Model Info);
             sensor series are not reconstructed or invented here.
           </p>
         </Card>
