@@ -1,4 +1,4 @@
-/* Types for src/data/platform_data.json — produced by
+/* Types for src/data/platform_data.json, produced by
    dashboard/platform_export.py from platform/experiments/ (INDEX.json +
    record JSONs, read at export time) and platform/DATASET_REGISTRY.md
    (dataset facts transcribed in the export script). Keep in sync with
@@ -15,6 +15,9 @@ export interface PlatformDataset {
   status: "integrated" | "blocked" | "researched" | "not-found";
   adapter: string | null;
   note: string;
+  /** Label/value spec pairs transcribed from the registry notes;
+      empty for blocked / researched-only entries. */
+  specs: [string, string][];
   records: number;
 }
 

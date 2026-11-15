@@ -1,4 +1,4 @@
-/* Types for src/data/demo_data.json — produced by dashboard/data_export.py
+/* Types for src/data/demo_data.json, produced by dashboard/data_export.py
    from real project artifacts (simulator/demo.db, ml/artifacts/*.json,
    edge parity fixtures). Keep in sync with that script. */
 

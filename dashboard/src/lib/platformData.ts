@@ -76,8 +76,8 @@ export function metricLabel(key: string): string {
 }
 
 export function fmtTrainTime(trainS: number | null): string {
-  if (trainS == null) return "—";
-  if (trainS === 0) return "0 s (no training — transfer)";
+  if (trainS == null) return "-";
+  if (trainS === 0) return "0 s (no training, transfer record)";
   if (trainS < 60) return `${trainS.toFixed(1)} s`;
   return `${(trainS / 60).toFixed(1)} min`;
 }

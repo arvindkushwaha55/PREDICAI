@@ -19,7 +19,7 @@ export interface PolicyResult {
 }
 
 /** RUL band of maintenance/policy.py (v1.0), applied to a predicted RUL.
-    NOTE: these are policy thresholds for planning reviews — NOT validated
+    NOTE: these are policy thresholds for planning reviews, NOT validated
     failure boundaries. The full policy also escalates on cycles since
     service; that input only exists for the synthetic demo machine, so the
     fleet/machine views show the RUL band alone and say so. */
