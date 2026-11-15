@@ -20,10 +20,20 @@ jobs:
         run: |
           pip install pandas numpy scikit-learn pytest onnx onnxruntime
           pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Cache NASA C-MAPSS zip
+        uses: actions/cache@v4
+        with:
+          path: /tmp/CMAPSSData.zip
+          key: cmapssdata-zip-v1
       - name: Download NASA C-MAPSS data (not stored in this repo)
         run: |
           mkdir -p ml/data/raw
-          curl -sL -o /tmp/CMAPSSData.zip https://data.nasa.gov/docs/legacy/CMAPSSData.zip
+          # data.nasa.gov is intermittently slow (curl exit 28 timeouts failed
+          # runs #29 and #34 on 2026-11-15); retry hard and reuse the cache.
+          if [ ! -s /tmp/CMAPSSData.zip ]; then
+            curl -sL --retry 5 --retry-all-errors --retry-delay 15 --connect-timeout 30 -o /tmp/CMAPSSData.zip https://data.nasa.gov/docs/legacy/CMAPSSData.zip
+          fi
+          unzip -t -q /tmp/CMAPSSData.zip
           unzip -q -o /tmp/CMAPSSData.zip -d /tmp/cmapss
           find /tmp/cmapss -name "*.txt" -exec cp {} ml/data/raw/ \;
           ls ml/data/raw/
