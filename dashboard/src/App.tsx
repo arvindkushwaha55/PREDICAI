@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { data } from "./lib/data";
 import { platform } from "./lib/platformData";
 import {
@@ -13,6 +13,8 @@ import { PlatformView } from "./views/PlatformView";
 import { DatasetsView } from "./views/DatasetsView";
 import { ExperimentsView } from "./views/ExperimentsView";
 import { ResearchView } from "./views/ResearchView";
+import { PrivacyView } from "./views/PrivacyView";
+import { TermsView } from "./views/TermsView";
 
 type View =
   | "fleet"
@@ -22,7 +24,9 @@ type View =
   | "platform"
   | "datasets"
   | "experiments"
-  | "research";
+  | "research"
+  | "privacy"
+  | "terms";
 
 const NAV: { id: View; label: string; hint: string }[] = [
   { id: "fleet", label: "Fleet Overview", hint: "3 replayed engines" },
@@ -44,7 +48,7 @@ const NAV_PLATFORM: { id: View; label: string; hint: string }[] = [
   {
     id: "datasets",
     label: "Datasets",
-    hint: "Registry — integrated, blocked, researched",
+    hint: "Registry: integrated, blocked, researched",
   },
   {
     id: "experiments",
@@ -58,26 +62,117 @@ const NAV_PLATFORM: { id: View; label: string; hint: string }[] = [
   },
 ];
 
+const NAV_LEGAL: { id: View; label: string }[] = [
+  { id: "privacy", label: "Privacy Policy" },
+  { id: "terms", label: "Terms and Conditions" },
+];
+
 const TITLES: Record<View, string> = {
   fleet: "Fleet Overview",
   machine: "Machine Detail",
-  maintenance: "Maintenance — Synthetic Demo",
+  maintenance: "Maintenance: Synthetic Demo",
   model: "Model Info & Live API",
-  platform: "Platform — Multi-Dataset Overview",
-  datasets: "Datasets — Registry",
-  experiments: "Experiments — Registry",
-  research: "Research — Transfer, XAI, IMS",
+  platform: "Platform: Multi-Dataset Overview",
+  datasets: "Datasets: Registry",
+  experiments: "Experiments: Registry",
+  research: "Research: Transfer, XAI, IMS",
+  privacy: "Privacy Policy",
+  terms: "Terms and Conditions",
 };
+
+type Theme = "light" | "dark";
+
+function initialTheme(): Theme {
+  try {
+    return localStorage.getItem("predicai-theme") === "dark"
+      ? "dark"
+      : "light";
+  } catch {
+    return "light";
+  }
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2" />
+      <path d="M12 20v2" />
+      <path d="m4.93 4.93 1.41 1.41" />
+      <path d="m17.66 17.66 1.41 1.41" />
+      <path d="M2 12h2" />
+      <path d="M20 12h2" />
+      <path d="m6.34 17.66-1.41 1.41" />
+      <path d="m19.07 4.93-1.41 1.41" />
+    </svg>
+  );
+}
 
 export default function App() {
   const [view, setView] = useState<View>("fleet");
   const [engine, setEngine] = useState<number>(49);
+  const [theme, setTheme] = useState<Theme>(initialTheme);
   const api = useApiHealth();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    try {
+      localStorage.setItem("predicai-theme", theme);
+    } catch {
+      // Storage blocked (private mode etc.): the toggle still applies
+      // for this session, it just is not remembered.
+    }
+  }, [theme]);
 
   function openMachine(eng: number) {
     setEngine(eng);
     setView("machine");
   }
+
+  const navButton = (item: { id: View; label: string; hint?: string }) => (
+    <button
+      key={item.id}
+      onClick={() => setView(item.id)}
+      className={
+        view === item.id
+          ? "block w-full rounded border-l-2 border-cyan-400 bg-slate-800 px-3 py-2 text-left transition-colors duration-150"
+          : "block w-full rounded border-l-2 border-transparent px-3 py-2 text-left transition-colors duration-150 hover:bg-slate-800/60"
+      }
+    >
+      <span className="block text-sm font-semibold text-slate-100">
+        {item.label}
+      </span>
+      {item.hint && (
+        <span className="block text-xs text-slate-500">{item.hint}</span>
+      )}
+    </button>
+  );
 
   return (
     <div className="flex min-h-screen">
@@ -96,41 +191,15 @@ export default function App() {
           </div>
         </div>
         <nav className="flex-1 space-y-1 px-3 py-4">
-          {NAV.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setView(item.id)}
-              className={
-                view === item.id
-                  ? "block w-full rounded border-l-2 border-cyan-400 bg-slate-800 px-3 py-2 text-left"
-                  : "block w-full rounded border-l-2 border-transparent px-3 py-2 text-left hover:bg-slate-800/60"
-              }
-            >
-              <span className="block text-sm font-semibold text-slate-100">
-                {item.label}
-              </span>
-              <span className="block text-xs text-slate-500">{item.hint}</span>
-            </button>
-          ))}
-          <div className="px-3 pt-4 pb-1 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-            Platform — Phase 8
+          {NAV.map(navButton)}
+          <div className="px-3 pt-4 pb-1 font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+            Platform · Phase 8
           </div>
-          {NAV_PLATFORM.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setView(item.id)}
-              className={
-                view === item.id
-                  ? "block w-full rounded border-l-2 border-cyan-400 bg-slate-800 px-3 py-2 text-left"
-                  : "block w-full rounded border-l-2 border-transparent px-3 py-2 text-left hover:bg-slate-800/60"
-              }
-            >
-              <span className="block text-sm font-semibold text-slate-100">
-                {item.label}
-              </span>
-              <span className="block text-xs text-slate-500">{item.hint}</span>
-            </button>
-          ))}
+          {NAV_PLATFORM.map(navButton)}
+          <div className="px-3 pt-4 pb-1 font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+            Legal
+          </div>
+          {NAV_LEGAL.map(navButton)}
         </nav>
         <div className="border-t border-slate-800 px-5 py-4 text-[11px] leading-relaxed text-slate-500">
           Data: FD001 replay export + Part 8 synthetic maintenance demo.
@@ -140,22 +209,43 @@ export default function App() {
 
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-6 py-3">
-          <h1 className="text-lg font-bold text-slate-900">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-700 dark:bg-slate-900">
+          <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
             {TITLES[view]}
           </h1>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-slate-500 dark:text-slate-400">
               Rust edge API · localhost:18080
             </span>
             <ApiStatusPill api={api} />
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              title={
+                theme === "dark"
+                  ? "Switch to light theme"
+                  : "Switch to dark theme"
+              }
+              aria-label={
+                theme === "dark"
+                  ? "Switch to light theme"
+                  : "Switch to dark theme"
+              }
+              className="rounded border border-slate-300 bg-white px-2.5 py-1.5 text-slate-600 transition-colors duration-150 hover:border-slate-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-400"
+            >
+              {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+            </button>
           </div>
         </header>
 
         <main className="flex-1 px-6 py-6">
+          <div key={view} className="view-enter">
           {view === "fleet" && <FleetView onOpen={openMachine} />}
           {view === "machine" && (
-            <MachineView engine={engine} onSelect={setEngine} />
+            <MachineView
+              engine={engine}
+              onSelect={setEngine}
+              dark={theme === "dark"}
+            />
           )}
           {view === "maintenance" && <MaintenanceView />}
           {view === "model" && <ModelInfoView api={api} />}
@@ -163,14 +253,36 @@ export default function App() {
           {view === "datasets" && <DatasetsView />}
           {view === "experiments" && <ExperimentsView />}
           {view === "research" && <ResearchView />}
+          {view === "privacy" && <PrivacyView />}
+          {view === "terms" && <TermsView />}
+          </div>
         </main>
 
-        <footer className="border-t border-slate-200 bg-white px-6 py-3 text-xs text-slate-500">
-          Demo build — FD001 replay data; not connected to real machines. ·
-          Data exported {data.generated_at} by dashboard/data_export.py from
-          simulator/demo.db and ml/artifacts/. · Platform data exported{" "}
-          {platform.generated_at} by dashboard/platform_export.py from
-          platform/experiments/ and the dataset registry.
+        <footer className="border-t border-slate-200 bg-white px-6 py-3 text-xs text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span>
+              Demo build: FD001 replay data; not connected to real machines.
+              · Data exported {data.generated_at} by dashboard/data_export.py
+              from simulator/demo.db and ml/artifacts/. · Platform data
+              exported {platform.generated_at} by
+              dashboard/platform_export.py from platform/experiments/ and
+              the dataset registry.
+            </span>
+            <span className="flex shrink-0 items-center gap-3">
+              <button
+                onClick={() => setView("privacy")}
+                className="font-medium text-slate-600 underline-offset-2 transition-colors duration-150 hover:text-cyan-700 hover:underline dark:text-slate-300 dark:hover:text-cyan-300"
+              >
+                Privacy Policy
+              </button>
+              <button
+                onClick={() => setView("terms")}
+                className="font-medium text-slate-600 underline-offset-2 transition-colors duration-150 hover:text-cyan-700 hover:underline dark:text-slate-300 dark:hover:text-cyan-300"
+              >
+                Terms and Conditions
+              </button>
+            </span>
+          </div>
         </footer>
       </div>
     </div>
