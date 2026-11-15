@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-15T15:09:00+00:00",
+ "generated_at": "2026-11-15T18:03:13+00:00",
  "unit": "cycles",
  "policy_thresholds": {
   "source": "maintenance/policy.py (policy version 1.0): POLICY CHOICES for planning reviews, NOT scientifically validated failure boundaries",
@@ -11,7 +11,7 @@
   {
    "engine": 1,
    "machine_id": "ENGINE-001",
-   "source": "FD001 REPLAY: predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 1; exported from simulator/demo.db",
+   "source": "FD001 REPLAY: predictions logged by the Rust edge API during the simulator replay of NASA C-MAPSS FD001 test engine 1; exported from the replay log",
    "total_recorded_cycles": 31,
    "predictions_logged": 2,
    "cycle_alignment_verified": true,
@@ -46,7 +46,7 @@
   {
    "engine": 49,
    "machine_id": "ENGINE-049",
-   "source": "FD001 REPLAY: predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 49; exported from simulator/demo.db",
+   "source": "FD001 REPLAY: predictions logged by the Rust edge API during the simulator replay of NASA C-MAPSS FD001 test engine 49; exported from the replay log",
    "total_recorded_cycles": 303,
    "predictions_logged": 274,
    "cycle_alignment_verified": true,
@@ -1985,7 +1985,7 @@
   {
    "engine": 100,
    "machine_id": "ENGINE-100",
-   "source": "FD001 REPLAY: predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 100; exported from simulator/demo.db",
+   "source": "FD001 REPLAY: predictions logged by the Rust edge API during the simulator replay of NASA C-MAPSS FD001 test engine 100; exported from the replay log",
    "total_recorded_cycles": 198,
    "predictions_logged": 169,
    "cycle_alignment_verified": true,
@@ -3189,11 +3189,11 @@
  ],
  "maintenance": {
   "machine_id": "ENGINE-001",
-  "source": "SYNTHETIC DEMO DATA: FD001 contains no real service records. Generated at export time by the Part 8 maintenance module (seed_synthetic_demo + policy v1.0) on a throwaway database; simulator/demo.db itself was not modified.",
+  "source": "SYNTHETIC DEMO DATA: FD001 contains no real service records. Generated at export time by the maintenance module (seed_synthetic_demo + policy v1.0) on a throwaway database; the replay database itself was not modified.",
   "machine": {
    "machine_id": "ENGINE-001",
    "display_name": "Demo Engine 001",
-   "registered_at": "2026-11-15 15:09:00",
+   "registered_at": "2026-11-15 18:03:13",
    "notes": "SYNTHETIC DEMO machine for PREDICAI demonstration."
   },
   "service_records": [
@@ -3205,7 +3205,7 @@
     "service_type": "Major Maintenance",
     "notes": "SYNTHETIC DEMO record - not a real service event.",
     "is_synthetic": 1,
-    "created_at": "2026-11-15 15:09:00"
+    "created_at": "2026-11-15 18:03:13"
    },
    {
     "record_id": 2,
@@ -3215,14 +3215,14 @@
     "service_type": "Minor Inspection",
     "notes": "SYNTHETIC DEMO record - not a real service event.",
     "is_synthetic": 1,
-    "created_at": "2026-11-15 15:09:00"
+    "created_at": "2026-11-15 18:03:13"
    }
   ],
   "recommendations": [
    {
     "rec_id": 1,
     "machine_id": "ENGINE-001",
-    "created_at": "2026-11-15 15:09:00",
+    "created_at": "2026-11-15 18:03:13",
     "predicted_rul": 117.60932159423828,
     "current_cycle": 440,
     "cycles_since_service": 320,
@@ -3233,13 +3233,13 @@
   ],
   "recommendation_inputs": {
    "predicted_rul": 117.60932159423828,
-   "predicted_rul_source": "ENGINE-001 final prediction logged in simulator/demo.db (real model output)",
+   "predicted_rul_source": "ENGINE-001 final prediction from the replay log (real model output)",
    "current_cycle": 440,
    "current_cycle_source": "synthetic demo machine reference cycle, as used by the Part 8 module's own tests"
   }
  },
  "model": {
-  "source": "ml/artifacts/model_metadata.json + metrics.json + explainability.json: real Kaggle training run (owner, 13 Nov 2026); no placeholder numbers",
+  "source": "Recorded metadata, metrics and explainability from the real Kaggle training run (owner, 13 Nov 2026); no placeholder numbers",
   "architecture": "LSTM(14->128) -> Dropout 0.2 -> LSTM(128->64) -> Linear(64->32) -> ReLU -> Linear(32->1)",
   "model_file": "cmapss_lstm.onnx",
   "weights": "best_model.pt",
@@ -3361,7 +3361,7 @@
   }
  },
  "live_sample": {
-  "source": "edge/tests/fixtures/parity_windows.json (engine 1 case): raw 30x14 sensor window from real FD001 test data; the same window the Rust parity test uses",
+  "source": "The Rust parity test fixture (engine 1 case): raw 30x14 sensor window from real FD001 test data; the same window the Rust parity test uses",
   "machine_id": "ENGINE-001",
   "window": [
    [

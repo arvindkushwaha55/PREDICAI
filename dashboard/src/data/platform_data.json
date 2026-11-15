@@ -1,6 +1,6 @@
 {
- "generated_at": "2026-11-15T15:09:00+00:00",
- "source": "platform/experiments/INDEX.json + the record JSONs it lists (read at export time) and platform/DATASET_REGISTRY.md (dataset facts transcribed in platform_export.py). No placeholder numbers.",
+ "generated_at": "2026-11-15T18:03:13+00:00",
+ "source": "The experiment record index and every record it lists (read at export time) and the dataset registry (dataset facts transcribed at export). No placeholder numbers.",
  "counts": {
   "records": 50,
   "transfers": 10,
