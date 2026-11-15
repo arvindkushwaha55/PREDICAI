@@ -4,12 +4,12 @@ import type { DemoData } from "./types";
 export const data = rawData as unknown as DemoData;
 
 /* Live API access: during `npm run dev` the dashboard calls the same-origin
-   /api/* path and Vite proxies it to the Rust API on localhost:18080 (the
-   API sends no CORS headers, so direct cross-origin browser calls are
-   blocked). Set VITE_API_BASE to override the base URL. */
+   /api/* path and Vite proxies it to the Rust API running on the same
+   machine (the API sends no CORS headers, so direct cross-origin browser
+   calls are blocked). Set VITE_API_BASE to override the base URL. The
+   API's address is never shown in the UI. */
 export const API_BASE: string =
   (import.meta.env.VITE_API_BASE as string | undefined) ?? "/api";
-export const API_DISPLAY_URL = "http://localhost:18080";
 
 export type PolicyLevel = "MONITOR" | "INSPECTION" | "REVIEW";
 
