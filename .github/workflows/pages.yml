@@ -1,0 +1,47 @@
+name: Deploy dashboard to GitHub Pages
+
+# Free for public repositories: GitHub Pages + Actions on public repos
+# do not bill. The dashboard is a static build; the Live API panel will
+# honestly show the edge API as unreachable on the hosted site (no proxy
+# exists there) — every other view runs entirely on bundled data.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build dashboard (Pages base path)
+        working-directory: dashboard
+        env:
+          GITHUB_PAGES: "true"
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard/dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
