@@ -377,3 +377,74 @@ documented as such rather than counted separately).
   PCoE repository (see §1 URL).
 - 
 ...[truncated 9113 chars]
+---
+
+## Addendum — 2026-11-15 (Advanced Expansion, Waves 1–3)
+
+**File-integrity note (found this wave):** the on-disk copy of this
+report ends mid-§10 (Milling) with a literal `...[truncated 9113 chars]`
+marker as its last line — the file was saved truncated when Phase 1 was
+written. Sections 11 (NASA Battery), 12 (Hydraulic) and 13 (MetroPT-3),
+the first-wave shortlist and the "could not verify" list are therefore
+absent from this file, although they were present in the Phase-1
+research handoff. They are **not** re-written here (this addendum only
+appends); the operational record for those datasets now lives in
+`DATASET_REGISTRY.md`, which was built this wave and covers all of
+them. Flagged for the parent/user to decide whether a full rewrite of
+this report is wanted.
+
+**What changed this wave (all verified live on 2026-11-15):**
+
+1. **NASA Li-ion Battery (§11) — INTEGRATED.** The repository page's own
+   download link (PHM S3 mirror of the PCoE repository) was fetched:
+   `5. Battery Data Set.zip`, 209,708,670 bytes, SHA-256
+   82302a7db4fc1b34e0b6676326610438d43b816bdf11a69d1d012a464ef2f92e.
+   No named licence is stated (acknowledgement requested; use at own
+   risk) — this supersedes §11's "NASA PCoE / Open Data Portal" access
+   note. New `NASABatteryAdapter`: per-discharge-cycle table for
+   B0005/B0006/B0007/B0018 (636 rows), RUL = cycles to the 1.4 Ah EOL
+   criterion (B0007 never crosses — documented fallback).
+2. **Paderborn (§5) — INTEGRATED (3 bearings); licence CONFIRMED.**
+   The official page states **CC BY-NC 4.0** verbatim — §5's "reported
+   by secondary sources, not verified on the official page" is now
+   resolved. Downloads are plain per-bearing .rar archives on a public
+   directory listing — no terms click-through or form (supersedes §5's
+   access description). K001 (healthy), KA01 (outer-race, artificial),
+   KI01 (inner-race, artificial) downloaded with SHA-256s recorded in
+   `DATASET_REGISTRY.md` / the adapter; new `PaderbornAdapter`
+   (vibration_1 @ 64 kHz → CWRU-shared window features; 30,022 windows).
+3. **IMS (§6) — BLOCKED this wave; access facts superseded.** §6 said
+   no bare direct link was verified and called the download small.
+   Both are now corrected: the official PCoE page itself publishes
+   https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip , and it
+   is **1,075,597,174 bytes (≈1.08 GB)** — over this wave's
+   bounded-download gate, so it was deliberately not fetched. Licence
+   remains not stated on the PCoE page.
+4. **MFPT (new) — BLOCKED: official source gone.** mfpt.org now
+   301-redirects domain-wide to an ASNT page with no dataset, download
+   or licence. Historical contents (23 .mat files) are documented from
+   secondary sources only in the registry, labelled as unverified.
+   No mirror was substituted.
+5. **MIMII (new) — researched-only by decision.** Zenodo record
+   3384388 verified: CC BY-SA 4.0, **100.2 GB** across 12 zips —
+   deliberately not downloaded.
+6. **Automotive engine health (new) — no verified public sensor
+   dataset found.** The only licence-verified hit (Zenodo, CC BY 4.0)
+   is an expert-knowledge JSON, not sensor data; popular Kaggle engine
+   sets could not be licence-verified. The registry records the
+   category as unfilled rather than inventing an entry.
+7. **Motor electrical faults (new) — licence-verified candidates
+   found, none downloaded yet:** UCI Sensorless Drive Diagnosis
+   (CC BY 4.0, current-derived features, 11 classes); KAIST PMSM
+   stator-fault dataset (Mendeley, CC BY 4.0, raw current @ 100 kHz);
+   UOEMD-VAFCVS (CC BY 4.0, electrical-fault labels but no current
+   channel); NLN-EMP (CC0, current+voltage @ 20 kHz); USP broken-bar
+   database (IEEE DataPort, licence text not yet verified). Full
+   details in `DATASET_REGISTRY.md`.
+8. **New central registry:** `DATASET_REGISTRY.md` now carries the
+   per-dataset source / licence / tasks / features / preprocessing /
+   integration-status record for all 20 dataset entries in scope,
+   including the two new categories above. Statuses as of today:
+   integrated = FD001–FD004, AI4I, SECOM, CWRU, NASA Battery,
+   Paderborn (3 bearings); blocked = Bosch (Kaggle-gated), IMS (size
+   gate), MFPT (source retired); everything else researched-only.
