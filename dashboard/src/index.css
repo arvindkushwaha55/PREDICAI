@@ -22,9 +22,30 @@ body {
 .dark body {
   background-color: var(--color-slate-950);
   background-image:
-    linear-gradient(to right, rgb(148 163 184 / 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(148 163 184 / 0.08) 1px, transparent 1px);
+    linear-gradient(to right, rgb(161 161 170 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(161 161 170 / 0.1) 1px, transparent 1px);
   color: var(--color-slate-100);
+}
+
+/* Dark theme palette: dark silver. Inside .dark the slate scale is
+   remapped to the neutral zinc (silver-grey) scale, so every dark:
+   surface, border and text utility renders as flat silver tones
+   (near-black silver page, dark silver panels, silver borders and
+   text) instead of blue-tinted slate. The light theme keeps the
+   original slate palette; semantic colours (cyan, amber, rose,
+   emerald) are untouched in both themes. Solid colours only. */
+.dark {
+  --color-slate-50: #fafafa;
+  --color-slate-100: #f4f4f5;
+  --color-slate-200: #e4e4e7;
+  --color-slate-300: #d4d4d8;
+  --color-slate-400: #a1a1aa;
+  --color-slate-500: #71717a;
+  --color-slate-600: #52525b;
+  --color-slate-700: #3f3f46;
+  --color-slate-800: #27272a;
+  --color-slate-900: #18181b;
+  --color-slate-950: #09090b;
 }
 
 .tabular {
