@@ -1,13 +1,18 @@
+import { useEffect, useRef, useState } from "react";
 import { data, fmt, policyForRul } from "../lib/data";
 import type { EngineData } from "../lib/types";
 import { Card, CountUp, LevelChip, SectionTitle, SourceTag, Stat } from "../components/ui";
+import { HeroPanel } from "../components/HeroPanel";
+import { TestMachine } from "../components/TestMachine";
 
 function EngineCard({
   engine,
   onOpen,
+  onTest,
 }: {
   engine: EngineData;
   onOpen: (engine: number) => void;
+  onTest: (engine: number) => void;
 }) {
   const policy = policyForRul(engine.final.predicted_rul);
   return (
@@ -66,23 +71,87 @@ function EngineCard({
         Status from the policy RUL band only (policy.py v1.0 thresholds).
       </p>
 
-      <button
-        onClick={() => onOpen(engine.engine)}
-        className="mt-4 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:border-cyan-700 hover:text-cyan-800 dark:text-cyan-300"
-      >
-        Open machine detail →
-      </button>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onTest(engine.engine);
+          }}
+          className="flex-1 rounded bg-cyan-700 px-3 py-2 text-sm font-semibold whitespace-nowrap text-white transition-colors duration-150 hover:bg-cyan-600"
+        >
+          Test Machine
+        </button>
+        <button
+          onClick={() => onOpen(engine.engine)}
+          className="flex-1 rounded border border-slate-300 px-3 py-2 text-sm font-semibold whitespace-nowrap text-slate-700 transition-colors duration-150 hover:border-cyan-700 hover:text-cyan-800 dark:border-slate-600 dark:text-slate-300 dark:hover:border-cyan-500 dark:hover:text-cyan-300"
+        >
+          Open machine detail →
+        </button>
+      </div>
     </Card>
   );
 }
 
 export function FleetView({ onOpen }: { onOpen: (engine: number) => void }) {
   const t = data.policy_thresholds;
+  const [diagEngine, setDiagEngine] = useState<number | null>(null);
+  const [reducedMotion, setReducedMotion] = useState<boolean>(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const diagRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReducedMotion(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (diagEngine != null) {
+      diagRef.current?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    }
+  }, [diagEngine, reducedMotion]);
+
+  const diagData =
+    diagEngine != null
+      ? data.engines.find((e) => e.engine === diagEngine)
+      : undefined;
+
   return (
     <div className="stagger-cards space-y-6">
-      <div className="stagger-cards grid gap-4 md:grid-cols-3">
+      <HeroPanel
+        onTestMachine={() => setDiagEngine(1)}
+        sceneActive={diagEngine == null}
+        reducedMotion={reducedMotion}
+      />
+
+      {diagData && (
+        <div ref={diagRef}>
+          <TestMachine
+            key={diagData.engine}
+            engine={diagData}
+            onSelectEngine={setDiagEngine}
+            onClose={() => setDiagEngine(null)}
+            onOpen={onOpen}
+            reducedMotion={reducedMotion}
+          />
+        </div>
+      )}
+
+      <div id="fleet-engines" className="stagger-cards grid gap-4 md:grid-cols-3">
         {data.engines.map((e) => (
-          <EngineCard key={e.machine_id} engine={e} onOpen={onOpen} />
+          <EngineCard
+            key={e.machine_id}
+            engine={e}
+            onOpen={onOpen}
+            onTest={setDiagEngine}
+          />
         ))}
       </div>
 
