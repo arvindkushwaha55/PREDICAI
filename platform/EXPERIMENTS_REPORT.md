@@ -567,3 +567,167 @@ six-condition, FD004 adds the fan fault mode); SHAP/permutation for
 the new best models; CWRU frequency-domain features (the §18
 finding); per-regime normalisation for FD002/FD004 (wave-2 finding,
 still open); dashboard integration of the platform results.
+
+---
+
+# Waves 5–6 (2026-11-15) — cross-dataset generalisation, IMS, XAI
+
+Wave 5 completes the transfer matrix in both directions (the
+wave-2 FD001 → FD003 result stood alone), integrates IMS, and wave 6
+adds the explainability records for the wave-4 models. All runs are
+seed 42, source-fitted preprocessing only, and every record states
+its protocol. `FAULT_DIAGNOSIS.md` (new this wave) consolidates what
+the platform can and cannot claim, record by record.
+
+## 22. The transfer matrix — in-domain vs cross-domain, side by side
+
+| Pair | Direction | Model | In-domain (target) | Cross-domain | Δ RMSE / acc |
+|---|---|---|---|---|---|
+| C-MAPSS RUL | FD001 → FD003 | shipped LSTM (14 feat) | 15.04 | **48.80** | +224% |
+| C-MAPSS RUL | FD003 → FD001 | CNN-LSTM (15 feat) | 13.73 | **15.82** | +15% |
+| C-MAPSS RUL | FD002 → FD004 | Ridge (23 feat) | 19.43 | **51.38** | +164% |
+| C-MAPSS RUL | FD004 → FD002 | Ridge (23 feat) | 16.58 | **18.07** | +9% |
+| Bearings | CWRU → Paderborn | RF (10 feat) | 0.950 acc | **0.253 acc** | −0.70 |
+| Bearings | Paderborn → CWRU | RF (10 feat) | 0.665 acc | **0.125 acc** | −0.54 |
+
+Records: `cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42`,
+`cmapss_fd002_to_fd004__taskB__transfer_ridge__s42`,
+`cmapss_fd004_to_fd002__taskB__transfer_ridge__s42`,
+`cwru_to_paderborn__taskA__transfer_rf__s42`,
+`paderborn_to_cwru__taskA__transfer_rf__s42` (plus the wave-2
+FD001 → FD003 record).
+
+## 23. FD003 → FD001 — the asymmetry, measured
+
+The FD003 CNN-LSTM, applied zero-shot to FD001 with FD003's 15
+features and FD003's scaler, scores RMSE **15.816** / MAE 11.420 /
+NASA **395.0** — against 48.80 for the reverse direction. It is
+well calibrated on average (mean prediction 73.5 vs mean truth
+74.4; 13 of 100 engines off by more than 25 cycles), and its NASA
+score is even below the shipped model's in-domain 431.3 — that is
+a property of the asymmetric NASA penalty (the transfer model's
+errors are comparatively symmetric), **not** evidence it beats the
+in-domain model: its RMSE/MAE are worse than both in-domain FD001
+references (13.73 shipped LSTM, 13.22 GRU).
+
+Why the asymmetry is believable, stated with its confound: FD003
+training contains both fault modes (HPC + fan) and FD001 only one
+(HPC), so the FD003 model has seen a superset of the target's
+failure physics, while the FD001 model prices FD003's fan mode as
+health. The confound: the two directions also differ in
+architecture (LSTM vs CNN-LSTM) and feature set (14 vs 15, sensor_6
+kept for FD003). A perfectly controlled pair would retrain both
+directions with one architecture; the direction of the effect is
+consistent with §24's Ridge pair, which *is* architecture- and
+feature-controlled, so the fault-mode explanation is the one the
+evidence supports.
+
+## 24. FD002 ↔ FD004 Ridge — the controlled pair
+
+Both subsets derive the identical 23-feature set (verified in-run),
+Ridge is deterministic (the refit *is* the wave-2 model), so this
+pair isolates distribution/fault-mode shift from everything else.
+
+- FD002 → FD004: RMSE **51.380** / MAE 36.071 / NASA 7,095,957.
+  Failure anatomy: 62 of 237 engines over-predicted by > 50 cycles;
+  the worst (engine 235: true 24 → predicted 160; engine 135: true
+  7 → 151) show the FD002 model reading FD004's fan-mode engines as
+  early-life. NASA explodes because the score punishes late
+  predictions exponentially — a handful of +130-cycle errors
+  dominates it.
+- FD004 → FD002: RMSE **18.069** / MAE 15.182 / NASA 1,266 — a mild
+  +9% over FD002's in-domain Ridge (16.58).
+
+Same conclusion as §23, without the confound: **wide → narrow
+transfers, narrow → wide fails, and the failure mode is dangerous**
+(over-predicting the life of engines failing in an unseen mode).
+
+## 25. CWRU ↔ Paderborn — fault location does not transfer
+
+Both directions fail outright. CWRU → Paderborn accuracy **0.253**
+(F1-macro 0.205) is below the target's 0.334 majority-class rate;
+Paderborn → CWRU accuracy **0.125** (F1-macro 0.156) against a
+0.625 majority rate. The confusion matrices show why: **Normal is
+never predicted correctly in either direction (F1 = 0.0)** — a
+CWRU-trained forest calls every Paderborn window Inner or Outer
+race; a Paderborn-trained forest calls all 591 CWRU Normal windows
+OuterRace. Identical features and label names cannot compensate
+for 12 kHz vs 64 kHz sampling (2048-sample windows = 170.7 ms vs
+32.0 ms), different rigs, bearings, speeds and defect creation.
+On time-domain features, "Normal" is a property of the rig. This
+closes the bearing-transfer question for this feature set;
+frequency-domain features are the documented next attempt, not a
+promised fix.
+
+## 26. IMS Bearing — integrated; alarm timing on Test 1
+
+The user approved lifting wave 3's size gate; the official zip
+(1,075,597,174 B, SHA-256 `21001ac2…ad83`) is triple-nested
+(zip → IMS.7z → per-test .rar — the wave-3 community note was
+right). Test 1 extracted: 2,156 snapshots × (20,480 × 8) at 20 kHz.
+New `IMSAdapter` emits per-snapshot per-channel features.
+
+Per-bearing Isolation Forests (fit on the first 30% = 646
+snapshots; threshold = train q95; alarm = 10 consecutive snapshots
+above) — record `ims__taskC__isolation_forest__s42`:
+
+| Bearing | Teardown truth | First sustained alarm | Last-10% exceedance |
+|---|---|---|---|
+| 1 | none reported | never | 0.10 |
+| 2 | none reported | never | 0.19 |
+| 3 | inner-race defect | **1819 / 2156** (2003-11-22) | 1.00 |
+| 4 | roller-element defect | **1433 / 2156** (2003-11-18) | 1.00 |
+
+The detectors fire on exactly the two bearings that failed —
+bearing 4 gives 723 snapshots (≈ 5.0 days) of warning, bearing 3
+gives 337 (≈ 2.3 days) — and never sustain an alarm on the two
+healthy bearings (their late-run exceedance rates of 0.10/0.19 are
+isolated excursions, never 10 in a row). No precision/recall is
+reported: IMS has no per-snapshot labels, and inventing them would
+be fabrication. DATASET_REGISTRY.md now lists IMS as integrated
+(Test 1); Tests 2–3 remain unextracted in the local archive.
+
+## 27. Wave-6 XAI — Battery SHAP, Paderborn permutation
+
+**Battery SHAP** (`battery__taskB__shap_random_forest__s42`):
+explanation model = RF refit on all cycles of B0005/B0006/B0018
+(protocol difference vs LOBO stated in the record; its in-sample
+RMSE 1.09 is labelled in-sample and is not a performance claim).
+Mean |SHAP| on B0005: **soh 15.99, capacity_ah 15.05** — two views
+of the same capacity trajectory — then duration_s 7.29, and every
+voltage/temperature feature ≤ 1.37 (ambient_temperature exactly
+0.0). The model's RUL is a capacity-curve extrapolation; SHAP
+makes that plain rather than dressing it up.
+
+**Paderborn permutation** (`paderborn__taskA__permutation_rf__s42`):
+the refit reproduces wave 4's grouped-split accuracy (0.9499 vs
+0.950). Importance (accuracy drop): **kurtosis 0.196, skewness
+0.164**, then a cliff to std 0.038 / RMS 0.038 / crest 0.023;
+`max` is ≈ 0 (−0.002). The forest separates the three classes
+almost entirely on impulsiveness statistics — physically
+consistent with localised race defects, and a useful pointer for
+the frequency-domain follow-up (envelope spectra are the natural
+extension of the same idea).
+
+## 28. Wave-5/6 files, and what remains
+
+```
+platform/platform_lib/adapters/ims.py                 IMS adapter (Test 1)
+platform/platform_lib/benchmarking/run_wave5.py       transfers + XAI runners
+platform/platform_lib/benchmarking/run_wave5_ims.py   IMS runner
+platform/FAULT_DIAGNOSIS.md                           capability/limits audit
+platform/tests/test_wave5.py                          wave-5/6 tests (suite 96/96)
+platform/experiments/                                 8 new records (37 total) + INDEX.json
+platform/data/raw/ims/                                official archive + Test 1 (gitignored)
+```
+
+Run commands (from `platform/`):
+`../.venv/bin/python -m platform_lib.benchmarking.run_wave5 --set fd003tofd001|ridge|bearings|battery_shap|paderborn_perm|ims`
+
+Remaining: IMS Tests 2–3 (in the local archive, unextracted);
+per-regime normalisation for FD002/FD004 (open since wave 2);
+CWRU/Paderborn frequency-domain features for a second transfer
+attempt; Paderborn's real-damage bearings (artificial → real shift,
+not yet downloaded); a controlled LSTM↔CNN-LSTM transfer pair to
+remove §23's architecture confound; dashboard integration of the
+platform results.

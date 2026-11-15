@@ -31,7 +31,7 @@ is public domain.
 | SECOM | UCI ML Repository | CC BY 4.0 | A, C | **integrated** | `SECOMAdapter` |
 | CWRU Bearing | Case Western Reserve Univ. | Not stated on official page | A (C secondary) | **integrated** (4 recordings) | `CWRUAdapter` |
 | Paderborn Bearing | KAt-DataCenter, Paderborn Univ. | **CC BY-NC 4.0** (confirmed on official page) | A (C secondary) | **integrated** (3 of 32 bearings) | `PaderbornAdapter` |
-| IMS Bearing | NASA PCoE / Univ. Cincinnati | Not stated on PCoE page | C, B | **blocked** — official zip verified but 1.08 GB, over this wave's bounded-download gate | — |
+| IMS Bearing | NASA PCoE / Univ. Cincinnati | Not stated on PCoE page | C, B | **integrated** (Test 1, wave 5 — user approved the 1.08 GB download) | `IMSAdapter` |
 | FEMTO-ST PRONOSTIA | FEMTO-ST / NASA PCoE mirrors | Not confirmed | B (C secondary) | researched-only | — |
 | XJTU-SY Bearing | Xi'an Jiaotong Univ. (researcher page) | Not stated | B (C secondary) | researched-only | — |
 | MFPT Bearing | MFPT Society (mfpt.org) | Not stated (live page gone) | A | **blocked** — official site retired; domain redirects to ASNT, no data offered | — |
@@ -231,6 +231,36 @@ is public domain.
 
 ---
 
+### IMS Bearing (NASA / University of Cincinnati)
+- **Source / official URL:** NASA Prognostics Data Repository, entry
+  #4 "Bearings" — the official page itself publishes the direct link
+  https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip
+  (citation: Lee, Qiu, Yu, Lin & Rexnord Technical Services, 2007).
+- **Licence:** no per-dataset licence stated on the PCoE page
+  (acknowledgement requested; use at own risk). A data.gov catalog
+  entry lists a government-works licence URL, but its legacy download
+  resource is not usable (redirect → 403) — the PCoE/S3 link above is
+  the working official route.
+- **Tasks:** C (primary), B (derived time-to-failure labels, not yet
+  attempted).
+- **Status:** **integrated (Test 1)** — `IMSAdapter`; wave-5 Task-C
+  record `ims__taskC__isolation_forest__s42`. Downloaded 2026-11-15
+  after the user approved lifting wave 3's size gate for this
+  archive: zip 1,075,597,174 B, SHA-256
+  `21001ac266c465f5d345ec42d7b508c6a6328487fd9d4d7774422dd5ea10ad83`.
+  The archive is triple-nested (zip → IMS.7z → per-test .rar) —
+  the wave-3 "unverified community note" about nesting turned out
+  to be accurate. Only 1st_test.rar was extracted: 2,156 snapshot
+  files (20,480 points × 8 channels at 20 kHz, 2003-10-22 →
+  2003-11-25). Tests 2–3 remain unextracted in the local archive.
+- **Ground truth (Test 1, teardown):** bearing 3 inner-race defect,
+  bearing 4 roller-element defect; bearings 1–2 no defect reported.
+  No per-snapshot labels exist — evaluation is alarm timing only.
+- **Binding caveats:** one rig, one run per test; the four bearings
+  share a shaft and load, so channels are not independent systems.
+
+---
+
 ## Researched-only datasets (verified, not yet integrated)
 
 ### FEMTO-ST / PRONOSTIA Bearing (IEEE PHM 2012)
@@ -405,27 +435,6 @@ wave, in rough priority order:
 ---
 
 ## Blocked datasets (verified route exists or existed — cannot integrate now)
-
-### IMS Bearing (NASA / University of Cincinnati)
-- **Source / official URL:** NASA Prognostics Data Repository, entry
-  #4 "Bearings" — the official page itself publishes the direct link
-  https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip
-  (citation: Lee, Qiu, Yu, Lin & Rexnord Technical Services, 2007).
-- **Licence:** no per-dataset licence stated on the PCoE page
-  (acknowledgement requested; use at own risk). A data.gov catalog
-  entry lists a government-works licence URL, but its legacy download
-  resource is not usable (redirect → 403) — the PCoE/S3 link above is
-  the working official route.
-- **Tasks:** C (primary), B (derived time-to-failure labels).
-- **Blocker (exact):** the official zip is **1,075,597,174 bytes
-  (≈1.08 GB)** — verified by HEAD request 2026-11-15 — which exceeds
-  this wave's bounded-download gate (~800 MB), so it was deliberately
-  **not** downloaded. (Phase 1 research called IMS a "small download";
-  that is superseded — it is not small.) Next step: a future wave with
-  the gate raised for this one archive can fetch it and extract Test 1
-  only (2,156 snapshot files, 8 channels/file). A secondary, unverified
-  community note claims the archive is nested (zip → 7z → rar) —
-  extraction tooling may need checking at that time.
 
 ### MFPT Bearing Fault Data (MFPT Society)
 - **Source:** historically https://mfpt.org/fault-data-sets/ (Bechhoefer,
