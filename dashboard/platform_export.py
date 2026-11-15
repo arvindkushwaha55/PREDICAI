@@ -77,7 +77,7 @@ DATASETS: list[dict] = [
         "tasks": ["B"],
         "status": "integrated",
         "adapter": "CMapssAdapter",
-        "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. On FD004 the LSTM wins RMSE/MAE but loses the NASA score to Ridge — recorded as measured.",
+        "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. With global normalisation the LSTM wins RMSE/MAE but loses the NASA score to Ridge; the per-regime LSTM (Wave 12, RMSE 15.37) is FD004's best and retakes the NASA lead — recorded as measured.",
     },
     {
         "id": "ai4i2020",
@@ -107,7 +107,7 @@ DATASETS: list[dict] = [
         "tasks": ["A"],
         "status": "integrated",
         "adapter": "CWRUAdapter",
-        "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation (accuracy 0.665) — see Research view.",
+        "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation with order-domain features (accuracy 0.802, Wave 12; time-domain features scored 0.665) — see Research view.",
     },
     {
         "id": "paderborn",
@@ -339,6 +339,20 @@ TRANSFER_VERDICTS = {
         "in-domain, though better than the time-domain run (0.125; "
         "F1-macro 0.286 vs 0.156). Normal F1 remains 0.000. "
         "Spectral features did not fix cross-rig transfer.",
+    "cwru_to_paderborn__taskA__transfer_rf_order__s42":
+        "Still fails — accuracy 0.335 is the best of the three "
+        "feature families in this direction (time-domain 0.253, "
+        "spectral 0.210), but F1-macro fell to 0.169 and Normal F1 "
+        "is back to 0.000 (spectral had reached 0.195). Aligning "
+        "the characteristic defect frequencies in shaft-speed-"
+        "relative units did not transfer 'Normal' across rigs.",
+    "paderborn_to_cwru__taskA__transfer_rf_order__s42":
+        "Still fails — accuracy 0.163, between the time-domain "
+        "(0.125) and spectral (0.187) runs; F1-macro 0.206. Normal "
+        "F1 is 0.000 — as in the time-domain family — so the third "
+        "hand-crafted feature family closes the cross-rig question "
+        "negatively: order features transform in-domain diagnosis "
+        "(0.802 recording-wise) but do not cross rigs.",
 }
 
 
