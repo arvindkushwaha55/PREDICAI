@@ -1,0 +1,310 @@
+{
+  "experiment_id": "cwru__taskA__random_forest_recordingwise__s42",
+  "timestamp_utc": "2026-11-15T09:07:55+00:00",
+  "dataset": "cwru",
+  "task": "A",
+  "model": "random_forest_recordingwise",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "per-window time-domain statistics of the drive-end vibration series (identical features to wave 2)"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over 12 recordings; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions.",
+    "n_recordings": 12,
+    "n_windows": 1122,
+    "recordings_per_class": {
+      "Ball": 177,
+      "InnerRace": 177,
+      "Normal": 591,
+      "OuterRace": 177
+    },
+    "class_window_counts": {
+      "Normal": 591,
+      "InnerRace": 177,
+      "Ball": 177,
+      "OuterRace": 177
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak"
+    ],
+    "windowing": "non-overlapping windows of 2048 samples over the DE channel of each recording (identical to wave 2)",
+    "recordings": [
+      {
+        "file": "97.mat",
+        "condition": "normal_0",
+        "label": "Normal",
+        "n_samples": 243938,
+        "n_windows": 119,
+        "official_url": "https://engineering.case.edu/sites/default/files/97.mat"
+      },
+      {
+        "file": "98.mat",
+        "condition": "normal_1",
+        "label": "Normal",
+        "n_samples": 483903,
+        "n_windows": 236,
+        "official_url": "https://engineering.case.edu/sites/default/files/98.mat"
+      },
+      {
+        "file": "99.mat",
+        "condition": "normal_2",
+        "label": "Normal",
+        "n_samples": 485063,
+        "n_windows": 236,
+        "official_url": "https://engineering.case.edu/sites/default/files/99.mat"
+      },
+      {
+        "file": "105.mat",
+        "condition": "IR007_0",
+        "label": "InnerRace",
+        "n_samples": 121265,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/105.mat"
+      },
+      {
+        "file": "169.mat",
+        "condition": "IR014_0",
+        "label": "InnerRace",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/169.mat"
+      },
+      {
+        "file": "209.mat",
+        "condition": "IR021_0",
+        "label": "InnerRace",
+        "n_samples": 122136,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/209.mat"
+      },
+      {
+        "file": "118.mat",
+        "condition": "B007_0",
+        "label": "Ball",
+        "n_samples": 122571,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/118.mat"
+      },
+      {
+        "file": "185.mat",
+        "condition": "B014_0",
+        "label": "Ball",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/185.mat"
+      },
+      {
+        "file": "222.mat",
+        "condition": "B021_0",
+        "label": "Ball",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/222.mat"
+      },
+      {
+        "file": "130.mat",
+        "condition": "OR007@6_0",
+        "label": "OuterRace",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/130.mat"
+      },
+      {
+        "file": "197.mat",
+        "condition": "OR014@6_0",
+        "label": "OuterRace",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/197.mat"
+      },
+      {
+        "file": "234.mat",
+        "condition": "OR021@6_0",
+        "label": "OuterRace",
+        "n_samples": 122426,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/234.mat"
+      }
+    ]
+  },
+  "metrics": {
+    "accuracy": 0.6648841354723708,
+    "f1_macro": 0.4214028868431701,
+    "confusion_matrix": [
+      [
+        591,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        122,
+        55
+      ],
+      [
+        3,
+        19,
+        137,
+        18
+      ],
+      [
+        1,
+        100,
+        58,
+        18
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "Ball",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.9932773109243698,
+        "recall": 1.0,
+        "f1": 0.9966273187183811,
+        "support": 591
+      },
+      "InnerRace": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 177
+      },
+      "Ball": {
+        "precision": 0.43217665615141954,
+        "recall": 0.7740112994350282,
+        "f1": 0.5546558704453441,
+        "support": 177
+      },
+      "OuterRace": {
+        "precision": 0.1978021978021978,
+        "recall": 0.1016949152542373,
+        "f1": 0.13432835820895522,
+        "support": 177
+      }
+    }
+  },
+  "timing": {
+    "train_s": 15.2075,
+    "infer_ms_per_row": 0.92935
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "c0dc71461f8983d68fd6fc9fa59c855dbd278fd8",
+  "notes": "The leakage-safe counterpart of the wave-2 CWRU record. Wave 2 split WINDOWS of 4 recordings (one per class) stratified 80/20, so every test window's recording was also in training \u2014 its accuracy/F1 of 1.000 measures within-recording separability only. Here, 12 recordings (3 per class: Normal at 0/1/2 hp; InnerRace/Ball/OuterRace at 0.007/0.014/0.021 inch, 0 hp) are evaluated leave-one-recording-out, so the score below is the first CWRU number in this project that speaks about unseen recordings. It still does NOT cover unseen fault diameters combined with unseen loads jointly, nor different machines. Data note: 99.mat as served by the official host bundles the X098 variable alongside X099; the self-identified X099_DE_time series (2 hp normal) is the one used.",
+  "extra": {
+    "per_recording_accuracy": [
+      {
+        "recording": "B007_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "B014_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 0.3728813559322034
+      },
+      {
+        "recording": "B021_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 0.9491525423728814
+      },
+      {
+        "recording": "IR007_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "IR014_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "IR021_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "OR007@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "OR014@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "OR021@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.3050847457627119
+      },
+      {
+        "recording": "normal_0",
+        "label": "Normal",
+        "n_windows": 119,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "normal_1",
+        "label": "Normal",
+        "n_windows": 236,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "normal_2",
+        "label": "Normal",
+        "n_windows": 236,
+        "accuracy": 1.0
+      }
+    ],
+    "wave2_window_split_reference": {
+      "accuracy": 1.0,
+      "f1_macro": 1.0,
+      "source": "cwru__taskA__random_forest__s42 (window-wise stratified split over 4 recordings \u2014 optimistic, see its notes)"
+    },
+    "delta_vs_wave2_window_split": {
+      "accuracy_delta": -0.3351158645276292,
+      "f1_macro_delta": -0.5785971131568299
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "experiment_id": "cmapss_fd001__taskB__gru__s42",
+  "timestamp_utc": "2026-11-15T07:59:20+00:00",
+  "dataset": "cmapss_fd001",
+  "task": "B",
+  "model": "gru",
+  "model_params": {
+    "hidden_1": 128,
+    "hidden_2": 64,
+    "head_dim": 32,
+    "dropout": 0.2,
+    "epochs": 60,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "grad_clip": 1.0,
+    "patience": 10,
+    "seed": 42,
+    "device": "cpu (local run)",
+    "architecture": "GRU(128)->GRU(64)->head 32->1 (mirror of the shipped LSTM with GRU cells)"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 identical to the shipped FD001 LSTM evaluation",
+    "n_train_engines": 80,
+    "n_val_engines": 20,
+    "n_train_windows": 14459,
+    "n_val_windows": 3272,
+    "n_test_engines": 100
+  },
+  "preprocessing": {
+    "features": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21"
+    ],
+    "n_features": 14,
+    "feature_derivation": "shipped FD001 pipeline (predicai_ml.preprocessing): 14 sensors; 6 constant sensors + sensor_6 dropped, settings not used (single condition)",
+    "rul_cap": 125,
+    "seq_len": 30,
+    "scaling": "z-score (ddof=0) fit on train engines only"
+  },
+  "metrics": {
+    "test_last_window_per_engine": {
+      "rmse": 13.223986625671387,
+      "mae": 9.670916557312012,
+      "nasa_score": 305.8930541517568
+    },
+    "val_all_windows": {
+      "rmse": 12.527608871459961,
+      "mae": 8.682768821716309,
+      "nasa_score": 10728.18830300018
+    }
+  },
+  "timing": {
+    "train_s": 583.2,
+    "infer_ms_per_row": 0.37444
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "c0dc71461f8983d68fd6fc9fa59c855dbd278fd8",
+  "notes": "Architecture comparison on identical data/protocol: GRU vs the shipped LSTM (owner Kaggle GPU run, test RMSE 13.73). simulated (C-MAPSS tool), not real engines",
+  "extra": {
+    "epochs_run": 17,
+    "best_val_rmse": 12.5276,
+    "reference_shipped_lstm_fd001": {
+      "rmse": 13.728736877441406,
+      "mae": 9.885571479797363,
+      "nasa_score": 431.2853960321513,
+      "source": "ml/artifacts/metrics.json (shipped model, same last-window protocol)"
+    },
+    "delta_vs_shipped_lstm": {
+      "rmse_delta": -0.5047502517700195,
+      "mae_delta": -0.21465492248535156,
+      "nasa_delta": -125.3923418803945
+    }
+  }
+}

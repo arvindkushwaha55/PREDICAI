@@ -1,0 +1,131 @@
+{
+  "experiment_id": "paderborn__taskA__random_forest__s42",
+  "timestamp_utc": "2026-11-15T09:09:10+00:00",
+  "dataset": "paderborn",
+  "task": "A",
+  "model": "random_forest",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "per-window time-domain statistics of the vibration_1 channel (64 kHz), same feature space as CWRU"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 no measurement file contributes windows to both sides. NOTE: there is only ONE physical bearing per class in this scope, so train and test still share bearings (different measurements of them).",
+    "n_train": 24014,
+    "n_test": 6008,
+    "n_measurements_train": 192,
+    "n_measurements_test": 48,
+    "class_counts_total": {
+      "OuterRace": 10015,
+      "Normal": 10006,
+      "InnerRace": 10001
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak"
+    ],
+    "windowing": "non-overlapping windows of 2048 samples over the vibration_1 channel of each 4 s measurement",
+    "bearings": [
+      {
+        "bearing": "K001",
+        "label": "Normal",
+        "damage_origin": "none (healthy bearing)",
+        "n_measurements": 80,
+        "n_windows": 10006
+      },
+      {
+        "bearing": "KA01",
+        "label": "OuterRace",
+        "damage_origin": "artificial (EDM-seeded)",
+        "n_measurements": 80,
+        "n_windows": 10015
+      },
+      {
+        "bearing": "KI01",
+        "label": "InnerRace",
+        "damage_origin": "artificial (EDM-seeded)",
+        "n_measurements": 80,
+        "n_windows": 10001
+      }
+    ],
+    "licence": "CC BY-NC 4.0 (non-commercial; citation required)"
+  },
+  "metrics": {
+    "accuracy": 0.9499001331557922,
+    "f1_macro": 0.9519874629693527,
+    "confusion_matrix": [
+      [
+        1764,
+        108,
+        3
+      ],
+      [
+        164,
+        2198,
+        13
+      ],
+      [
+        0,
+        13,
+        1745
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.9149377593360996,
+        "recall": 0.9408,
+        "f1": 0.9276886668419668,
+        "support": 1875
+      },
+      "InnerRace": {
+        "precision": 0.9478223372143165,
+        "recall": 0.9254736842105263,
+        "f1": 0.9365146996165318,
+        "support": 2375
+      },
+      "OuterRace": {
+        "precision": 0.9909142532651902,
+        "recall": 0.9926052332195677,
+        "f1": 0.9917590224495595,
+        "support": 1758
+      }
+    }
+  },
+  "timing": {
+    "train_s": 27.5466,
+    "infer_ms_per_row": 0.03316
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "c0dc71461f8983d68fd6fc9fa59c855dbd278fd8",
+  "notes": "Caveat (binding): one physical bearing per class (K001 healthy, KA01 outer-race EDM, KI01 inner-race EDM). The measurement-grouped split removes the window-level leakage of a naive split, but the score measures within-bearing separability across measurements and operating conditions \u2014 NOT generalisation to unseen bearings. CC BY-NC 4.0 data: non-commercial use only. real test-rig recordings; KA01/KI01 damage is artificially EDM-seeded in this scope (the full dataset also contains real fatigue damage, not integrated here)",
+  "extra": {}
+}

@@ -1,0 +1,82 @@
+{
+  "experiment_id": "battery__taskB__lstm_lobo__s42",
+  "timestamp_utc": "2026-11-15T09:08:19+00:00",
+  "dataset": "nasa_battery",
+  "task": "B",
+  "model": "lstm",
+  "model_params": {
+    "architecture": "LSTM(1->32) -> head 16->1 on capacity sequences",
+    "window_cycles": 10,
+    "epochs_max": 150,
+    "patience": 15,
+    "batch_size": 32,
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "input": "capacity_ah only, standardised with TRAIN batteries' statistics; target standardised likewise and inverted at prediction"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "LEAVE-ONE-BATTERY-OUT (LOBO): each of B0005, B0006, B0018 is held out in turn and predicted by a model fitted on the other two batteries only; no cycle of the test battery is in training. B0007 is EXCLUDED: it is censored \u2014 its capacity never crosses the 1.4 Ah end-of-life threshold (last recorded 1.432 Ah), so it has no observed EOL label.",
+    "held_out_batteries": [
+      "B0005",
+      "B0006",
+      "B0018"
+    ],
+    "excluded_batteries": [
+      "B0007 (censored \u2014 never crosses 1.4 Ah EOL)"
+    ]
+  },
+  "preprocessing": {
+    "features": [
+      "capacity_ah (window of 10 discharge cycles)"
+    ],
+    "target": "rul_cycles_eol (discharge cycles until capacity first < 1.4 Ah = 70% of the 2 Ah rating)",
+    "note": "capacity_ah / soh are measured per-cycle health indicators and are inputs (standard for capacity-trajectory RUL); cycle_index counts discharge cycles of that battery only"
+  },
+  "metrics": {
+    "per_battery": {
+      "B0005": {
+        "n_cycles_scored": 158,
+        "rmse": 13.45490550994873,
+        "mae": 9.38134479522705
+      },
+      "B0006": {
+        "n_cycles_scored": 158,
+        "rmse": 19.818389892578125,
+        "mae": 11.564061164855957
+      },
+      "B0018": {
+        "n_cycles_scored": 122,
+        "rmse": 7.485937118530273,
+        "mae": 5.454164505004883
+      }
+    },
+    "pooled": {
+      "rmse": 14.919698715209961,
+      "mae": 9.074844360351562
+    }
+  },
+  "timing": {
+    "train_s": 11.6178,
+    "infer_ms_per_row": 0.02256
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "c0dc71461f8983d68fd6fc9fa59c855dbd278fd8",
+  "notes": "Real laboratory battery-aging data (NASA Ames PCoE, Saha & Goebel 2007). LOBO over 3 batteries is a small-sample evaluation: per-battery numbers are reported individually, not hidden in the pooled score. ",
+  "extra": {
+    "window_cycles": 10,
+    "scoring_note": "the first 10 discharge cycles of each held-out battery have no full window and are not scored by the sequence model (the RF scores every cycle)"
+  }
+}
