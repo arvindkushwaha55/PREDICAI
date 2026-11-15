@@ -9,6 +9,10 @@ import { defineConfig } from 'vite'
 // proxy — the Live API panel then honestly reports the API as unreachable
 // (see README.md).
 export default defineConfig({
+  // GitHub Pages serves the dashboard at /PREDICAI/ (project site); the
+  // Pages workflow sets GITHUB_PAGES=true so asset URLs get that prefix.
+  // Local dev and other builds stay at the root path.
+  base: process.env.GITHUB_PAGES === 'true' ? '/PREDICAI/' : '/',
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
