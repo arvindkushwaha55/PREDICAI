@@ -1,0 +1,335 @@
+{
+  "experiment_id": "cwru__taskA__random_forest_spectral_recordingwise__s42",
+  "timestamp_utc": "2026-11-15T11:56:53+00:00",
+  "dataset": "cwru",
+  "task": "A",
+  "model": "random_forest_spectral_recordingwise",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "combined wave-9 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 14 spectral/envelope features (platform_lib.features.spectral). All spectral quantities are RATE-FREE: frequencies and band edges are fractions of Nyquist (8 log-spaced bands over 0.005..1.0 x Nyquist), band energies are normalised by total spectral energy, and the envelope peak amplitude is normalised by total envelope-spectrum magnitude \u2014 so the identical feature definitions apply at CWRU's 12 kHz and Paderborn's 64 kHz. This removes the sampling-rate confound only; it does not align shaft-speed-relative defect frequencies across rigs."
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over the SAME 12 recordings as wave 4; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions. Protocol, recordings, model config and seed are identical to wave 4 \u2014 the ONLY change is the feature set.",
+    "n_recordings": 12,
+    "n_windows": 1122,
+    "recordings_per_class": {
+      "Ball": 177,
+      "InnerRace": 177,
+      "Normal": 591,
+      "OuterRace": 177
+    },
+    "class_window_counts": {
+      "Normal": 591,
+      "InnerRace": 177,
+      "Ball": 177,
+      "OuterRace": 177
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak",
+      "dom_freq_frac",
+      "spectral_centroid_frac",
+      "spectral_entropy",
+      "band_1",
+      "band_2",
+      "band_3",
+      "band_4",
+      "band_5",
+      "band_6",
+      "band_7",
+      "band_8",
+      "env_peak_amp_norm",
+      "env_peak_freq_frac",
+      "env_kurtosis"
+    ],
+    "feature_note": "combined wave-9 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 14 spectral/envelope features (platform_lib.features.spectral). All spectral quantities are RATE-FREE: frequencies and band edges are fractions of Nyquist (8 log-spaced bands over 0.005..1.0 x Nyquist), band energies are normalised by total spectral energy, and the envelope peak amplitude is normalised by total envelope-spectrum magnitude \u2014 so the identical feature definitions apply at CWRU's 12 kHz and Paderborn's 64 kHz. This removes the sampling-rate confound only; it does not align shaft-speed-relative defect frequencies across rigs.",
+    "windowing": "non-overlapping windows of 2048 samples over the DE channel of each recording (identical to waves 2/4)",
+    "recordings": [
+      {
+        "file": "97.mat",
+        "condition": "normal_0",
+        "label": "Normal",
+        "n_samples": 243938,
+        "n_windows": 119,
+        "official_url": "https://engineering.case.edu/sites/default/files/97.mat"
+      },
+      {
+        "file": "98.mat",
+        "condition": "normal_1",
+        "label": "Normal",
+        "n_samples": 483903,
+        "n_windows": 236,
+        "official_url": "https://engineering.case.edu/sites/default/files/98.mat"
+      },
+      {
+        "file": "99.mat",
+        "condition": "normal_2",
+        "label": "Normal",
+        "n_samples": 485063,
+        "n_windows": 236,
+        "official_url": "https://engineering.case.edu/sites/default/files/99.mat"
+      },
+      {
+        "file": "105.mat",
+        "condition": "IR007_0",
+        "label": "InnerRace",
+        "n_samples": 121265,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/105.mat"
+      },
+      {
+        "file": "169.mat",
+        "condition": "IR014_0",
+        "label": "InnerRace",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/169.mat"
+      },
+      {
+        "file": "209.mat",
+        "condition": "IR021_0",
+        "label": "InnerRace",
+        "n_samples": 122136,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/209.mat"
+      },
+      {
+        "file": "118.mat",
+        "condition": "B007_0",
+        "label": "Ball",
+        "n_samples": 122571,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/118.mat"
+      },
+      {
+        "file": "185.mat",
+        "condition": "B014_0",
+        "label": "Ball",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/185.mat"
+      },
+      {
+        "file": "222.mat",
+        "condition": "B021_0",
+        "label": "Ball",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/222.mat"
+      },
+      {
+        "file": "130.mat",
+        "condition": "OR007@6_0",
+        "label": "OuterRace",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/130.mat"
+      },
+      {
+        "file": "197.mat",
+        "condition": "OR014@6_0",
+        "label": "OuterRace",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/197.mat"
+      },
+      {
+        "file": "234.mat",
+        "condition": "OR021@6_0",
+        "label": "OuterRace",
+        "n_samples": 122426,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/234.mat"
+      }
+    ]
+  },
+  "metrics": {
+    "accuracy": 0.679144385026738,
+    "f1_macro": 0.4173853104065304,
+    "confusion_matrix": [
+      [
+        591,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        15,
+        103,
+        59
+      ],
+      [
+        5,
+        5,
+        155,
+        12
+      ],
+      [
+        0,
+        30,
+        146,
+        1
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "Ball",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.9916107382550335,
+        "recall": 1.0,
+        "f1": 0.995787700084246,
+        "support": 591
+      },
+      "InnerRace": {
+        "precision": 0.3,
+        "recall": 0.0847457627118644,
+        "f1": 0.13215859030837004,
+        "support": 177
+      },
+      "Ball": {
+        "precision": 0.38366336633663367,
+        "recall": 0.8757062146892656,
+        "f1": 0.5335628227194492,
+        "support": 177
+      },
+      "OuterRace": {
+        "precision": 0.013888888888888888,
+        "recall": 0.005649717514124294,
+        "f1": 0.008032128514056224,
+        "support": 177
+      }
+    }
+  },
+  "timing": {
+    "train_s": 13.6652,
+    "infer_ms_per_row": 0.59319
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "40a4f63bf214c141e27f872ae26b22d20adcc26e",
+  "notes": "Wave-9 counterpart of the wave-4 recording-wise record: identical protocol, recordings, model and seed; the only change is the feature set (10 time-domain -> 24 combined time + spectral/envelope). The direct comparison against wave 4 lives in extra.comparison_wave4_time_domain. Recording-wise evaluation still does NOT cover unseen fault diameters combined with unseen loads jointly, nor different machines. Data note (as wave 4): 99.mat as served bundles X098 alongside X099; the self-identified X099_DE_time series (2 hp normal) is the one used.",
+  "extra": {
+    "per_recording_accuracy": [
+      {
+        "recording": "B007_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "B014_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 0.6610169491525424
+      },
+      {
+        "recording": "B021_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 0.9661016949152542
+      },
+      {
+        "recording": "IR007_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.2542372881355932
+      },
+      {
+        "recording": "IR014_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "IR021_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "OR007@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.01694915254237288
+      },
+      {
+        "recording": "OR014@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "OR021@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "normal_0",
+        "label": "Normal",
+        "n_windows": 119,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "normal_1",
+        "label": "Normal",
+        "n_windows": 236,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "normal_2",
+        "label": "Normal",
+        "n_windows": 236,
+        "accuracy": 1.0
+      }
+    ],
+    "comparison_wave4_time_domain": {
+      "wave4_time_domain_only": {
+        "accuracy": 0.6648841354723708,
+        "f1_macro": 0.4214028868431701,
+        "innerrace_correct": 0,
+        "innerrace_support": 177,
+        "innerrace_f1": 0.0,
+        "record": "cwru__taskA__random_forest_recordingwise__s42"
+      },
+      "wave9_combined_spectral": {
+        "accuracy": 0.679144385026738,
+        "f1_macro": 0.4173853104065304,
+        "innerrace_correct": 15,
+        "innerrace_support": 177,
+        "innerrace_f1": 0.13215859030837004
+      },
+      "delta_accuracy": 0.014260249554367221,
+      "delta_f1_macro": -0.004017576436639747
+    }
+  }
+}

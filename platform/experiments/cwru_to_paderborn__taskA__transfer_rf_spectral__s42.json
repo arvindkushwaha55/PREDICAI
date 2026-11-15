@@ -1,0 +1,156 @@
+{
+  "experiment_id": "cwru_to_paderborn__taskA__transfer_rf_spectral__s42",
+  "timestamp_utc": "2026-11-15T11:58:03+00:00",
+  "dataset": "cwru_to_paderborn",
+  "task": "A",
+  "model": "transfer_rf_spectral",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "combined wave-9 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 14 spectral/envelope features (platform_lib.features.spectral). All spectral quantities are RATE-FREE: frequencies and band edges are fractions of Nyquist (8 log-spaced bands over 0.005..1.0 x Nyquist), band energies are normalised by total spectral energy, and the envelope peak amplitude is normalised by total envelope-spectrum magnitude \u2014 so the identical feature definitions apply at CWRU's 12 kHz and Paderborn's 64 kHz. This removes the sampling-rate confound only; it does not align shaft-speed-relative defect frequencies across rigs.",
+    "training": "fit on ALL cwru windows of the shared label set; no target data in training"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5 transfer protocol \u2014 the ONLY change is the feature set (10 time-domain -> 24 combined).",
+    "source_dataset": "cwru",
+    "target_dataset": "paderborn",
+    "n_train_windows": 945,
+    "n_test_windows": 30022,
+    "train_class_counts": {
+      "Normal": 591,
+      "InnerRace": 177,
+      "OuterRace": 177
+    },
+    "test_class_counts": {
+      "OuterRace": 10015,
+      "Normal": 10006,
+      "InnerRace": 10001
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak",
+      "dom_freq_frac",
+      "spectral_centroid_frac",
+      "spectral_entropy",
+      "band_1",
+      "band_2",
+      "band_3",
+      "band_4",
+      "band_5",
+      "band_6",
+      "band_7",
+      "band_8",
+      "env_peak_amp_norm",
+      "env_peak_freq_frac",
+      "env_kurtosis"
+    ],
+    "feature_note": "combined wave-9 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 14 spectral/envelope features (platform_lib.features.spectral). All spectral quantities are RATE-FREE: frequencies and band edges are fractions of Nyquist (8 log-spaced bands over 0.005..1.0 x Nyquist), band energies are normalised by total spectral energy, and the envelope peak amplitude is normalised by total envelope-spectrum magnitude \u2014 so the identical feature definitions apply at CWRU's 12 kHz and Paderborn's 64 kHz. This removes the sampling-rate confound only; it does not align shaft-speed-relative defect frequencies across rigs.",
+    "windowing": "non-overlapping 2048-sample windows in both datasets \u2014 the window TIME SPAN still differs by sampling rate: 2048 samples = 170.7 ms at CWRU's 12 kHz vs 32.0 ms at Paderborn's 64 kHz. The spectral features are computed per window in rate-free units, but a window on one rig still observes ~5.3x more shaft revolutions than on the other.",
+    "excluded": "CWRU 'Ball' class excluded (Paderborn scope has no ball-fault bearing); CWRU windows of that class are dropped from BOTH training (when CWRU is the source) and scoring",
+    "scaling": "none (tree model, as in the wave-5 records)"
+  },
+  "metrics": {
+    "accuracy": 0.21017920191859304,
+    "f1_macro": 0.1707094964881981,
+    "confusion_matrix": [
+      [
+        2552,
+        27,
+        7427
+      ],
+      [
+        7383,
+        13,
+        2605
+      ],
+      [
+        6270,
+        0,
+        3745
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.15748225856217216,
+        "recall": 0.25504697181690983,
+        "f1": 0.19472740452481782,
+        "support": 10006
+      },
+      "InnerRace": {
+        "precision": 0.325,
+        "recall": 0.0012998700129987,
+        "f1": 0.002589383527537098,
+        "support": 10001
+      },
+      "OuterRace": {
+        "precision": 0.27182986136314147,
+        "recall": 0.37393909136295556,
+        "f1": 0.3148117014122394,
+        "support": 10015
+      }
+    }
+  },
+  "timing": {
+    "train_s": 0.5839,
+    "infer_ms_per_row": 0.00504
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "40a4f63bf214c141e27f872ae26b22d20adcc26e",
+  "notes": "Zero-shot cwru -> paderborn bearing-fault transfer with the wave-9 combined spectral feature set \u2014 the wave-5 transfer re-run with the feature set as the only changed variable. Shift factors that remain, documented rather than corrected: different test rigs, bearing geometries, sensor mounting and load/speed regimes; shaft-speed-relative defect frequencies are NOT aligned by the rate-free features (sampling rate and shaft speed vary independently); window time spans differ 5.3x. The wave-5 time-domain baseline for this direction is carried in extra.wave5_time_domain_baseline; the result is reported as measured, whether or not it improves.",
+  "extra": {
+    "wave5_time_domain_baseline": {
+      "accuracy": 0.2530810738791553,
+      "f1_macro": 0.20477562327107987,
+      "normal_precision": 0.0,
+      "normal_recall": 0.0,
+      "normal_f1": 0.0,
+      "record": "cwru_to_paderborn__taskA__transfer_rf__s42"
+    },
+    "delta_vs_wave5_time_domain": {
+      "accuracy_delta": -0.04290187196056225,
+      "f1_macro_delta": -0.03406612678288176,
+      "normal_f1_delta": 0.19472740452481782
+    },
+    "reference_target_in_domain": {
+      "accuracy": 0.9499001331557922,
+      "f1_macro": 0.9519874629693527,
+      "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 no measurement file contributes windows to both sides. NOTE: there is only ONE physical bearing per class",
+      "source": "platform record paderborn__taskA__random_forest__s42 (time-domain features)"
+    },
+    "reference_source_in_domain": {
+      "accuracy": 0.6648841354723708,
+      "f1_macro": 0.4214028868431701,
+      "source": "platform record cwru__taskA__random_forest_recordingwise__s42 (time-domain features)"
+    },
+    "accuracy_delta_vs_target_in_domain": -0.7397209312371992
+  }
+}

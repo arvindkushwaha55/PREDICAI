@@ -471,6 +471,69 @@
         "bearing3_first_sustained_alarm": 1819,
         "bearing4_first_sustained_alarm": 1433
       }
+    },
+    {
+      "experiment_id": "cwru__taskA__random_forest_spectral_recordingwise__s42",
+      "dataset": "cwru",
+      "task": "A",
+      "model": "random_forest_spectral_recordingwise",
+      "file": "cwru__taskA__random_forest_spectral_recordingwise__s42.json",
+      "timestamp_utc": "2026-11-15T11:56:53+00:00",
+      "headline": {
+        "accuracy": 0.6791,
+        "f1_macro": 0.4174,
+        "innerrace_correct": 15
+      }
+    },
+    {
+      "experiment_id": "cwru_to_paderborn__taskA__transfer_rf_spectral__s42",
+      "dataset": "cwru_to_paderborn",
+      "task": "A",
+      "model": "transfer_rf_spectral",
+      "file": "cwru_to_paderborn__taskA__transfer_rf_spectral__s42.json",
+      "timestamp_utc": "2026-11-15T11:58:03+00:00",
+      "headline": {
+        "accuracy": 0.2102,
+        "f1_macro": 0.1707,
+        "normal_f1": 0.1947
+      }
+    },
+    {
+      "experiment_id": "paderborn_to_cwru__taskA__transfer_rf_spectral__s42",
+      "dataset": "paderborn_to_cwru",
+      "task": "A",
+      "model": "transfer_rf_spectral",
+      "file": "paderborn_to_cwru__taskA__transfer_rf_spectral__s42.json",
+      "timestamp_utc": "2026-11-15T11:59:27+00:00",
+      "headline": {
+        "accuracy": 0.1873,
+        "f1_macro": 0.2857,
+        "normal_f1": 0.0
+      }
+    },
+    {
+      "experiment_id": "ims_test2__taskC__isolation_forest__s42",
+      "dataset": "ims_test2",
+      "task": "C",
+      "model": "isolation_forest",
+      "file": "ims_test2__taskC__isolation_forest__s42.json",
+      "timestamp_utc": "2026-11-15T12:00:16+00:00",
+      "headline": {
+        "n_snapshots": 984,
+        "bearing1_first_sustained_alarm": 532
+      }
+    },
+    {
+      "experiment_id": "ims_test3__taskC__isolation_forest__s42",
+      "dataset": "ims_test3",
+      "task": "C",
+      "model": "isolation_forest",
+      "file": "ims_test3__taskC__isolation_forest__s42.json",
+      "timestamp_utc": "2026-11-15T12:03:01+00:00",
+      "headline": {
+        "n_snapshots": 4448,
+        "bearing3_first_sustained_alarm": null
+      }
     }
   ]
 }
