@@ -731,3 +731,33 @@ attempt; Paderborn's real-damage bearings (artificial → real shift,
 not yet downloaded); a controlled LSTM↔CNN-LSTM transfer pair to
 remove §23's architecture confound; dashboard integration of the
 platform results.
+
+---
+
+# Advanced expansion — Waves 1–8, closing note (2026-11-15)
+
+The advanced expansion brief (Waves 1–8) is complete. Waves 1–3 built
+the dataset registry and integrated NASA Battery + Paderborn (IMS and
+MFPT blocked, for the reasons recorded in the registry); Wave 4
+(§§13–21) expanded the model set and replaced CWRU's leaky headline
+with the recording-wise evaluation; Waves 5–6 (§§22–28) ran the
+cross-dataset transfer matrix, integrated IMS Test 1, and added the
+Wave-6 XAI records plus `FAULT_DIAGNOSIS.md`; Wave 7 fed these records
+into four new dashboard views (Platform, Datasets, Experiments,
+Research) alongside the original FD001 views; Wave 8 re-verified
+everything and completed the documentation.
+
+Wave-8 verification (all run locally, 2026-11-15): platform suite
+**96/96 passed**; original Python suite (the CI command over
+`ml/tests`, `maintenance`, `simulator`) **23/23 passed**; Rust edge
+suite **15/15 passed**, including the Rust↔Python ONNX parity test;
+dashboard production build green. `DATASET_RESEARCH.md` — found
+truncated in Wave 3 — has been fully rewritten from the registry, and
+the root README gained a platform section.
+
+Still open (unchanged from §28, restated so nothing is silently
+dropped): IMS Tests 2–3 (in the local archive, unextracted);
+per-regime normalisation for FD002/FD004; frequency-domain bearing
+features for a second CWRU↔Paderborn transfer attempt; Paderborn's
+real-damage bearings; a controlled LSTM↔CNN-LSTM transfer pair to
+remove §23's architecture confound.
