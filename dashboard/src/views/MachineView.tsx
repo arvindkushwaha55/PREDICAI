@@ -98,7 +98,10 @@ export function MachineView({
                   value: "Inspection ≤ 50",
                   fontSize: 11,
                   fill: "#b45309",
-                  position: "insideTopRight",
+                  // Was "insideTopRight": the label ran past the chart's
+                  // right edge and rendered clipped. Anchoring it inside
+                  // the top-left keeps the full text within the plot area.
+                  position: "insideTopLeft",
                 }}
               />
               <ReferenceLine
