@@ -134,8 +134,8 @@ regression, **C** anomaly detection. A central registry tracks 20 dataset
 entries; **10 are integrated** (adapters + local data + experiment
 records): C-MAPSS FD001–FD004, AI4I 2020, SECOM, CWRU, Paderborn
 (artificial EDM + real fatigue-damage bearings), IMS (Tests 1–3) and
-the NASA Li-ion Battery set. **46
-experiment records** (Task A 20 · B 20 · C 6, all seed 42) live in
+the NASA Li-ion Battery set. **50
+experiment records** (Task A 23 · B 21 · C 6, all seed 42) live in
 `platform/experiments/`, each with its split protocol stated — splits are
 asset/recording-wise wherever windows from one machine could otherwise
 leak across train/test.
@@ -149,8 +149,9 @@ Headline results, stated as measured (full detail in
 - FD003 CNN-LSTM: RMSE **13.17**, ahead of the FD003 LSTM (15.04).
 - CWRU bearing diagnosis: the window-split Random Forest scores 1.000 —
   but that measures *within-recording* separability. The honest
-  recording-wise re-evaluation scores **0.665**; both numbers are kept,
-  the caveat travels with them.
+  recording-wise re-evaluation scores **0.665** on time-domain
+  features — and **0.802** with Wave 12's order-domain features (see
+  below); both numbers are kept, the caveat travels with them.
 - Cross-dataset transfer mostly fails, and is documented failing:
   FD001→FD003 RMSE 48.80 (unseen fault mode) vs FD003→FD001 15.82;
   FD002→FD004 51.38 vs FD004→FD002 18.07; CWRU↔Paderborn accuracy
@@ -172,6 +173,18 @@ Headline results, stated as measured (full detail in
   accuracy under the identical grouped protocol — within-bearing
   separability with one physical bearing per class, not
   unseen-bearing generalisation.
+- Wave 12, reported as measured: the FD004 per-regime LSTM scores
+  RMSE **15.37** — FD004's new best, and it retakes the NASA-score
+  lead from Ridge (1457 vs 1766) that the global-normalisation LSTM
+  had lost; the per-regime gain is now confirmed on both 6-condition
+  subsets. Order-domain features (characteristic defect frequencies
+  in shaft-speed-relative units) lift CWRU recording-wise diagnosis
+  to accuracy **0.802** / F1-macro 0.689 — the best honest CWRU
+  result, with InnerRace finally partially readable in-domain
+  (109/177). But the CWRU↔Paderborn transfers fail for the *third*
+  feature family in a row (Normal F1 0.000 in both directions):
+  with hand-crafted features, the cross-rig question is closed
+  negatively.
 
 Platform documents:
 [`platform/DATASET_REGISTRY.md`](platform/DATASET_REGISTRY.md) ·
