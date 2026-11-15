@@ -1,17 +1,17 @@
 {
- "generated_at": "2026-11-15T09:33:15+00:00",
+ "generated_at": "2026-11-15T12:24:09+00:00",
  "source": "platform/experiments/INDEX.json + the record JSONs it lists (read at export time) and platform/DATASET_REGISTRY.md (dataset facts transcribed in platform_export.py). No placeholder numbers.",
  "counts": {
-  "records": 37,
-  "transfers": 6,
+  "records": 46,
+  "transfers": 8,
   "explainability": 3,
-  "trained_model_records": 28,
+  "trained_model_records": 35,
   "datasets_integrated": 10,
   "datasets_registry_entries": 20,
   "tasks": {
-   "A": 16,
-   "C": 4,
-   "B": 17
+   "A": 20,
+   "C": 6,
+   "B": 20
   }
  },
  "datasets": [
@@ -39,7 +39,7 @@
    "status": "integrated",
    "adapter": "CMapssAdapter",
    "note": "6 operating conditions, 1 fault mode. Train 53,759 rows / 260 engines; 23 features after derivation.",
-   "records": 4
+   "records": 6
   },
   {
    "id": "cmapss_fd003",
@@ -65,7 +65,7 @@
    "status": "integrated",
    "adapter": "CMapssAdapter",
    "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. On FD004 the LSTM wins RMSE/MAE but loses the NASA score to Ridge \u2014 recorded as measured.",
-   "records": 2
+   "records": 3
   },
   {
    "id": "ai4i2020",
@@ -106,7 +106,7 @@
    "status": "integrated",
    "adapter": "CWRUAdapter",
    "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation (accuracy 0.665) \u2014 see Research view.",
-   "records": 2
+   "records": 3
   },
   {
    "id": "paderborn",
@@ -119,7 +119,7 @@
    "status": "integrated",
    "adapter": "PaderbornAdapter",
    "note": "Integrated scope: 3 of 32 bearings (K001 healthy, KA01 outer-race, KI01 inner-race) \u2192 30,022 windows. Non-commercial licence. One physical bearing per class \u2014 no unseen-bearing generalisation claim.",
-   "records": 2
+   "records": 3
   },
   {
    "id": "ims",
@@ -133,7 +133,7 @@
    "status": "integrated",
    "adapter": "IMSAdapter",
    "note": "Test 1 integrated (wave 5, after the user approved the 1.08 GB download): 2,156 snapshots \u00d7 8 channels at 20 kHz. Teardown ground truth: bearing 3 inner-race + bearing 4 roller defects. No per-snapshot labels \u2014 evaluation is alarm timing only.",
-   "records": 1
+   "records": 3
   },
   {
    "id": "nasa_battery",
@@ -935,6 +935,165 @@
    "infer_ms_per_row": 0.01147,
    "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology.",
    "notes": "IMS Test 1 integrated in wave 5 after the user approved the 1.08 GB official download that wave 3's size gate had blocked. Detectors see only their own bearing's channels. A sustained alarm on bearings 3/4 late in the run, with bearings 1/2 quiet or much later, is the success pattern this design can honestly show; whatever the measured pattern is, it is reported as measured in EXPERIMENTS_REPORT.md. Data is real run-to-failure rig data (not field data); licence not stated on the PCoE page."
+  },
+  {
+   "id": "cwru__taskA__random_forest_spectral_recordingwise__s42",
+   "dataset": "cwru",
+   "task": "A",
+   "model": "random_forest_spectral_recordingwise",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T11:56:53+00:00",
+   "headline": {
+    "accuracy": 0.6791,
+    "f1_macro": 0.4174,
+    "innerrace_correct": 15
+   },
+   "train_s": 13.6652,
+   "infer_ms_per_row": 0.59319,
+   "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over the SAME 12 recordings as wave 4; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions. Protocol, recordings, model config and seed are identical to wave 4 \u2014 the ONLY change is the feature set.",
+   "notes": "Wave-9 counterpart of the wave-4 recording-wise record: identical protocol, recordings, model and seed; the only change is the feature set (10 time-domain -> 24 combined time + spectral/envelope). The direct comparison against wave 4 lives in extra.comparison_wave4_time_domain. Recording-wise evaluation still does NOT cover unseen fault diameters combined with unseen loads jointly, nor different machines. Data note (as wave 4): 99.mat as served bundles X098 alongside X099; the self-identified X099_DE_time series (2 hp normal) is the one used."
+  },
+  {
+   "id": "cwru_to_paderborn__taskA__transfer_rf_spectral__s42",
+   "dataset": "cwru_to_paderborn",
+   "task": "A",
+   "model": "transfer_rf_spectral",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T11:58:03+00:00",
+   "headline": {
+    "accuracy": 0.2102,
+    "f1_macro": 0.1707,
+    "normal_f1": 0.1947
+   },
+   "train_s": 0.5839,
+   "infer_ms_per_row": 0.00504,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5 transfer protocol \u2014 the ONLY change is the feature set (10 time-domain -> 24 combined).",
+   "notes": "Zero-shot cwru -> paderborn bearing-fault transfer with the wave-9 combined spectral feature set \u2014 the wave-5 transfer re-run with the feature set as the only changed variable. Shift factors that remain, documented rather than corrected: different test rigs, bearing geometries, sensor mounting and load/speed regimes; shaft-speed-relative defect frequencies are NOT aligned by the rate-free features (sampling rate and shaft speed vary independently); window time spans differ 5.3x. The wave-5 time-domain baseline for this direction is carried in extra.wave5_time_domain_baseline; the result is reported as measured, whether or not it improves."
+  },
+  {
+   "id": "paderborn_to_cwru__taskA__transfer_rf_spectral__s42",
+   "dataset": "paderborn_to_cwru",
+   "task": "A",
+   "model": "transfer_rf_spectral",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T11:59:27+00:00",
+   "headline": {
+    "accuracy": 0.1873,
+    "f1_macro": 0.2857,
+    "normal_f1": 0.0
+   },
+   "train_s": 33.4142,
+   "infer_ms_per_row": 0.05043,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5 transfer protocol \u2014 the ONLY change is the feature set (10 time-domain -> 24 combined).",
+   "notes": "Zero-shot paderborn -> cwru bearing-fault transfer with the wave-9 combined spectral feature set \u2014 the wave-5 transfer re-run with the feature set as the only changed variable. Shift factors that remain, documented rather than corrected: different test rigs, bearing geometries, sensor mounting and load/speed regimes; shaft-speed-relative defect frequencies are NOT aligned by the rate-free features (sampling rate and shaft speed vary independently); window time spans differ 5.3x. The wave-5 time-domain baseline for this direction is carried in extra.wave5_time_domain_baseline; the result is reported as measured, whether or not it improves."
+  },
+  {
+   "id": "ims_test2__taskC__isolation_forest__s42",
+   "dataset": "ims_test2",
+   "task": "C",
+   "model": "isolation_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T12:00:16+00:00",
+   "headline": {
+    "n_snapshots": 984,
+    "bearing1_first_sustained_alarm": 532
+   },
+   "train_s": 1.2748,
+   "infer_ms_per_row": 0.01528,
+   "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology. Identical to the wave-5 Test 1 protocol.",
+   "notes": "IMS 2nd_test integrated in wave 9, completing the IMS dataset (Tests 1-3) under the identical wave-5 protocol. Detectors see only their own bearing's channels. A sustained alarm on bearing 1 (the documented failure) late in the run, with the other bearings quiet or much later, is the success pattern this design can honestly show; whatever the measured pattern is, it is reported as measured in EXPERIMENTS_REPORT.md. Data is real run-to-failure rig data (not field data); licence not stated on the PCoE page."
+  },
+  {
+   "id": "ims_test3__taskC__isolation_forest__s42",
+   "dataset": "ims_test3",
+   "task": "C",
+   "model": "isolation_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T12:03:01+00:00",
+   "headline": {
+    "n_snapshots": 4448,
+    "bearing3_first_sustained_alarm": null
+   },
+   "train_s": 1.3387,
+   "infer_ms_per_row": 0.01111,
+   "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology. Identical to the wave-5 Test 1 protocol.",
+   "notes": "IMS 3rd_test integrated in wave 9, completing the IMS dataset (Tests 1-3) under the identical wave-5 protocol. Detectors see only their own bearing's channels. A sustained alarm on bearing 3 (the documented failure) late in the run, with the other bearings quiet or much later, is the success pattern this design can honestly show; whatever the measured pattern is, it is reported as measured in EXPERIMENTS_REPORT.md. Data is real run-to-failure rig data (not field data); licence not stated on the PCoE page."
+  },
+  {
+   "id": "cmapss_fd002__taskB__ridge_perregime__s42",
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "model": "ridge_perregime",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T12:11:28+00:00",
+   "headline": {
+    "test_rmse": 16.518,
+    "test_mae": 13.229,
+    "test_nasa": 1378.7
+   },
+   "train_s": 1.1354,
+   "infer_ms_per_row": 0.00053,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)",
+   "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Wave-10 per-regime normalisation re-run of the wave-2 ridge_flat experiment; split, features, cap, windowing and model are unchanged \u2014 only the scaling differs, so the delta vs the comparison block is the normalisation effect as measured. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "cmapss_fd004__taskB__ridge_perregime__s42",
+   "dataset": "cmapss_fd004",
+   "task": "B",
+   "model": "ridge_perregime",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T12:11:38+00:00",
+   "headline": {
+    "test_rmse": 19.115,
+    "test_mae": 15.223,
+    "test_nasa": 1766.0
+   },
+   "train_s": 0.8774,
+   "infer_ms_per_row": 0.00083,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)",
+   "notes": "FD004 = 6 operating conditions, 2 fault mode(s). Wave-10 per-regime normalisation re-run of the wave-2 ridge_flat experiment; split, features, cap, windowing and model are unchanged \u2014 only the scaling differs, so the delta vs the comparison block is the normalisation effect as measured. simulated (C-MAPSS tool), not real engines"
+  },
+  {
+   "id": "paderborn_real__taskA__random_forest__s42",
+   "dataset": "paderborn_real",
+   "task": "A",
+   "model": "random_forest",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T12:12:19+00:00",
+   "headline": {
+    "accuracy": 0.9977,
+    "f1_macro": 0.9978
+   },
+   "train_s": 14.8414,
+   "infer_ms_per_row": 0.01666,
+   "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 identical protocol to wave 4; the ONLY change vs wave 4 is the bearing set (real fatigue damage instead of artificial EDM damage). NOTE: one physical bearing per class, so train and test share bearings (different measurements of them).",
+   "notes": "Caveat (binding): one physical bearing per class (K001 healthy, KA04 outer-race REAL fatigue pitting, KI04 inner-race REAL fatigue pitting as its primary damage). The measurement-grouped split removes window-level leakage, but the score measures within-bearing separability across measurements and operating conditions \u2014 NOT generalisation to unseen bearings, and NOT an artificial-vs-real damage comparison (different bearings, not the same bearing before/after). KI04's official profile documents a SECONDARY outer-race damage (particle-caused indentations) alongside its primary inner-race pitting; it is recorded in extra.bearing_documentation, not hidden. CC BY-NC 4.0 data: non-commercial use only. real test-rig recordings; damage origin per bearing as listed in `bearings` (artificial EDM-seeded for KA01/KI01; real fatigue pitting from lifetime tests for KA04/KI04, per the official damage-profile PDFs shipped in each archive)"
+  },
+  {
+   "id": "cmapss_fd002__taskB__lstm_perregime__s42",
+   "dataset": "cmapss_fd002",
+   "task": "B",
+   "model": "lstm_perregime",
+   "kind": "experiment",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T12:12:49+00:00",
+   "headline": {
+    "test_rmse": 14.046,
+    "test_mae": 10.087,
+    "test_nasa": 1039.9
+   },
+   "train_s": 464.4,
+   "infer_ms_per_row": 0.14556,
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)",
+   "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Wave-10 per-regime normalisation re-run of the wave-2 lstm experiment; split, features, cap, windowing and model are unchanged \u2014 only the scaling differs, so the delta vs the comparison block is the normalisation effect as measured. simulated (C-MAPSS tool), not real engines"
   }
  ],
  "transfers": [
@@ -1203,6 +1362,86 @@
     "accuracy_delta_vs_target_in_domain": -0.5400164106046459
    },
    "verdict": "Fails \u2014 accuracy 0.125 vs 0.665 recording-wise in-domain. Normal recall 0.0 again; 12 kHz vs 64 kHz sampling also makes the same 2048-sample window cover 170.7 ms vs 32.0 ms."
+  },
+  {
+   "id": "cwru_to_paderborn__taskA__transfer_rf_spectral__s42",
+   "dataset": "cwru_to_paderborn",
+   "task": "A",
+   "model": "transfer_rf_spectral",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T11:58:03+00:00",
+   "headline": {
+    "accuracy": 0.2102,
+    "f1_macro": 0.1707,
+    "normal_f1": 0.1947
+   },
+   "train_s": 0.5839,
+   "infer_ms_per_row": 0.00504,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all cwru windows, tested on all paderborn windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5 transfer protocol \u2014 the ONLY change is the feature set (10 time-domain -> 24 combined).",
+   "notes": "Zero-shot cwru -> paderborn bearing-fault transfer with the wave-9 combined spectral feature set \u2014 the wave-5 transfer re-run with the feature set as the only changed variable. Shift factors that remain, documented rather than corrected: different test rigs, bearing geometries, sensor mounting and load/speed regimes; shaft-speed-relative defect frequencies are NOT aligned by the rate-free features (sampling rate and shaft speed vary independently); window time spans differ 5.3x. The wave-5 time-domain baseline for this direction is carried in extra.wave5_time_domain_baseline; the result is reported as measured, whether or not it improves.",
+   "source_dataset": "cwru",
+   "target_dataset": "paderborn",
+   "cross_metrics": {
+    "accuracy": 0.21017920191859304,
+    "f1_macro": 0.1707094964881981
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain",
+     "accuracy": 0.9499001331557922,
+     "f1_macro": 0.9519874629693527
+    },
+    {
+     "label": "source in domain",
+     "accuracy": 0.6648841354723708,
+     "f1_macro": 0.4214028868431701
+    }
+   ],
+   "degradation": {
+    "accuracy_delta_vs_target_in_domain": -0.7397209312371992
+   },
+   "verdict": "Still fails \u2014 accuracy 0.210 vs 0.950 in-domain, slightly WORSE than the time-domain run (0.253). One genuine change: the Normal class is recognised at all now (F1 0.195 vs 0.000). Spectral features did not fix cross-rig transfer."
+  },
+  {
+   "id": "paderborn_to_cwru__taskA__transfer_rf_spectral__s42",
+   "dataset": "paderborn_to_cwru",
+   "task": "A",
+   "model": "transfer_rf_spectral",
+   "kind": "transfer",
+   "seed": 42,
+   "timestamp_utc": "2026-11-15T11:59:27+00:00",
+   "headline": {
+    "accuracy": 0.1873,
+    "f1_macro": 0.2857,
+    "normal_f1": 0.0
+   },
+   "train_s": 33.4142,
+   "infer_ms_per_row": 0.05043,
+   "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5 transfer protocol \u2014 the ONLY change is the feature set (10 time-domain -> 24 combined).",
+   "notes": "Zero-shot paderborn -> cwru bearing-fault transfer with the wave-9 combined spectral feature set \u2014 the wave-5 transfer re-run with the feature set as the only changed variable. Shift factors that remain, documented rather than corrected: different test rigs, bearing geometries, sensor mounting and load/speed regimes; shaft-speed-relative defect frequencies are NOT aligned by the rate-free features (sampling rate and shaft speed vary independently); window time spans differ 5.3x. The wave-5 time-domain baseline for this direction is carried in extra.wave5_time_domain_baseline; the result is reported as measured, whether or not it improves.",
+   "source_dataset": "paderborn",
+   "target_dataset": "cwru",
+   "cross_metrics": {
+    "accuracy": 0.1873015873015873,
+    "f1_macro": 0.2857142857142857
+   },
+   "in_domain_references": [
+    {
+     "label": "target in domain",
+     "accuracy": 0.6648841354723708,
+     "f1_macro": 0.4214028868431701
+    },
+    {
+     "label": "source in domain",
+     "accuracy": 0.9499001331557922,
+     "f1_macro": 0.9519874629693527
+    }
+   ],
+   "degradation": {
+    "accuracy_delta_vs_target_in_domain": -0.4775825481707835
+   },
+   "verdict": "Still fails \u2014 accuracy 0.187 vs 0.665 recording-wise in-domain, though better than the time-domain run (0.125; F1-macro 0.286 vs 0.156). Normal F1 remains 0.000. Spectral features did not fix cross-rig transfer."
   }
  ],
  "xai": [
@@ -1458,6 +1697,16 @@
    "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 no measurement file contributes windows to both sides. NOTE: there is only ONE physical bearing per class in this scope, so train and test still share bearings (different measurements of them)."
   },
   {
+   "dataset": "paderborn_real",
+   "task": "A",
+   "experiment_id": "paderborn_real__taskA__random_forest__s42",
+   "model": "random_forest",
+   "metric_label": "F1-macro",
+   "metric_value": 0.9978,
+   "metric_display": null,
+   "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 identical protocol to wave 4; the ONLY change vs wave 4 is the bearing set (real fatigue damage instead of artificial EDM damage). NOTE: one physical bearing per class, so train and test share bearings (different measurements of them)."
+  },
+  {
    "dataset": "cmapss_fd001",
    "task": "B",
    "experiment_id": "cmapss_fd001__taskB__gru__s42",
@@ -1470,12 +1719,12 @@
   {
    "dataset": "cmapss_fd002",
    "task": "B",
-   "experiment_id": "cmapss_fd002__taskB__lstm__s42",
-   "model": "lstm",
+   "experiment_id": "cmapss_fd002__taskB__lstm_perregime__s42",
+   "model": "lstm_perregime",
    "metric_label": "Test RMSE (cycles)",
-   "metric_value": 16.236,
+   "metric_value": 14.046,
    "metric_display": null,
-   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine"
+   "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)"
   },
   {
    "dataset": "cmapss_fd003",
@@ -1526,6 +1775,26 @@
    "metric_value": null,
    "metric_display": "Bearing 3 (inner-race defect): first sustained alarm 337 snapshots before run end \u00b7 Bearing 4 (roller defect): 723 snapshots before end \u00b7 Bearings 1\u20132 (no defect): no sustained alarm",
    "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology."
+  },
+  {
+   "dataset": "ims_test2",
+   "task": "C",
+   "experiment_id": "ims_test2__taskC__isolation_forest__s42",
+   "model": "isolation_forest",
+   "metric_label": "Alarm timing (no per-snapshot labels exist)",
+   "metric_value": null,
+   "metric_display": "Bearing 1 (outer-race failure): first sustained alarm 452 snapshots before run end \u00b7 bearings 2, 3, 4 (no defect reported) also sustained alarms",
+   "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology. Identical to the wave-5 Test 1 protocol."
+  },
+  {
+   "dataset": "ims_test3",
+   "task": "C",
+   "experiment_id": "ims_test3__taskC__isolation_forest__s42",
+   "model": "isolation_forest",
+   "metric_label": "Alarm timing (no per-snapshot labels exist)",
+   "metric_value": null,
+   "metric_display": "Bearing 3 (outer-race failure): NO sustained alarm \u2014 the protocol missed the failed bearing \u00b7 bearings 1, 4 (no defect reported) also sustained alarms",
+   "protocol": "TEMPORAL split within one run-to-failure test: each bearing's detector is fitted ONLY on the first 30% of snapshots (early life, nominal by construction) and scored over the full run. No random splitting anywhere \u2014 snapshot order is the run's chronology. Identical to the wave-5 Test 1 protocol."
   }
  ],
  "ims_alarms": {
