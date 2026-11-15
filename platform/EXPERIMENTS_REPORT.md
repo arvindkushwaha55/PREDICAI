@@ -161,3 +161,190 @@ research-use with citation).
 - **Maintenance-history experiment:** still *not run — no suitable data*. None
   of the wave-1 datasets contains real service logs; the channel stays
   structurally absent rather than synthesised (ARCHITECTURE.md §7).
+
+---
+
+# Wave 2 — Phases 4/6/7 continuation (2026-11-15)
+
+**Records:** 7 new (`platform/experiments/`, 17 total + `INDEX.json`) ·
+**Code:** `platform/platform_lib/benchmarking/run_wave2.py`,
+`platform/platform_lib/adapters/cwru.py` · Same rule as wave 1: every
+number below is copied from an experiment record produced by an actual
+run in this session; the existing FD001 system was not modified.
+Environment: same pinned stack as wave 1 (numpy 1.26.4, pandas 2.1.4,
+torch 2.15.0+cpu, scikit-learn 1.5.2, lightgbm 4.7.0) plus shap 0.54.1,
+installed this session. Note: shap 0.54.1 declares `numpy>=2`; the
+platform keeps numpy 1.26.4 for consistency with the shipped system's
+artifacts, and shap's TreeExplainer was smoke-tested and then verified
+in the real run below (its retrained-model metrics reproduce the wave-1
+LightGBM record exactly, and the ranking is physically sensible).
+
+## 6. C-MAPSS FD002 — Task B, RUL regression
+
+Protocol: identical to FD003 wave 1 (engine-wise 80/20, seed 42; official
+test set, last window per engine, **n = 253** for FD002; cap 125,
+window 30, scaler fit on train engines only).
+
+**Feature derivation (FD002's own train split, std < 0.005 dropped):**
+23 features kept — all 3 settings plus 20 sensors. Dropped: sensor_16
+only. This is the six-condition counterpart of the FD003 finding: where
+the operating condition varies, the settings *and* the regime-dependent
+sensors (1, 5, 10, 18, 19 — constant within FD001/FD003's single regime)
+carry real signal and the rule keeps them automatically.
+
+| Model | Test RMSE | Test MAE | Test NASA | Val RMSE (all windows) | Train time |
+|---|---|---|---|---|---|
+| Ridge (flattened 30×23 windows, α = 1.0) | 16.582 | 13.268 | 1267.2 | 17.006 | 0.8 s |
+| **LSTM (shipped recipe, local CPU)** | **16.236** | **11.933** | **1099.8** | 17.042 (best, epoch 10; early stop @ 20) | 931 s |
+
+Honest reading: on FD002 the LSTM's margin over Ridge is the smallest
+seen so far — 2 % on RMSE (though 10 % on MAE and 13 % on NASA). Its
+validation RMSE bottomed at epoch 10 and then *rose* (17.0 → 21.8 by
+epoch 20, where early stopping fired); the saved model is the epoch-10
+state, so the reported test numbers are that state's. FD002's six
+operating regimes make the raw-window problem harder for both models,
+and the shipped recipe — tuned on single-condition FD001 — is not
+regime-aware (no per-regime normalisation; that remains the open design
+question flagged in wave 1).
+
+## 7. C-MAPSS FD004 — Task B, RUL regression
+
+Protocol as FD002 (official test n = 237). Feature derivation produced
+the same 23 features as FD002 (all settings kept; sensor_16 dropped).
+
+| Model | Test RMSE | Test MAE | Test NASA | Val RMSE (all windows) | Train time |
+|---|---|---|---|---|---|
+| Ridge (flattened 30×23 windows, α = 1.0) | 19.425 | 15.708 | 1779.1 | 19.338 | 0.6 s |
+| **LSTM (shipped recipe, local CPU)** | **18.809** | **13.538** | 2141.5 | 18.346 (best, epoch 9; early stop @ 19) | 742.6 s |
+
+FD004 (six conditions × two fault modes) is the hardest subset for the
+linear baseline, as expected. The LSTM wins on RMSE (−3 %) and MAE
+(−14 %) but **loses on the NASA score** (2141.5 vs Ridge's 1779.1):
+NASA's asymmetric penalty punishes the LSTM's occasional large
+over-predictions more than it rewards its better average accuracy —
+the same pattern seen in wave 1 on FD001 (Ridge NASA 407.8 vs shipped
+LSTM 431.3), now amplified on the hardest subset. Reported as measured;
+on a NASA-score criterion the FD004 ranking would flip, and the
+platform's per-(dataset, task) records keep all three metrics precisely
+so that choice stays visible rather than hidden behind one number.
+
+## 12. What wave 2 closes, and what remains
+
+Closed from the wave-1 "remains" list: FD002 + FD004 baselines and
+LSTMs (§6–7), the FD001→FD003 cross-dataset transfer (§8 — run, with a
+negative and therefore informative result), SHAP for AI4I (§9), and the
+CWRU adapter (§10 — integrated, with its evaluation limitation stated).
+Still open, unchanged from wave 1: per-regime normalisation for the
+six-condition subsets (now the clearest modelling gap — both FD002 and
+FD004 LSTMs peaked early and then degraded on validation), a
+recording-wise CWRU evaluation with more recordings per class, SHAP
+for the SECOM models, platform dashboard/API integration (Phase 8),
+and the maintenance-history experiment (still no dataset with real
+service logs — the channel remains absent, not synthesised).
+
+## 8. Phase 6 — Cross-dataset transfer: FD001 → FD003 (zero-shot)
+
+Protocol (spelled out in the record): the **shipped** FD001 LSTM
+(`ml/artifacts/best_model.pt`, owner's Kaggle GPU run) applied unchanged
+to FD003's official test set, last window per engine (n = 100). Inputs
+built with FD001's exact 14-sensor feature set and FD001's scaler
+statistics from `ml/artifacts/preprocessing.json` — no FD003 fitting of
+anything: no fine-tuning, no target-domain scaler, no threshold tuning.
+
+| Model | Test RMSE | Test MAE | Test NASA |
+|---|---|---|---|
+| FD001 LSTM on FD001 (in-domain reference) | 13.729 | 9.886 | 431.3 |
+| FD003 LSTM on FD003 (in-domain reference) | 15.043 | 10.512 | 451.8 |
+| **FD001 LSTM → FD003 (zero-shot transfer)** | **48.800** | **30.673** | **956,059** |
+
+The degradation is severe: RMSE ×3.2 vs the FD003 in-domain model
+(+224 %), and the NASA score — which penalises over-prediction
+exponentially — blows up by three orders of magnitude. The per-engine
+breakdown (in the record) shows *how* it fails, and it is not uniform:
+the median absolute error is 11.5 cycles (half the engines transfer
+acceptably), but 24 of 100 engines are off by more than 50 cycles, and
+the mean prediction (101.4) sits far above the mean truth (73.8) — the
+FD001 model systematically reads many FD003 engines as much healthier
+than they are. That is the dangerous direction for a maintenance
+system, and it is consistent with the known causes: (1) FD003's second
+(fan) fault mode produces degradation signatures FD001 training never
+contains, in sensor channels the FD001 model maps to high RUL; (2)
+plain distribution shift — FD003 sensor marginals differ from FD001's,
+and the source-fitted scaler cannot correct that. Conclusion the
+platform is allowed to draw: **zero-shot transfer FD001 → FD003 is not
+deployable**; a target-domain model (or at minimum target-domain
+adaptation) is required. The reverse direction (FD003 → FD001) was not
+run: the wave-1 FD003 training did not save a checkpoint, and
+retraining solely to enable it was judged out of scope — stated here
+rather than silently omitted.
+
+## 9. Phase 7 — SHAP for AI4I LightGBM
+
+The wave-1 LightGBM (n_estimators 300, class_weight balanced, seed 42,
+identical stratified split) was retrained and explained with
+`shap.TreeExplainer` over all 2,000 test rows. The retrained model's
+metrics reproduce the wave-1 record **exactly** (accuracy 0.9855,
+precision 0.8000, recall 0.7647, F1 0.7820, ROC-AUC 0.9703), so the
+attributions describe the same model the platform already reports.
+
+Mean |SHAP| ranking (failure class, log-odds scale):
+Torque [Nm] **1.362**, Tool wear [min] 1.260, Air temperature [K] 1.144,
+Rotational speed [rpm] 0.943, Process temperature [K] 0.905,
+Type_M 0.220, Type_H 0.218, Type_L 0.099.
+
+**Comparison with wave-1 permutation importance** (Random Forest,
+test-F1): the top-5 *sets are identical* — {Torque, Rotational speed,
+Air temperature, Process temperature, Tool wear} — and both methods put
+Torque first. The order inside the top group differs: SHAP ranks Tool
+wear #2 (permutation: #5) and Rotational speed #4 (permutation: #2).
+Across all 8 features the rankings correlate at Spearman ρ = 0.74
+(p = 0.037). Plain reading: the two methods, on two different models,
+agree on *which* features drive AI4I failure predictions and on the
+single dominant one; they disagree on mid-group ordering, which is
+expected — permutation importance measures F1 lost when a feature is
+destroyed (on the RF), SHAP measures mean attribution magnitude (on
+the LightGBM), and correlated process variables (the two temperatures;
+torque × speed) split credit differently under the two definitions.
+The AI4I synthetic-data caveat from §1 applies unchanged.
+
+## 10. CWRU Bearing — Task A, fault diagnosis (bounded integration)
+
+The official CWRU Bearing Data Center downloads worked. Four 12 kHz
+drive-end recordings were fetched from the official file host
+(engineering.case.edu), one per class, all 0 HP / 0.007″ faults:
+97.mat (Normal, 243,938 samples), 105.mat (IR007_0, 121,265),
+118.mat (B007_0, 122,571), 130.mat (OR007@6_0, 121,991). Each file's
+identity is self-verified by its internal `X<id>_DE_time` variable and
+its size matches the Data Center catalogue. New adapter:
+`platform_lib/adapters/cwru.py` — non-overlapping 2048-sample windows →
+10 time-domain statistics per window → 296 windows (119 Normal,
+59 per fault class). Random Forest (300 trees, balanced), stratified
+80/20 split over windows, seed 42:
+
+| Model | Accuracy | F1 (macro) | Per-class F1 | Confusion |
+|---|---|---|---|---|
+| Random Forest | 1.000 | 1.000 | 1.000 / 1.000 / 1.000 / 1.000 | diagonal (24/12/12/12) |
+
+**This perfect score must be read with its binding limitation:** the
+split is over *windows*, and there is only one recording per class, so
+windows of the same recording sit in both train and test — the score
+shows the four conditions are cleanly separable within these
+recordings (and that the adapter + pipeline work end-to-end on real
+vibration data), **not** that the classifier generalises to unseen
+bearings, loads, or fault sizes. A recording-wise evaluation needs
+more recordings per class (the Data Center publishes 4 loads × several
+fault sizes) and is the honest next step before any CWRU number is
+quoted as diagnosis performance.
+
+## 11. Wave-2 files
+
+```
+platform/platform_lib/benchmarking/run_wave2.py   FD002/FD004, transfer, SHAP, CWRU runners
+platform/platform_lib/adapters/cwru.py            CWRU adapter (official .mat downloads)
+platform/experiments/                             7 new records (17 total) + INDEX.json
+platform/tests/test_wave2.py                      wave-2 tests
+platform/data/raw/cwru/{97,105,118,130}.mat       official CWRU downloads (gitignored with platform/data/)
+```
+
+Run commands (from `platform/`):
+`../.venv/bin/python -m platform_lib.benchmarking.run_wave2 --set fd002|fd004|transfer|shap|cwru`
