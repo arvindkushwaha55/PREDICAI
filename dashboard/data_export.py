@@ -107,9 +107,8 @@ def export_engines(db: sqlite3.Connection) -> list[dict]:
                 "machine_id": mid,
                 "source": (
                     "FD001 REPLAY: predictions logged by the Rust edge API "
-                    "(predictions_log.source = 'RUST EDGE') during the Part 10 "
-                    "simulator replay of NASA C-MAPSS FD001 test engine "
-                    f"{eng}; exported from simulator/demo.db"
+                    "during the simulator replay of NASA C-MAPSS FD001 "
+                    f"test engine {eng}; exported from the replay log"
                 ),
                 "total_recorded_cycles": total,
                 "predictions_logged": len(rows),
@@ -161,9 +160,9 @@ def export_maintenance(final_pred_rul: float) -> dict:
         "machine_id": "ENGINE-001",
         "source": (
             "SYNTHETIC DEMO DATA: FD001 contains no real service records. "
-            "Generated at export time by the Part 8 maintenance module "
+            "Generated at export time by the maintenance module "
             "(seed_synthetic_demo + policy v1.0) on a throwaway database; "
-            "simulator/demo.db itself was not modified."
+            "the replay database itself was not modified."
         ),
         "machine": machine,
         "service_records": records,
@@ -171,7 +170,7 @@ def export_maintenance(final_pred_rul: float) -> dict:
         "recommendation_inputs": {
             "predicted_rul": final_pred_rul,
             "predicted_rul_source": (
-                "ENGINE-001 final prediction logged in simulator/demo.db "
+                "ENGINE-001 final prediction from the replay log "
                 "(real model output)"
             ),
             "current_cycle": 440,
@@ -190,9 +189,9 @@ def export_model() -> dict:
     xai = json.loads((art / "explainability.json").read_text())
     return {
         "source": (
-            "ml/artifacts/model_metadata.json + metrics.json + "
-            "explainability.json: real Kaggle training run (owner, "
-            "13 Nov 2026); no placeholder numbers"
+            "Recorded metadata, metrics and explainability from the "
+            "real Kaggle training run (owner, 13 Nov 2026); no "
+            "placeholder numbers"
         ),
         "architecture": meta["architecture"],
         "model_file": meta["model_file"],
@@ -244,7 +243,7 @@ def export_live_sample() -> dict:
     case = next(c for c in fx["cases"] if c["engine"] == 1)
     return {
         "source": (
-            "edge/tests/fixtures/parity_windows.json (engine 1 case): raw "
+            "The Rust parity test fixture (engine 1 case): raw "
             "30x14 sensor window from real FD001 test data; the same window "
             "the Rust parity test uses"
         ),

@@ -640,10 +640,9 @@ def main() -> None:
         "generated_at": datetime.now(timezone.utc).isoformat(
             timespec="seconds"),
         "source": (
-            "platform/experiments/INDEX.json + the record JSONs it lists "
-            "(read at export time) and platform/DATASET_REGISTRY.md "
-            "(dataset facts transcribed in platform_export.py). No "
-            "placeholder numbers."
+            "The experiment record index and every record it lists "
+            "(read at export time) and the dataset registry (dataset "
+            "facts transcribed at export). No placeholder numbers."
         ),
         "counts": counts,
         "datasets": datasets_out,
