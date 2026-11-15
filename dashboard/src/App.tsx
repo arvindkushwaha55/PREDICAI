@@ -325,9 +325,6 @@ export default function App() {
             {TITLES[view]}
           </h1>
           <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-slate-500 sm:inline dark:text-slate-400">
-              Rust edge API · localhost:18080
-            </span>
             <ApiStatusPill api={api} />
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
