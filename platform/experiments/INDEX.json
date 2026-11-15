@@ -371,6 +371,106 @@
         "accuracy": 0.9499,
         "f1_macro": 0.952
       }
+    },
+    {
+      "experiment_id": "cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42",
+      "dataset": "cmapss_fd003_to_fd001",
+      "task": "B",
+      "model": "transfer_cnn_lstm",
+      "file": "cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42.json",
+      "timestamp_utc": "2026-11-15T09:14:22+00:00",
+      "headline": {
+        "test_rmse": 15.816,
+        "test_mae": 11.42,
+        "test_nasa": 395.0
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd002_to_fd004__taskB__transfer_ridge__s42",
+      "dataset": "cmapss_fd002_to_fd004",
+      "task": "B",
+      "model": "transfer_ridge",
+      "file": "cmapss_fd002_to_fd004__taskB__transfer_ridge__s42.json",
+      "timestamp_utc": "2026-11-15T09:15:03+00:00",
+      "headline": {
+        "test_rmse": 51.38,
+        "test_mae": 36.071,
+        "test_nasa": 7095957.4
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd004_to_fd002__taskB__transfer_ridge__s42",
+      "dataset": "cmapss_fd004_to_fd002",
+      "task": "B",
+      "model": "transfer_ridge",
+      "file": "cmapss_fd004_to_fd002__taskB__transfer_ridge__s42.json",
+      "timestamp_utc": "2026-11-15T09:15:06+00:00",
+      "headline": {
+        "test_rmse": 18.069,
+        "test_mae": 15.182,
+        "test_nasa": 1266.0
+      }
+    },
+    {
+      "experiment_id": "cwru_to_paderborn__taskA__transfer_rf__s42",
+      "dataset": "cwru_to_paderborn",
+      "task": "A",
+      "model": "transfer_rf",
+      "file": "cwru_to_paderborn__taskA__transfer_rf__s42.json",
+      "timestamp_utc": "2026-11-15T09:15:52+00:00",
+      "headline": {
+        "accuracy": 0.2531,
+        "f1_macro": 0.2048
+      }
+    },
+    {
+      "experiment_id": "paderborn_to_cwru__taskA__transfer_rf__s42",
+      "dataset": "paderborn_to_cwru",
+      "task": "A",
+      "model": "transfer_rf",
+      "file": "paderborn_to_cwru__taskA__transfer_rf__s42.json",
+      "timestamp_utc": "2026-11-15T09:17:00+00:00",
+      "headline": {
+        "accuracy": 0.1249,
+        "f1_macro": 0.1558
+      }
+    },
+    {
+      "experiment_id": "battery__taskB__shap_random_forest__s42",
+      "dataset": "nasa_battery",
+      "task": "B",
+      "model": "shap_random_forest",
+      "file": "battery__taskB__shap_random_forest__s42.json",
+      "timestamp_utc": "2026-11-15T09:17:14+00:00",
+      "headline": {
+        "in_sample_rmse": 1.093,
+        "top_feature": "soh"
+      }
+    },
+    {
+      "experiment_id": "paderborn__taskA__permutation_rf__s42",
+      "dataset": "paderborn",
+      "task": "A",
+      "model": "permutation_rf",
+      "file": "paderborn__taskA__permutation_rf__s42.json",
+      "timestamp_utc": "2026-11-15T09:18:36+00:00",
+      "headline": {
+        "accuracy": 0.9499,
+        "top_feature": "kurtosis"
+      }
+    },
+    {
+      "experiment_id": "ims__taskC__isolation_forest__s42",
+      "dataset": "ims",
+      "task": "C",
+      "model": "isolation_forest",
+      "file": "ims__taskC__isolation_forest__s42.json",
+      "timestamp_utc": "2026-11-15T09:26:58+00:00",
+      "headline": {
+        "n_snapshots": 2156,
+        "bearing3_first_sustained_alarm": 1819,
+        "bearing4_first_sustained_alarm": 1433
+      }
     }
   ]
 }

@@ -1,0 +1,1286 @@
+{
+  "experiment_id": "cmapss_fd002_to_fd004__taskB__transfer_ridge__s42",
+  "timestamp_utc": "2026-11-15T09:15:03+00:00",
+  "dataset": "cmapss_fd002_to_fd004",
+  "task": "B",
+  "model": "transfer_ridge",
+  "model_params": {
+    "alpha": 1.0,
+    "input": "flattened (30 x F) windows, predictions clipped at >= 0",
+    "training": "REFIT in this run on the source subset with the identical wave-2 config (Ridge alpha=1.0); Ridge is deterministic, so this refit reproduces the wave-2 in-domain model exactly \u2014 no wave-2 checkpoint existed to load",
+    "transfer": "the refit model + the SOURCE scaler are applied to the target test set unchanged; the target contributes only its test inputs and labels"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "zero-shot cross-subset transfer: FD002 Ridge (refit, identical config) applied to the official FD004 test set, last window per engine; FD004 data used for scoring only",
+    "n_test_engines": 237,
+    "n_train_windows_source": 37051,
+    "source_dataset": "cmapss_fd002",
+    "target_dataset": "cmapss_fd004"
+  },
+  "preprocessing": {
+    "features": [
+      "setting_1",
+      "setting_2",
+      "setting_3",
+      "sensor_1",
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_5",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_10",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_18",
+      "sensor_19",
+      "sensor_20",
+      "sensor_21"
+    ],
+    "n_features": 23,
+    "feature_set": "FD002's derived features; FD004's own derivation produces the IDENTICAL list (verified in this run: True) \u2014 both are the 23 candidates that survive the std<0.005 rule on six-condition subsets (all 3 settings + 20 sensors)",
+    "scaling": "z-score with FD002 train-split statistics (source-fitted; no FD004 statistics used)",
+    "rul_cap": 125,
+    "seq_len": 30
+  },
+  "metrics": {
+    "test_last_window_per_engine": {
+      "rmse": 51.379669189453125,
+      "mae": 36.07050323486328,
+      "nasa_score": 7095957.415125308
+    }
+  },
+  "timing": {
+    "train_s": 0.2722,
+    "infer_ms_per_row": 0.0005
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "9ff7b0ad36f93c272fe258cca23d966980dc2ac6",
+  "notes": "Zero-shot FD002 -> FD004 Ridge transfer. Both subsets have six operating conditions; FD002 has 1 fault mode(s), FD004 has 2. The shared 23-feature space makes this the cleanest C-MAPSS transfer pair in the platform; any degradation is therefore attributable to distribution / fault-mode shift, not to feature misalignment. train_s is the deterministic refit time on the source subset.",
+  "extra": {
+    "reference_target_in_domain_ridge": {
+      "rmse": 19.425004959106445,
+      "mae": 15.708367347717285,
+      "nasa_score": 1779.1453175774552,
+      "source": "platform record cmapss_fd004__taskB__ridge_flat__s42 (wave 2)"
+    },
+    "reference_source_in_domain_ridge": {
+      "rmse": 16.581666946411133,
+      "mae": 13.268168449401855,
+      "nasa_score": 1267.1963340696525,
+      "source": "platform record cmapss_fd002__taskB__ridge_flat__s42 (wave 2)"
+    },
+    "degradation_vs_target_in_domain": {
+      "rmse_delta": 31.95466423034668,
+      "rmse_pct_increase": 164.50273396386615,
+      "mae_delta": 20.362135887145996,
+      "nasa_delta": 7094178.26980773
+    },
+    "per_engine": [
+      {
+        "engine": 1,
+        "y_true": 22.0,
+        "y_pred": 137.05496215820312
+      },
+      {
+        "engine": 2,
+        "y_true": 39.0,
+        "y_pred": 65.57981872558594
+      },
+      {
+        "engine": 3,
+        "y_true": 107.0,
+        "y_pred": 133.823974609375
+      },
+      {
+        "engine": 4,
+        "y_true": 75.0,
+        "y_pred": 135.05224609375
+      },
+      {
+        "engine": 5,
+        "y_true": 125.0,
+        "y_pred": 80.62946319580078
+      },
+      {
+        "engine": 6,
+        "y_true": 78.0,
+        "y_pred": 140.03619384765625
+      },
+      {
+        "engine": 7,
+        "y_true": 94.0,
+        "y_pred": 83.20801544189453
+      },
+      {
+        "engine": 8,
+        "y_true": 14.0,
+        "y_pred": 23.8896484375
+      },
+      {
+        "engine": 9,
+        "y_true": 99.0,
+        "y_pred": 162.4627685546875
+      },
+      {
+        "engine": 11,
+        "y_true": 125.0,
+        "y_pred": 153.75665283203125
+      },
+      {
+        "engine": 12,
+        "y_true": 7.0,
+        "y_pred": 118.65364074707031
+      },
+      {
+        "engine": 13,
+        "y_true": 71.0,
+        "y_pred": 143.48196411132812
+      },
+      {
+        "engine": 14,
+        "y_true": 105.0,
+        "y_pred": 101.92281341552734
+      },
+      {
+        "engine": 15,
+        "y_true": 12.0,
+        "y_pred": 141.8551483154297
+      },
+      {
+        "engine": 16,
+        "y_true": 125.0,
+        "y_pred": 137.70773315429688
+      },
+      {
+        "engine": 17,
+        "y_true": 125.0,
+        "y_pred": 124.00210571289062
+      },
+      {
+        "engine": 18,
+        "y_true": 104.0,
+        "y_pred": 143.11611938476562
+      },
+      {
+        "engine": 20,
+        "y_true": 82.0,
+        "y_pred": 90.34231567382812
+      },
+      {
+        "engine": 21,
+        "y_true": 91.0,
+        "y_pred": 148.4892578125
+      },
+      {
+        "engine": 22,
+        "y_true": 11.0,
+        "y_pred": 14.354995727539062
+      },
+      {
+        "engine": 23,
+        "y_true": 26.0,
+        "y_pred": 35.83776092529297
+      },
+      {
+        "engine": 24,
+        "y_true": 125.0,
+        "y_pred": 150.0651397705078
+      },
+      {
+        "engine": 25,
+        "y_true": 39.0,
+        "y_pred": 157.66757202148438
+      },
+      {
+        "engine": 26,
+        "y_true": 92.0,
+        "y_pred": 85.02505493164062
+      },
+      {
+        "engine": 27,
+        "y_true": 76.0,
+        "y_pred": 85.0965347290039
+      },
+      {
+        "engine": 29,
+        "y_true": 64.0,
+        "y_pred": 144.51853942871094
+      },
+      {
+        "engine": 30,
+        "y_true": 118.0,
+        "y_pred": 146.0892791748047
+      },
+      {
+        "engine": 31,
+        "y_true": 6.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 32,
+        "y_true": 22.0,
+        "y_pred": 41.16326904296875
+      },
+      {
+        "engine": 33,
+        "y_true": 125.0,
+        "y_pred": 136.1136474609375
+      },
+      {
+        "engine": 34,
+        "y_true": 125.0,
+        "y_pred": 138.08897399902344
+      },
+      {
+        "engine": 35,
+        "y_true": 36.0,
+        "y_pred": 43.072513580322266
+      },
+      {
+        "engine": 36,
+        "y_true": 73.0,
+        "y_pred": 135.46240234375
+      },
+      {
+        "engine": 37,
+        "y_true": 89.0,
+        "y_pred": 139.5752716064453
+      },
+      {
+        "engine": 38,
+        "y_true": 11.0,
+        "y_pred": 19.444541931152344
+      },
+      {
+        "engine": 39,
+        "y_true": 125.0,
+        "y_pred": 143.79150390625
+      },
+      {
+        "engine": 40,
+        "y_true": 10.0,
+        "y_pred": 135.5440673828125
+      },
+      {
+        "engine": 41,
+        "y_true": 97.0,
+        "y_pred": 126.6038818359375
+      },
+      {
+        "engine": 42,
+        "y_true": 30.0,
+        "y_pred": 35.9617919921875
+      },
+      {
+        "engine": 43,
+        "y_true": 42.0,
+        "y_pred": 87.88455963134766
+      },
+      {
+        "engine": 44,
+        "y_true": 60.0,
+        "y_pred": 137.40328979492188
+      },
+      {
+        "engine": 45,
+        "y_true": 85.0,
+        "y_pred": 103.16270446777344
+      },
+      {
+        "engine": 46,
+        "y_true": 125.0,
+        "y_pred": 100.46990966796875
+      },
+      {
+        "engine": 47,
+        "y_true": 34.0,
+        "y_pred": 31.503448486328125
+      },
+      {
+        "engine": 48,
+        "y_true": 45.0,
+        "y_pred": 132.24652099609375
+      },
+      {
+        "engine": 49,
+        "y_true": 24.0,
+        "y_pred": 147.73638916015625
+      },
+      {
+        "engine": 50,
+        "y_true": 86.0,
+        "y_pred": 115.2147445678711
+      },
+      {
+        "engine": 51,
+        "y_true": 119.0,
+        "y_pred": 129.0214385986328
+      },
+      {
+        "engine": 52,
+        "y_true": 125.0,
+        "y_pred": 128.1187744140625
+      },
+      {
+        "engine": 53,
+        "y_true": 125.0,
+        "y_pred": 122.88182830810547
+      },
+      {
+        "engine": 54,
+        "y_true": 125.0,
+        "y_pred": 86.47531127929688
+      },
+      {
+        "engine": 55,
+        "y_true": 125.0,
+        "y_pred": 154.3656005859375
+      },
+      {
+        "engine": 56,
+        "y_true": 67.0,
+        "y_pred": 123.05062866210938
+      },
+      {
+        "engine": 57,
+        "y_true": 97.0,
+        "y_pred": 143.59860229492188
+      },
+      {
+        "engine": 58,
+        "y_true": 8.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 59,
+        "y_true": 125.0,
+        "y_pred": 127.82976531982422
+      },
+      {
+        "engine": 60,
+        "y_true": 125.0,
+        "y_pred": 139.03533935546875
+      },
+      {
+        "engine": 61,
+        "y_true": 51.0,
+        "y_pred": 151.62481689453125
+      },
+      {
+        "engine": 62,
+        "y_true": 33.0,
+        "y_pred": 134.92298889160156
+      },
+      {
+        "engine": 63,
+        "y_true": 125.0,
+        "y_pred": 128.25482177734375
+      },
+      {
+        "engine": 64,
+        "y_true": 46.0,
+        "y_pred": 145.02792358398438
+      },
+      {
+        "engine": 65,
+        "y_true": 12.0,
+        "y_pred": 108.83393859863281
+      },
+      {
+        "engine": 66,
+        "y_true": 125.0,
+        "y_pred": 99.14009857177734
+      },
+      {
+        "engine": 67,
+        "y_true": 46.0,
+        "y_pred": 73.19646453857422
+      },
+      {
+        "engine": 68,
+        "y_true": 46.0,
+        "y_pred": 58.22364044189453
+      },
+      {
+        "engine": 69,
+        "y_true": 12.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 70,
+        "y_true": 33.0,
+        "y_pred": 152.54006958007812
+      },
+      {
+        "engine": 71,
+        "y_true": 15.0,
+        "y_pred": 149.36273193359375
+      },
+      {
+        "engine": 72,
+        "y_true": 125.0,
+        "y_pred": 142.05894470214844
+      },
+      {
+        "engine": 73,
+        "y_true": 23.0,
+        "y_pred": 59.71992492675781
+      },
+      {
+        "engine": 74,
+        "y_true": 89.0,
+        "y_pred": 150.36688232421875
+      },
+      {
+        "engine": 75,
+        "y_true": 124.0,
+        "y_pred": 147.63006591796875
+      },
+      {
+        "engine": 76,
+        "y_true": 125.0,
+        "y_pred": 130.73779296875
+      },
+      {
+        "engine": 77,
+        "y_true": 25.0,
+        "y_pred": 55.36714553833008
+      },
+      {
+        "engine": 78,
+        "y_true": 74.0,
+        "y_pred": 92.20020294189453
+      },
+      {
+        "engine": 79,
+        "y_true": 78.0,
+        "y_pred": 153.55136108398438
+      },
+      {
+        "engine": 80,
+        "y_true": 114.0,
+        "y_pred": 92.06057739257812
+      },
+      {
+        "engine": 81,
+        "y_true": 96.0,
+        "y_pred": 118.14627075195312
+      },
+      {
+        "engine": 82,
+        "y_true": 10.0,
+        "y_pred": 11.362495422363281
+      },
+      {
+        "engine": 83,
+        "y_true": 125.0,
+        "y_pred": 148.74810791015625
+      },
+      {
+        "engine": 84,
+        "y_true": 125.0,
+        "y_pred": 138.49533081054688
+      },
+      {
+        "engine": 85,
+        "y_true": 115.0,
+        "y_pred": 141.48104858398438
+      },
+      {
+        "engine": 86,
+        "y_true": 70.0,
+        "y_pred": 144.19468688964844
+      },
+      {
+        "engine": 87,
+        "y_true": 94.0,
+        "y_pred": 149.5976104736328
+      },
+      {
+        "engine": 88,
+        "y_true": 56.0,
+        "y_pred": 75.01846313476562
+      },
+      {
+        "engine": 89,
+        "y_true": 86.0,
+        "y_pred": 160.47500610351562
+      },
+      {
+        "engine": 90,
+        "y_true": 96.0,
+        "y_pred": 78.17821502685547
+      },
+      {
+        "engine": 91,
+        "y_true": 50.0,
+        "y_pred": 64.50502014160156
+      },
+      {
+        "engine": 92,
+        "y_true": 73.0,
+        "y_pred": 90.25929260253906
+      },
+      {
+        "engine": 93,
+        "y_true": 125.0,
+        "y_pred": 145.4481964111328
+      },
+      {
+        "engine": 94,
+        "y_true": 125.0,
+        "y_pred": 120.2125473022461
+      },
+      {
+        "engine": 95,
+        "y_true": 125.0,
+        "y_pred": 113.60572814941406
+      },
+      {
+        "engine": 96,
+        "y_true": 71.0,
+        "y_pred": 86.986328125
+      },
+      {
+        "engine": 97,
+        "y_true": 105.0,
+        "y_pred": 101.51141357421875
+      },
+      {
+        "engine": 98,
+        "y_true": 113.0,
+        "y_pred": 118.47589111328125
+      },
+      {
+        "engine": 99,
+        "y_true": 37.0,
+        "y_pred": 131.60806274414062
+      },
+      {
+        "engine": 100,
+        "y_true": 7.0,
+        "y_pred": 116.93592834472656
+      },
+      {
+        "engine": 101,
+        "y_true": 13.0,
+        "y_pred": 10.609382629394531
+      },
+      {
+        "engine": 102,
+        "y_true": 22.0,
+        "y_pred": 144.6793975830078
+      },
+      {
+        "engine": 103,
+        "y_true": 9.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 104,
+        "y_true": 120.0,
+        "y_pred": 133.85882568359375
+      },
+      {
+        "engine": 105,
+        "y_true": 100.0,
+        "y_pred": 156.26223754882812
+      },
+      {
+        "engine": 106,
+        "y_true": 107.0,
+        "y_pred": 85.81724548339844
+      },
+      {
+        "engine": 107,
+        "y_true": 41.0,
+        "y_pred": 73.21739959716797
+      },
+      {
+        "engine": 108,
+        "y_true": 125.0,
+        "y_pred": 135.19509887695312
+      },
+      {
+        "engine": 109,
+        "y_true": 125.0,
+        "y_pred": 153.40280151367188
+      },
+      {
+        "engine": 110,
+        "y_true": 59.0,
+        "y_pred": 144.3074493408203
+      },
+      {
+        "engine": 111,
+        "y_true": 18.0,
+        "y_pred": 146.27410888671875
+      },
+      {
+        "engine": 112,
+        "y_true": 66.0,
+        "y_pred": 89.36000061035156
+      },
+      {
+        "engine": 113,
+        "y_true": 13.0,
+        "y_pred": 12.773979187011719
+      },
+      {
+        "engine": 114,
+        "y_true": 14.0,
+        "y_pred": 139.15695190429688
+      },
+      {
+        "engine": 115,
+        "y_true": 125.0,
+        "y_pred": 102.34526062011719
+      },
+      {
+        "engine": 116,
+        "y_true": 13.0,
+        "y_pred": 23.9249267578125
+      },
+      {
+        "engine": 117,
+        "y_true": 75.0,
+        "y_pred": 100.56452941894531
+      },
+      {
+        "engine": 118,
+        "y_true": 8.0,
+        "y_pred": 135.66775512695312
+      },
+      {
+        "engine": 119,
+        "y_true": 109.0,
+        "y_pred": 138.61659240722656
+      },
+      {
+        "engine": 120,
+        "y_true": 125.0,
+        "y_pred": 86.01043701171875
+      },
+      {
+        "engine": 121,
+        "y_true": 41.0,
+        "y_pred": 39.253318786621094
+      },
+      {
+        "engine": 122,
+        "y_true": 125.0,
+        "y_pred": 138.4380645751953
+      },
+      {
+        "engine": 123,
+        "y_true": 23.0,
+        "y_pred": 128.53909301757812
+      },
+      {
+        "engine": 124,
+        "y_true": 86.0,
+        "y_pred": 64.32527160644531
+      },
+      {
+        "engine": 126,
+        "y_true": 15.0,
+        "y_pred": 29.00140380859375
+      },
+      {
+        "engine": 127,
+        "y_true": 125.0,
+        "y_pred": 131.96231079101562
+      },
+      {
+        "engine": 128,
+        "y_true": 125.0,
+        "y_pred": 154.98406982421875
+      },
+      {
+        "engine": 129,
+        "y_true": 120.0,
+        "y_pred": 148.0771026611328
+      },
+      {
+        "engine": 130,
+        "y_true": 125.0,
+        "y_pred": 100.04194641113281
+      },
+      {
+        "engine": 131,
+        "y_true": 101.0,
+        "y_pred": 91.29344940185547
+      },
+      {
+        "engine": 132,
+        "y_true": 116.0,
+        "y_pred": 102.22056579589844
+      },
+      {
+        "engine": 133,
+        "y_true": 125.0,
+        "y_pred": 137.38780212402344
+      },
+      {
+        "engine": 134,
+        "y_true": 36.0,
+        "y_pred": 141.2506866455078
+      },
+      {
+        "engine": 135,
+        "y_true": 7.0,
+        "y_pred": 150.48455810546875
+      },
+      {
+        "engine": 136,
+        "y_true": 122.0,
+        "y_pred": 106.00027465820312
+      },
+      {
+        "engine": 137,
+        "y_true": 125.0,
+        "y_pred": 127.37521362304688
+      },
+      {
+        "engine": 138,
+        "y_true": 88.0,
+        "y_pred": 145.0543975830078
+      },
+      {
+        "engine": 139,
+        "y_true": 125.0,
+        "y_pred": 162.11434936523438
+      },
+      {
+        "engine": 140,
+        "y_true": 125.0,
+        "y_pred": 98.71798706054688
+      },
+      {
+        "engine": 142,
+        "y_true": 108.0,
+        "y_pred": 126.00762939453125
+      },
+      {
+        "engine": 143,
+        "y_true": 53.0,
+        "y_pred": 139.6710968017578
+      },
+      {
+        "engine": 144,
+        "y_true": 125.0,
+        "y_pred": 106.83857727050781
+      },
+      {
+        "engine": 145,
+        "y_true": 59.0,
+        "y_pred": 70.36837768554688
+      },
+      {
+        "engine": 146,
+        "y_true": 100.0,
+        "y_pred": 143.8103485107422
+      },
+      {
+        "engine": 147,
+        "y_true": 56.0,
+        "y_pred": 105.04767608642578
+      },
+      {
+        "engine": 148,
+        "y_true": 125.0,
+        "y_pred": 106.36966705322266
+      },
+      {
+        "engine": 149,
+        "y_true": 76.0,
+        "y_pred": 133.61158752441406
+      },
+      {
+        "engine": 150,
+        "y_true": 57.0,
+        "y_pred": 60.32688903808594
+      },
+      {
+        "engine": 151,
+        "y_true": 31.0,
+        "y_pred": 137.21255493164062
+      },
+      {
+        "engine": 152,
+        "y_true": 88.0,
+        "y_pred": 153.8139190673828
+      },
+      {
+        "engine": 153,
+        "y_true": 125.0,
+        "y_pred": 99.38867950439453
+      },
+      {
+        "engine": 154,
+        "y_true": 34.0,
+        "y_pred": 48.722373962402344
+      },
+      {
+        "engine": 155,
+        "y_true": 7.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 157,
+        "y_true": 125.0,
+        "y_pred": 131.14112854003906
+      },
+      {
+        "engine": 158,
+        "y_true": 6.0,
+        "y_pred": 11.335037231445312
+      },
+      {
+        "engine": 159,
+        "y_true": 22.0,
+        "y_pred": 36.67386245727539
+      },
+      {
+        "engine": 160,
+        "y_true": 83.0,
+        "y_pred": 136.2994384765625
+      },
+      {
+        "engine": 161,
+        "y_true": 82.0,
+        "y_pred": 134.00537109375
+      },
+      {
+        "engine": 162,
+        "y_true": 84.0,
+        "y_pred": 95.21776580810547
+      },
+      {
+        "engine": 163,
+        "y_true": 95.0,
+        "y_pred": 108.99445343017578
+      },
+      {
+        "engine": 165,
+        "y_true": 111.0,
+        "y_pred": 132.05572509765625
+      },
+      {
+        "engine": 166,
+        "y_true": 72.0,
+        "y_pred": 116.0697021484375
+      },
+      {
+        "engine": 167,
+        "y_true": 109.0,
+        "y_pred": 123.11972045898438
+      },
+      {
+        "engine": 168,
+        "y_true": 87.0,
+        "y_pred": 91.75715637207031
+      },
+      {
+        "engine": 169,
+        "y_true": 125.0,
+        "y_pred": 112.35777282714844
+      },
+      {
+        "engine": 170,
+        "y_true": 125.0,
+        "y_pred": 123.21478271484375
+      },
+      {
+        "engine": 171,
+        "y_true": 125.0,
+        "y_pred": 134.5909423828125
+      },
+      {
+        "engine": 172,
+        "y_true": 12.0,
+        "y_pred": 34.245506286621094
+      },
+      {
+        "engine": 173,
+        "y_true": 8.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 174,
+        "y_true": 10.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 175,
+        "y_true": 123.0,
+        "y_pred": 85.23129272460938
+      },
+      {
+        "engine": 176,
+        "y_true": 103.0,
+        "y_pred": 92.17398071289062
+      },
+      {
+        "engine": 177,
+        "y_true": 12.0,
+        "y_pred": 15.105644226074219
+      },
+      {
+        "engine": 178,
+        "y_true": 106.0,
+        "y_pred": 159.6487274169922
+      },
+      {
+        "engine": 179,
+        "y_true": 12.0,
+        "y_pred": 137.8852081298828
+      },
+      {
+        "engine": 180,
+        "y_true": 32.0,
+        "y_pred": 137.80613708496094
+      },
+      {
+        "engine": 181,
+        "y_true": 37.0,
+        "y_pred": 29.12415313720703
+      },
+      {
+        "engine": 182,
+        "y_true": 116.0,
+        "y_pred": 122.06401062011719
+      },
+      {
+        "engine": 183,
+        "y_true": 15.0,
+        "y_pred": 37.70304489135742
+      },
+      {
+        "engine": 184,
+        "y_true": 10.0,
+        "y_pred": 4.256111145019531
+      },
+      {
+        "engine": 185,
+        "y_true": 46.0,
+        "y_pred": 52.71522903442383
+      },
+      {
+        "engine": 186,
+        "y_true": 125.0,
+        "y_pred": 111.2953872680664
+      },
+      {
+        "engine": 187,
+        "y_true": 24.0,
+        "y_pred": 45.30320358276367
+      },
+      {
+        "engine": 188,
+        "y_true": 125.0,
+        "y_pred": 104.8768081665039
+      },
+      {
+        "engine": 189,
+        "y_true": 56.0,
+        "y_pred": 158.9656982421875
+      },
+      {
+        "engine": 190,
+        "y_true": 43.0,
+        "y_pred": 132.64999389648438
+      },
+      {
+        "engine": 191,
+        "y_true": 125.0,
+        "y_pred": 133.678955078125
+      },
+      {
+        "engine": 192,
+        "y_true": 71.0,
+        "y_pred": 150.0706787109375
+      },
+      {
+        "engine": 193,
+        "y_true": 104.0,
+        "y_pred": 131.91259765625
+      },
+      {
+        "engine": 194,
+        "y_true": 15.0,
+        "y_pred": 129.18113708496094
+      },
+      {
+        "engine": 195,
+        "y_true": 125.0,
+        "y_pred": 135.32623291015625
+      },
+      {
+        "engine": 196,
+        "y_true": 89.0,
+        "y_pred": 109.4243392944336
+      },
+      {
+        "engine": 197,
+        "y_true": 36.0,
+        "y_pred": 50.52741622924805
+      },
+      {
+        "engine": 198,
+        "y_true": 11.0,
+        "y_pred": 0.0
+      },
+      {
+        "engine": 199,
+        "y_true": 92.0,
+        "y_pred": 70.22962951660156
+      },
+      {
+        "engine": 200,
+        "y_true": 96.0,
+        "y_pred": 83.62749481201172
+      },
+      {
+        "engine": 201,
+        "y_true": 59.0,
+        "y_pred": 137.1603546142578
+      },
+      {
+        "engine": 202,
+        "y_true": 13.0,
+        "y_pred": 8.758369445800781
+      },
+      {
+        "engine": 203,
+        "y_true": 125.0,
+        "y_pred": 127.51225280761719
+      },
+      {
+        "engine": 205,
+        "y_true": 125.0,
+        "y_pred": 92.79853820800781
+      },
+      {
+        "engine": 206,
+        "y_true": 109.0,
+        "y_pred": 148.48812866210938
+      },
+      {
+        "engine": 207,
+        "y_true": 116.0,
+        "y_pred": 154.45909118652344
+      },
+      {
+        "engine": 208,
+        "y_true": 91.0,
+        "y_pred": 91.86917877197266
+      },
+      {
+        "engine": 209,
+        "y_true": 11.0,
+        "y_pred": 34.1007080078125
+      },
+      {
+        "engine": 210,
+        "y_true": 88.0,
+        "y_pred": 93.01200103759766
+      },
+      {
+        "engine": 211,
+        "y_true": 108.0,
+        "y_pred": 138.52072143554688
+      },
+      {
+        "engine": 212,
+        "y_true": 76.0,
+        "y_pred": 143.5513458251953
+      },
+      {
+        "engine": 213,
+        "y_true": 14.0,
+        "y_pred": 143.86827087402344
+      },
+      {
+        "engine": 214,
+        "y_true": 89.0,
+        "y_pred": 86.7098159790039
+      },
+      {
+        "engine": 215,
+        "y_true": 125.0,
+        "y_pred": 124.52299499511719
+      },
+      {
+        "engine": 216,
+        "y_true": 17.0,
+        "y_pred": 6.717552185058594
+      },
+      {
+        "engine": 217,
+        "y_true": 66.0,
+        "y_pred": 79.63097381591797
+      },
+      {
+        "engine": 218,
+        "y_true": 125.0,
+        "y_pred": 112.92051696777344
+      },
+      {
+        "engine": 219,
+        "y_true": 41.0,
+        "y_pred": 57.43321990966797
+      },
+      {
+        "engine": 220,
+        "y_true": 125.0,
+        "y_pred": 149.60211181640625
+      },
+      {
+        "engine": 221,
+        "y_true": 73.0,
+        "y_pred": 149.74574279785156
+      },
+      {
+        "engine": 222,
+        "y_true": 39.0,
+        "y_pred": 128.7541046142578
+      },
+      {
+        "engine": 223,
+        "y_true": 58.0,
+        "y_pred": 143.7490997314453
+      },
+      {
+        "engine": 224,
+        "y_true": 14.0,
+        "y_pred": 16.46826934814453
+      },
+      {
+        "engine": 225,
+        "y_true": 125.0,
+        "y_pred": 114.22681427001953
+      },
+      {
+        "engine": 226,
+        "y_true": 88.0,
+        "y_pred": 92.00422668457031
+      },
+      {
+        "engine": 227,
+        "y_true": 125.0,
+        "y_pred": 158.25784301757812
+      },
+      {
+        "engine": 228,
+        "y_true": 125.0,
+        "y_pred": 137.81332397460938
+      },
+      {
+        "engine": 230,
+        "y_true": 98.0,
+        "y_pred": 114.30033111572266
+      },
+      {
+        "engine": 231,
+        "y_true": 33.0,
+        "y_pred": 122.0924072265625
+      },
+      {
+        "engine": 232,
+        "y_true": 125.0,
+        "y_pred": 137.91102600097656
+      },
+      {
+        "engine": 233,
+        "y_true": 110.0,
+        "y_pred": 108.64588928222656
+      },
+      {
+        "engine": 234,
+        "y_true": 68.0,
+        "y_pred": 63.721797943115234
+      },
+      {
+        "engine": 235,
+        "y_true": 24.0,
+        "y_pred": 160.37850952148438
+      },
+      {
+        "engine": 236,
+        "y_true": 75.0,
+        "y_pred": 142.51492309570312
+      },
+      {
+        "engine": 237,
+        "y_true": 18.0,
+        "y_pred": 8.022880554199219
+      },
+      {
+        "engine": 238,
+        "y_true": 16.0,
+        "y_pred": 39.789306640625
+      },
+      {
+        "engine": 240,
+        "y_true": 98.0,
+        "y_pred": 141.22198486328125
+      },
+      {
+        "engine": 241,
+        "y_true": 125.0,
+        "y_pred": 104.37428283691406
+      },
+      {
+        "engine": 242,
+        "y_true": 81.0,
+        "y_pred": 101.72102355957031
+      },
+      {
+        "engine": 243,
+        "y_true": 118.0,
+        "y_pred": 151.52000427246094
+      },
+      {
+        "engine": 244,
+        "y_true": 35.0,
+        "y_pred": 41.57544708251953
+      },
+      {
+        "engine": 245,
+        "y_true": 125.0,
+        "y_pred": 140.0437469482422
+      },
+      {
+        "engine": 247,
+        "y_true": 112.0,
+        "y_pred": 91.49899291992188
+      },
+      {
+        "engine": 248,
+        "y_true": 26.0,
+        "y_pred": 44.77501678466797
+      }
+    ]
+  }
+}

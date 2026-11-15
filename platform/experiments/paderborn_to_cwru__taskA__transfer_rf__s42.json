@@ -1,0 +1,128 @@
+{
+  "experiment_id": "paderborn_to_cwru__taskA__transfer_rf__s42",
+  "timestamp_utc": "2026-11-15T09:17:00+00:00",
+  "dataset": "paderborn_to_cwru",
+  "task": "A",
+  "model": "transfer_rf",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "identical 10 per-window time-domain statistics (adapters share window_features); window = 2048 samples in BOTH datasets",
+    "training": "fit on ALL paderborn windows of the shared label set; no target data in training"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']",
+    "source_dataset": "paderborn",
+    "target_dataset": "cwru",
+    "n_train_windows": 30022,
+    "n_test_windows": 945,
+    "train_class_counts": {
+      "OuterRace": 10015,
+      "Normal": 10006,
+      "InnerRace": 10001
+    },
+    "test_class_counts": {
+      "Normal": 591,
+      "InnerRace": 177,
+      "OuterRace": 177
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak"
+    ],
+    "windowing": "non-overlapping 2048-sample windows in both datasets \u2014 but the window TIME SPAN differs by sampling rate: 2048 samples = 170.7 ms at CWRU's 12 kHz vs 32.0 ms at Paderborn's 64 kHz",
+    "excluded": "CWRU 'Ball' class excluded (Paderborn scope has no ball-fault bearing); CWRU windows of that class are dropped from BOTH training (when CWRU is the source) and scoring",
+    "scaling": "none (tree model on raw time-domain features, as in the in-domain records)"
+  },
+  "metrics": {
+    "accuracy": 0.12486772486772486,
+    "f1_macro": 0.15577010495745386,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        591
+      ],
+      [
+        58,
+        59,
+        60
+      ],
+      [
+        1,
+        117,
+        59
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 591
+      },
+      "InnerRace": {
+        "precision": 0.3352272727272727,
+        "recall": 0.3333333333333333,
+        "f1": 0.3342776203966006,
+        "support": 177
+      },
+      "OuterRace": {
+        "precision": 0.08309859154929577,
+        "recall": 0.3333333333333333,
+        "f1": 0.133032694475761,
+        "support": 177
+      }
+    }
+  },
+  "timing": {
+    "train_s": 35.7915,
+    "infer_ms_per_row": 0.04545
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "9ff7b0ad36f93c272fe258cca23d966980dc2ac6",
+  "notes": "Zero-shot paderborn -> cwru bearing-fault transfer. Known shift factors, all documented rather than corrected: sampling rate 12 kHz (CWRU) vs 64 kHz (Paderborn) so identical 2048-sample windows cover 170.7 ms vs 32.0 ms of shaft rotation; different test rigs, bearing geometries, sensor mounting and load/speed regimes; CWRU faults are EDM-seeded single-point defects, Paderborn's are EDM/drilling/engraving defects on a different bearing type. Time-domain statistics (RMS, kurtosis, ...) are amplitude- and rate-sensitive, so degradation vs the in-domain references is the expected result \u2014 this record measures it instead of assuming it.",
+  "extra": {
+    "reference_target_in_domain": {
+      "accuracy": 0.6648841354723708,
+      "f1_macro": 0.4214028868431701,
+      "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over 12 recordings; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording a",
+      "source": "platform record cwru__taskA__random_forest_recordingwise__s42"
+    },
+    "reference_source_in_domain": {
+      "accuracy": 0.9499001331557922,
+      "f1_macro": 0.9519874629693527,
+      "source": "platform record paderborn__taskA__random_forest__s42"
+    },
+    "accuracy_delta_vs_target_in_domain": -0.5400164106046459
+  }
+}

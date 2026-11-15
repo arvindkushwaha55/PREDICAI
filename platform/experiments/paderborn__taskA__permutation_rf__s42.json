@@ -1,0 +1,141 @@
+{
+  "experiment_id": "paderborn__taskA__permutation_rf__s42",
+  "timestamp_utc": "2026-11-15T09:18:36+00:00",
+  "dataset": "paderborn",
+  "task": "A",
+  "model": "permutation_rf",
+  "model_params": {
+    "model": "RandomForestClassifier(n_estimators=300, class_weight='balanced') \u2014 identical config and identical grouped split to the wave-4 record",
+    "method": "sklearn permutation_importance on the grouped test split, scoring='accuracy', n_repeats=5",
+    "n_explained_rows": 6008
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "MEASUREMENT-GROUPED split identical to wave 4: GroupShuffleSplit by source_file, 80/20, seed 42; importance measured on the held-out measurements only",
+    "n_train": 24014,
+    "n_test": 6008,
+    "n_measurements_train": 192,
+    "n_measurements_test": 48
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak"
+    ],
+    "windowing": "non-overlapping 2048-sample windows over the vibration_1 channel (64 kHz), as wave 4",
+    "bearings": [
+      {
+        "bearing": "K001",
+        "label": "Normal",
+        "damage_origin": "none (healthy bearing)",
+        "n_measurements": 80,
+        "n_windows": 10006
+      },
+      {
+        "bearing": "KA01",
+        "label": "OuterRace",
+        "damage_origin": "artificial (EDM-seeded)",
+        "n_measurements": 80,
+        "n_windows": 10015
+      },
+      {
+        "bearing": "KI01",
+        "label": "InnerRace",
+        "damage_origin": "artificial (EDM-seeded)",
+        "n_measurements": 80,
+        "n_windows": 10001
+      }
+    ],
+    "licence": "CC BY-NC 4.0 (non-commercial; citation required)"
+  },
+  "metrics": {
+    "accuracy": 0.9499001331557922,
+    "f1_macro": 0.9519874629693527
+  },
+  "timing": {
+    "train_s": 27.2906,
+    "infer_ms_per_row": 0.03347
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "9ff7b0ad36f93c272fe258cca23d966980dc2ac6",
+  "notes": "Explainability record (wave 6): permutation importance of the wave-4 Paderborn forest, measured as accuracy drop on its grouped test split. The refit reproduces the wave-4 model (same config, split and seed), so the importances belong to that scored model. Caveat carried from wave 4: one physical bearing per class \u2014 importances describe within-scope separability, not unseen bearings.",
+  "extra": {
+    "permutation_importance_test_accuracy": [
+      {
+        "feature": "kurtosis",
+        "importance_mean": 0.19570572569906788,
+        "importance_std": 0.002456174000758556
+      },
+      {
+        "feature": "skewness",
+        "importance_mean": 0.16384820239680423,
+        "importance_std": 0.0034604497989124145
+      },
+      {
+        "feature": "std",
+        "importance_mean": 0.03821571238348866,
+        "importance_std": 0.0010346384998615253
+      },
+      {
+        "feature": "rms",
+        "importance_mean": 0.037616511318242306,
+        "importance_std": 0.002215653967016468
+      },
+      {
+        "feature": "crest_factor",
+        "importance_mean": 0.022802929427430074,
+        "importance_std": 0.0015578374110250012
+      },
+      {
+        "feature": "min",
+        "importance_mean": 0.02180426098535282,
+        "importance_std": 0.0021027445668913053
+      },
+      {
+        "feature": "mean",
+        "importance_mean": 0.015479360852197033,
+        "importance_std": 0.0009297097232868771
+      },
+      {
+        "feature": "peak",
+        "importance_mean": 0.002396804260985297,
+        "importance_std": 0.0008526130808831919
+      },
+      {
+        "feature": "peak_to_peak",
+        "importance_mean": 0.0009653794940079452,
+        "importance_std": 0.0008513123736713934
+      },
+      {
+        "feature": "max",
+        "importance_mean": -0.001564580559254325,
+        "importance_std": 0.0011170413938457148
+      }
+    ],
+    "permutation_compute_s": 21.618,
+    "wave4_reference": {
+      "accuracy": 0.9499001331557922,
+      "source": "paderborn__taskA__random_forest__s42 (wave 4)"
+    }
+  }
+}

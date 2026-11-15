@@ -1,0 +1,122 @@
+{
+  "experiment_id": "battery__taskB__shap_random_forest__s42",
+  "timestamp_utc": "2026-11-15T09:17:14+00:00",
+  "dataset": "nasa_battery",
+  "task": "B",
+  "model": "shap_random_forest",
+  "model_params": {
+    "model": "RandomForestRegressor(n_estimators=300) \u2014 the wave-4 LOBO config, but refit on ALL cycles of B0005/B0006/B0018 (explanation model, see split)",
+    "explainer": "shap.TreeExplainer",
+    "shap_version": "0.54.1",
+    "explained_rows": "all discharge cycles of B0005",
+    "n_explained_rows": 168
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "EXPLANATION MODEL \u2014 deliberately NOT the wave-4 leave-one-battery-out protocol: the forest is fitted on every cycle of B0005, B0006 and B0018 so the attributions describe the fullest model of the three EOL batteries. Its metrics below are IN-SAMPLE and must not be quoted as generalisation \u2014 the honest generalisation estimate is the wave-4 LOBO record (pooled RMSE 9.27).",
+    "n_train_rows": 468,
+    "batteries": [
+      "B0005",
+      "B0006",
+      "B0018"
+    ],
+    "excluded_batteries": [
+      "B0007 (censored \u2014 never crosses 1.4 Ah EOL, no RUL label)"
+    ]
+  },
+  "preprocessing": {
+    "features": [
+      "cycle_index",
+      "ambient_temperature",
+      "capacity_ah",
+      "soh",
+      "duration_s",
+      "voltage_min",
+      "voltage_max",
+      "voltage_mean",
+      "temp_mean",
+      "temp_max",
+      "current_measured_mean"
+    ],
+    "target": "rul_cycles_eol (discharge cycles until capacity first < 1.4 Ah)",
+    "note": "identical feature space to the wave-4 battery records (cycle_index + adapter FEATURE_COLUMNS)"
+  },
+  "metrics": {
+    "in_sample_all_batteries": {
+      "rmse": 1.0930455830950723,
+      "mae": 0.6409757834757835
+    }
+  },
+  "timing": {
+    "train_s": 1.0363,
+    "infer_ms_per_row": 0.11071
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "9ff7b0ad36f93c272fe258cca23d966980dc2ac6",
+  "notes": "Explainability record (wave 6): SHAP TreeExplainer attributions of the all-batteries Random Forest for B0005's discharge cycles, on the RUL (cycles) output scale. Attributions describe what THIS model uses \u2014 dominated, expectedly, by the capacity trajectory features \u2014 not a physical ageing mechanism. The LOBO record remains the performance reference for this dataset.",
+  "extra": {
+    "shap_mean_abs_ranking": [
+      {
+        "feature": "soh",
+        "mean_abs_shap": 15.990604213705824
+      },
+      {
+        "feature": "capacity_ah",
+        "mean_abs_shap": 15.054028259792407
+      },
+      {
+        "feature": "duration_s",
+        "mean_abs_shap": 7.290904593567076
+      },
+      {
+        "feature": "voltage_mean",
+        "mean_abs_shap": 1.3740812557678894
+      },
+      {
+        "feature": "temp_mean",
+        "mean_abs_shap": 1.3368014181580437
+      },
+      {
+        "feature": "cycle_index",
+        "mean_abs_shap": 0.9794767004031619
+      },
+      {
+        "feature": "current_measured_mean",
+        "mean_abs_shap": 0.6952381582010264
+      },
+      {
+        "feature": "temp_max",
+        "mean_abs_shap": 0.5454502293833672
+      },
+      {
+        "feature": "voltage_min",
+        "mean_abs_shap": 0.19100079906872883
+      },
+      {
+        "feature": "voltage_max",
+        "mean_abs_shap": 0.18802546532105027
+      },
+      {
+        "feature": "ambient_temperature",
+        "mean_abs_shap": 0.0
+      }
+    ],
+    "shap_compute_s": 2.601,
+    "lobo_reference": {
+      "pooled_rmse": 9.266323846115169,
+      "source": "battery__taskB__random_forest_lobo__s42 (wave 4, leave-one-battery-out)"
+    }
+  }
+}

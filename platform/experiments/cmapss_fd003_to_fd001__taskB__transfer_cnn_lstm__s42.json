@@ -1,0 +1,597 @@
+{
+  "experiment_id": "cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42",
+  "timestamp_utc": "2026-11-15T09:14:22+00:00",
+  "dataset": "cmapss_fd003_to_fd001",
+  "task": "B",
+  "model": "transfer_cnn_lstm",
+  "model_params": {
+    "architecture": "Conv1d(F->64,k3)->ReLU->Conv1d(64->32,k3)->ReLU->LSTM(128)->LSTM(64)->head 32->1 (wave-4 FD003 CNN-LSTM, weights unchanged)",
+    "weights": "platform/artifacts/fd003_cnn_lstm.pt (wave-4 local CPU run, best-val state)",
+    "training": "none \u2014 zero-shot transfer, no FD001 fitting of any kind (no fine-tuning, no scaler fitting)"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "zero-shot cross-dataset transfer: wave-4 FD003 CNN-LSTM applied to the official FD001 test set, last window per engine; FD001 data used for scoring only",
+    "n_test_engines": 100,
+    "source_dataset": "cmapss_fd003",
+    "target_dataset": "cmapss_fd001"
+  },
+  "preprocessing": {
+    "features": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21"
+    ],
+    "n_features": 15,
+    "feature_set": "FD003's exact 15 features from the wave-4 sidecar (FD003's own std-rule derivation \u2014 all sensors except 1/5/10/16/18/19, settings excluded; sensor_6 is KEPT, unlike FD001's 14)",
+    "scaling": "z-score with FD003 train-split statistics from platform/artifacts/fd003_cnn_lstm_preprocessing.json \u2014 source-fitted; no FD001 statistics used anywhere",
+    "rul_cap": 125,
+    "seq_len": 30
+  },
+  "metrics": {
+    "test_last_window_per_engine": {
+      "rmse": 15.816073417663574,
+      "mae": 11.420226097106934,
+      "nasa_score": 394.9987089930513
+    }
+  },
+  "timing": {
+    "train_s": 0.0,
+    "infer_ms_per_row": 0.17893
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "9ff7b0ad36f93c272fe258cca23d966980dc2ac6",
+  "notes": "Zero-shot FD003 -> FD001 transfer, the mirror of wave 2's FD001 -> FD003 (RMSE 48.80). Asymmetry is expected and is itself the finding: the FD003 model was trained on TWO fault modes (HPC + fan) and a feature set that keeps sensor_6, while FD001 contains only the HPC mode \u2014 transferring INTO the narrower domain is not the same problem as transferring out of it. train_s = 0.0 because no training was performed in this run.",
+  "extra": {
+    "reference_fd003_in_domain_cnn_lstm": {
+      "rmse": 13.168869972229004,
+      "mae": 9.098997116088867,
+      "nasa_score": 290.5232215798337,
+      "source": "platform record cmapss_fd003__taskB__cnn_lstm__s42 (local CPU run, FD003-native 15 features)"
+    },
+    "reference_fd001_in_domain_shipped_lstm": {
+      "rmse": 13.728736877441406,
+      "mae": 9.885571479797363,
+      "nasa_score": 431.2853960321513,
+      "source": "ml/artifacts/metrics.json (shipped FD001 model on FD001 test, same last-window protocol)"
+    },
+    "reverse_direction_wave2": {
+      "rmse": 48.800132751464844,
+      "mae": 30.672740936279297,
+      "nasa_score": 956059.3639758674,
+      "source": "platform record cmapss_fd001_to_fd003__taskB__transfer_lstm__s42 (shipped FD001 LSTM -> FD003, FD001's 14 features)"
+    },
+    "degradation_vs_fd001_in_domain": {
+      "rmse_delta": 2.087336540222168,
+      "rmse_pct_increase": 15.204141202910005,
+      "mae_delta": 1.5346546173095703,
+      "nasa_delta": -36.2866870391
+    },
+    "per_engine": [
+      {
+        "engine": 1,
+        "y_true": 112.0,
+        "y_pred": 116.07764434814453
+      },
+      {
+        "engine": 2,
+        "y_true": 98.0,
+        "y_pred": 124.07080078125
+      },
+      {
+        "engine": 3,
+        "y_true": 69.0,
+        "y_pred": 47.278438568115234
+      },
+      {
+        "engine": 4,
+        "y_true": 82.0,
+        "y_pred": 59.1290283203125
+      },
+      {
+        "engine": 5,
+        "y_true": 91.0,
+        "y_pred": 114.70315551757812
+      },
+      {
+        "engine": 6,
+        "y_true": 93.0,
+        "y_pred": 117.35939025878906
+      },
+      {
+        "engine": 7,
+        "y_true": 91.0,
+        "y_pred": 92.82196044921875
+      },
+      {
+        "engine": 8,
+        "y_true": 95.0,
+        "y_pred": 102.212646484375
+      },
+      {
+        "engine": 9,
+        "y_true": 111.0,
+        "y_pred": 121.53278350830078
+      },
+      {
+        "engine": 10,
+        "y_true": 96.0,
+        "y_pred": 87.72465515136719
+      },
+      {
+        "engine": 11,
+        "y_true": 97.0,
+        "y_pred": 62.204864501953125
+      },
+      {
+        "engine": 12,
+        "y_true": 124.0,
+        "y_pred": 91.9055404663086
+      },
+      {
+        "engine": 13,
+        "y_true": 95.0,
+        "y_pred": 77.8416748046875
+      },
+      {
+        "engine": 14,
+        "y_true": 107.0,
+        "y_pred": 78.56047058105469
+      },
+      {
+        "engine": 15,
+        "y_true": 83.0,
+        "y_pred": 103.53252410888672
+      },
+      {
+        "engine": 16,
+        "y_true": 84.0,
+        "y_pred": 110.27812194824219
+      },
+      {
+        "engine": 17,
+        "y_true": 50.0,
+        "y_pred": 56.884857177734375
+      },
+      {
+        "engine": 18,
+        "y_true": 28.0,
+        "y_pred": 30.077810287475586
+      },
+      {
+        "engine": 19,
+        "y_true": 87.0,
+        "y_pred": 62.564369201660156
+      },
+      {
+        "engine": 20,
+        "y_true": 16.0,
+        "y_pred": 14.34683895111084
+      },
+      {
+        "engine": 21,
+        "y_true": 57.0,
+        "y_pred": 48.157588958740234
+      },
+      {
+        "engine": 22,
+        "y_true": 111.0,
+        "y_pred": 120.7702407836914
+      },
+      {
+        "engine": 23,
+        "y_true": 113.0,
+        "y_pred": 124.11245727539062
+      },
+      {
+        "engine": 24,
+        "y_true": 20.0,
+        "y_pred": 20.563940048217773
+      },
+      {
+        "engine": 25,
+        "y_true": 125.0,
+        "y_pred": 121.7833251953125
+      },
+      {
+        "engine": 26,
+        "y_true": 119.0,
+        "y_pred": 112.45285034179688
+      },
+      {
+        "engine": 27,
+        "y_true": 66.0,
+        "y_pred": 88.24976348876953
+      },
+      {
+        "engine": 28,
+        "y_true": 97.0,
+        "y_pred": 80.2525634765625
+      },
+      {
+        "engine": 29,
+        "y_true": 90.0,
+        "y_pred": 114.45243835449219
+      },
+      {
+        "engine": 30,
+        "y_true": 115.0,
+        "y_pred": 119.56327819824219
+      },
+      {
+        "engine": 31,
+        "y_true": 8.0,
+        "y_pred": 10.374022483825684
+      },
+      {
+        "engine": 32,
+        "y_true": 48.0,
+        "y_pred": 49.16960525512695
+      },
+      {
+        "engine": 33,
+        "y_true": 106.0,
+        "y_pred": 105.26116180419922
+      },
+      {
+        "engine": 34,
+        "y_true": 7.0,
+        "y_pred": 5.520092010498047
+      },
+      {
+        "engine": 35,
+        "y_true": 11.0,
+        "y_pred": 7.760890960693359
+      },
+      {
+        "engine": 36,
+        "y_true": 19.0,
+        "y_pred": 21.472312927246094
+      },
+      {
+        "engine": 37,
+        "y_true": 21.0,
+        "y_pred": 34.37784194946289
+      },
+      {
+        "engine": 38,
+        "y_true": 50.0,
+        "y_pred": 44.66707992553711
+      },
+      {
+        "engine": 39,
+        "y_true": 125.0,
+        "y_pred": 121.7077865600586
+      },
+      {
+        "engine": 40,
+        "y_true": 28.0,
+        "y_pred": 29.01634979248047
+      },
+      {
+        "engine": 41,
+        "y_true": 18.0,
+        "y_pred": 33.15538787841797
+      },
+      {
+        "engine": 42,
+        "y_true": 10.0,
+        "y_pred": 11.650424003601074
+      },
+      {
+        "engine": 43,
+        "y_true": 59.0,
+        "y_pred": 46.84250259399414
+      },
+      {
+        "engine": 44,
+        "y_true": 109.0,
+        "y_pred": 84.95089721679688
+      },
+      {
+        "engine": 45,
+        "y_true": 114.0,
+        "y_pred": 71.83379364013672
+      },
+      {
+        "engine": 46,
+        "y_true": 47.0,
+        "y_pred": 41.54831314086914
+      },
+      {
+        "engine": 47,
+        "y_true": 125.0,
+        "y_pred": 94.25214385986328
+      },
+      {
+        "engine": 48,
+        "y_true": 92.0,
+        "y_pred": 83.436279296875
+      },
+      {
+        "engine": 49,
+        "y_true": 21.0,
+        "y_pred": 18.219545364379883
+      },
+      {
+        "engine": 50,
+        "y_true": 79.0,
+        "y_pred": 64.55369567871094
+      },
+      {
+        "engine": 51,
+        "y_true": 114.0,
+        "y_pred": 120.34424591064453
+      },
+      {
+        "engine": 52,
+        "y_true": 29.0,
+        "y_pred": 29.135967254638672
+      },
+      {
+        "engine": 53,
+        "y_true": 26.0,
+        "y_pred": 34.339778900146484
+      },
+      {
+        "engine": 54,
+        "y_true": 97.0,
+        "y_pred": 121.61891174316406
+      },
+      {
+        "engine": 55,
+        "y_true": 125.0,
+        "y_pred": 121.3613052368164
+      },
+      {
+        "engine": 56,
+        "y_true": 15.0,
+        "y_pred": 17.275793075561523
+      },
+      {
+        "engine": 57,
+        "y_true": 103.0,
+        "y_pred": 114.07703399658203
+      },
+      {
+        "engine": 58,
+        "y_true": 37.0,
+        "y_pred": 40.65559768676758
+      },
+      {
+        "engine": 59,
+        "y_true": 114.0,
+        "y_pred": 120.3548583984375
+      },
+      {
+        "engine": 60,
+        "y_true": 100.0,
+        "y_pred": 122.18101501464844
+      },
+      {
+        "engine": 61,
+        "y_true": 21.0,
+        "y_pred": 21.156230926513672
+      },
+      {
+        "engine": 62,
+        "y_true": 54.0,
+        "y_pred": 44.203067779541016
+      },
+      {
+        "engine": 63,
+        "y_true": 72.0,
+        "y_pred": 76.58216857910156
+      },
+      {
+        "engine": 64,
+        "y_true": 28.0,
+        "y_pred": 26.373807907104492
+      },
+      {
+        "engine": 65,
+        "y_true": 125.0,
+        "y_pred": 119.88235473632812
+      },
+      {
+        "engine": 66,
+        "y_true": 14.0,
+        "y_pred": 19.891504287719727
+      },
+      {
+        "engine": 67,
+        "y_true": 77.0,
+        "y_pred": 120.31163787841797
+      },
+      {
+        "engine": 68,
+        "y_true": 8.0,
+        "y_pred": 8.34969425201416
+      },
+      {
+        "engine": 69,
+        "y_true": 121.0,
+        "y_pred": 86.29573059082031
+      },
+      {
+        "engine": 70,
+        "y_true": 94.0,
+        "y_pred": 65.16893005371094
+      },
+      {
+        "engine": 71,
+        "y_true": 118.0,
+        "y_pred": 110.44697570800781
+      },
+      {
+        "engine": 72,
+        "y_true": 50.0,
+        "y_pred": 59.80631637573242
+      },
+      {
+        "engine": 73,
+        "y_true": 125.0,
+        "y_pred": 113.80046844482422
+      },
+      {
+        "engine": 74,
+        "y_true": 125.0,
+        "y_pred": 93.74053955078125
+      },
+      {
+        "engine": 75,
+        "y_true": 113.0,
+        "y_pred": 118.31919860839844
+      },
+      {
+        "engine": 76,
+        "y_true": 10.0,
+        "y_pred": 8.44137191772461
+      },
+      {
+        "engine": 77,
+        "y_true": 34.0,
+        "y_pred": 28.075178146362305
+      },
+      {
+        "engine": 78,
+        "y_true": 107.0,
+        "y_pred": 123.85804748535156
+      },
+      {
+        "engine": 79,
+        "y_true": 63.0,
+        "y_pred": 82.1089859008789
+      },
+      {
+        "engine": 80,
+        "y_true": 90.0,
+        "y_pred": 91.64607238769531
+      },
+      {
+        "engine": 81,
+        "y_true": 8.0,
+        "y_pred": 6.3297576904296875
+      },
+      {
+        "engine": 82,
+        "y_true": 9.0,
+        "y_pred": 8.54475212097168
+      },
+      {
+        "engine": 83,
+        "y_true": 125.0,
+        "y_pred": 122.92206573486328
+      },
+      {
+        "engine": 84,
+        "y_true": 58.0,
+        "y_pred": 89.74037170410156
+      },
+      {
+        "engine": 85,
+        "y_true": 118.0,
+        "y_pred": 123.68492126464844
+      },
+      {
+        "engine": 86,
+        "y_true": 89.0,
+        "y_pred": 97.43730163574219
+      },
+      {
+        "engine": 87,
+        "y_true": 116.0,
+        "y_pred": 117.197021484375
+      },
+      {
+        "engine": 88,
+        "y_true": 115.0,
+        "y_pred": 101.6529541015625
+      },
+      {
+        "engine": 89,
+        "y_true": 125.0,
+        "y_pred": 121.6022720336914
+      },
+      {
+        "engine": 90,
+        "y_true": 28.0,
+        "y_pred": 22.274215698242188
+      },
+      {
+        "engine": 91,
+        "y_true": 38.0,
+        "y_pred": 26.33845329284668
+      },
+      {
+        "engine": 92,
+        "y_true": 20.0,
+        "y_pred": 21.331392288208008
+      },
+      {
+        "engine": 93,
+        "y_true": 85.0,
+        "y_pred": 44.77726364135742
+      },
+      {
+        "engine": 94,
+        "y_true": 55.0,
+        "y_pred": 62.28717041015625
+      },
+      {
+        "engine": 95,
+        "y_true": 125.0,
+        "y_pred": 121.20405578613281
+      },
+      {
+        "engine": 96,
+        "y_true": 125.0,
+        "y_pred": 113.63379669189453
+      },
+      {
+        "engine": 97,
+        "y_true": 82.0,
+        "y_pred": 86.05255126953125
+      },
+      {
+        "engine": 98,
+        "y_true": 59.0,
+        "y_pred": 64.76972961425781
+      },
+      {
+        "engine": 99,
+        "y_true": 117.0,
+        "y_pred": 121.58174133300781
+      },
+      {
+        "engine": 100,
+        "y_true": 20.0,
+        "y_pred": 19.726919174194336
+      }
+    ]
+  }
+}
