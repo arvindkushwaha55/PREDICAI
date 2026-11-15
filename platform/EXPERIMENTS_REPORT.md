@@ -1090,3 +1090,161 @@ pre-existing >500 kB chunk advisory). Consistency audit: INDEX.json
 entries == record files on disk == platform_data.json counts ==
 README numbers (46 records; Task A 20 · B 20 · C 6; 10 of 20
 registry datasets integrated).
+
+# Wave 12 (2026-11-15) — FD004 per-regime LSTM + order-domain bearing features
+
+Wave 12 executes the two principled items the earlier waves
+documented but had not run: the FD004 per-regime LSTM (skipped in
+wave 10 for CPU budget) and the order-domain (shaft-speed-relative)
+bearing features — the documented next attack on the cross-rig
+transfer failure of waves 5 and 9. Four new records, 50 total.
+Everything below is as measured; the transfer verdict is stated
+plainly at §40.
+
+## 38. FD004 per-regime LSTM — the wave-10 protocol, completed (Task B)
+
+Identical protocol to the wave-10 FD002 per-regime LSTM (same
+regime pipeline — KMeans k=6 on train settings, per-regime sensor
+z-scores, settings keep the global scaler — same LSTM
+architecture/hyperparameters, cap 125, window 30, engine-wise
+split seed 42); only the subset changed. Early stop at epoch 14
+(best val RMSE 15.651 at epoch 4; train 841 s).
+
+| FD004 run | Test RMSE | Test MAE | NASA |
+|---|---|---|---|
+| Wave-2 LSTM, global norm | 18.809 | 13.539 | 2141.5 |
+| Wave-10 Ridge, per-regime | 19.115 | 15.223 | 1766.0 |
+| **Wave-12 LSTM, per-regime** | **15.372** | **10.864** | **1457.4** |
+
+Per-regime normalisation helps the FD004 LSTM even more than the
+FD002 one: −3.44 RMSE (−18.3%) and −684 NASA vs its own global-norm
+run, and −3.74 RMSE (−19.6%) vs the per-regime Ridge. Two
+consequences worth stating: (i) the per-regime LSTM gain is now
+confirmed on BOTH 6-condition subsets (FD002 −13.5%, FD004
+−18.3%), not a single-subset accident; (ii) on FD004 the LSTM
+retakes the NASA lead it had lost to Ridge in wave 2 (1457 <
+1766) — the wave-2 reading "on FD004 the LSTM loses NASA to
+Ridge" was a property of the global normalisation, not of the
+model class. The claim remains scoped to seed 42.
+
+## 39. Order-domain features — the physics (Task A)
+
+Bearing faults repeat at characteristic multiples of shaft speed.
+Wave 9's spectral features were rate-free (fractions of Nyquist)
+and by their own design note did not align these orders. Wave 12
+reads the Hilbert-envelope spectrum at the characteristic orders
+of the ACTUAL bearing in each rig, per recording speed:
+
+| Bearing | Geometry (source) | BPFO | BPFI | BSF* | FTF |
+|---|---|---|---|---|---|
+| CWRU SKF 6205-2RS JEM | 9 balls, Bd 0.3126 in, Pd 1.537 in (CWRU Data Center) | 3.5848 | 5.4152 | 4.7134 | 0.3983 |
+| Paderborn 6203 | 8 balls, Bd 6.75 mm, Pd 28.55 mm (nominal geometry) | 3.0543 | 4.9457 | 3.9932 | 0.3818 |
+
+\*BSF here is the ball-DEFECT order 2×ball-spin (a ball defect
+strikes both raceways once per revolution; it is also the value
+CWRU publishes as its rolling-element multiplier, 4.7135). Orders
+are computed from the kinematic formulas in
+`platform_lib/features/order.py`; for the 6205 they reproduce
+CWRU's own published multipliers to ≤8e-5, for the 6203 they
+match the nominal-geometry values cited in the Paderborn
+literature exactly at 4 dp. Speeds: CWRU per recording from the
+in-file X\<id\>RPM scalar where shipped (10 of 12 recordings,
+1796–1797 rpm), else the CWRU catalogue nominal for the load
+(98.mat → 1772, 99.mat → 1750); Paderborn per measurement from
+the condition code (N15 → 1500, N09 → 900), cross-checked against
+the recorded speed channel (means 1499.6 / 899.7 rpm).
+
+Features (9, added to the untouched 10 time-domain): envelope-
+spectrum energy share in a ±2% band at each of BPFO/BPFI/BSF/FTF
+and its 2nd harmonic (nearest single bin if the band holds no
+bin centre), plus order-domain spectral entropy over orders
+(0, 12]. The ±2% band exists because slip moves true defect
+rates ~1–2% off the kinematic orders.
+
+Resolution reality, stated before the results: true order
+resolution is 1/(revolutions per 2048-sample window) — 0.196
+orders on CWRU (5.11 rev/window) but **1.25 orders at Paderborn
+N15 and 2.08 at N09** (0.80 / 0.48 revolutions per window),
+coarser than the spacing between the characteristic orders
+themselves. On the Paderborn side the order features are blunt
+by construction of the shared window protocol.
+
+## 40. Order-domain results — a real in-domain win, and the transfer question answered (Task A)
+
+CWRU recording-wise (LOGO over the same 12 recordings; RF
+identical; only the feature set changes):
+
+| Feature set | Accuracy | F1-macro | InnerRace correct |
+|---|---|---|---|
+| Wave 4: time-domain (10) | 0.665 | 0.421 | 0/177 |
+| Wave 9: + spectral (24) | 0.679 | 0.417 | 15/177 |
+| **Wave 12: + order (19)** | **0.802** | **0.689** | **109/177** |
+
+The order features are the first change that materially moves
+fault LOCATION in-domain: InnerRace F1 0.760 (109/177, precision
+0.991), Ball 141/177, Normal 591/591. The remaining weakness is
+OuterRace (59/177 — all of them from the 0.007″ recording; the
+0.014″ and 0.021″ OR recordings score 0.000 per-recording, and
+117 OR windows are read as Ball). Per-recording detail is in the
+record.
+
+Cross-rig zero-shot transfer (same protocols as waves 5/9):
+
+| Direction | Wave 5 (time) | Wave 9 (spectral) | Wave 12 (order) |
+|---|---|---|---|
+| CWRU → Paderborn acc / F1-macro / Normal F1 | 0.253 / 0.205 / 0.000 | 0.210 / 0.171 / 0.195 | 0.335 / 0.169 / **0.000** |
+| Paderborn → CWRU acc / F1-macro / Normal F1 | 0.125 / 0.156 / 0.000 | 0.187 / 0.286 / 0.000 | 0.163 / 0.206 / **0.000** |
+
+Read as measured, not as the accuracy row alone suggests: the
+CWRU → Paderborn "improvement" to 0.335 is degenerate — the
+forest predicts OuterRace for 29,955 of 30,022 windows, i.e.
+accuracy equals the majority-class rate (0.334) while F1-macro
+is the worst of the three attempts. In the other direction all
+591 CWRU Normal windows are again predicted OuterRace (the
+InnerRace recall of 0.537 is real signal, but a rig's Normal
+class is never recognised). **Normal F1 is 0.000 in both
+directions under all three feature families.**
+
+**Closing statement on the bearing-transfer question.** Order
+alignment works exactly where the physics says it should — on a
+fixed rig, where it produced the platform's best honest CWRU
+result (0.802). Across rigs, three successive feature families
+(time-domain, rate-free spectral, order-domain) have now failed
+the same way, and the order features were the principled best
+case for hand-crafted alignment. For window-statistic features
+with a Random Forest, the cross-rig question is therefore
+answered, negatively: the blocker is not frequency alignment.
+It is the measurement regime itself — sub-revolution windows on
+the Paderborn side (order resolution coarser than the order
+spacing), different sensors, mountings and rig transfer
+functions, and different fault geometries — none of which a
+per-window feature can remove. What remains genuinely open is
+a different method class (learned representations on raw
+waveforms, longer windows, explicit domain adaptation), not a
+fourth hand-crafted feature set.
+
+## 41. Wave-12 files, verification, and what remains
+
+New: `platform_lib/features/order.py` (BearingSpec + order
+features, geometry and speed provenance in the docstring),
+`platform_lib/benchmarking/run_wave12.py`, records
+`cmapss_fd004__taskB__lstm_perregime__s42`,
+`cwru__taskA__random_forest_order_recordingwise__s42`,
+`cwru_to_paderborn__taskA__transfer_rf_order__s42`,
+`paderborn_to_cwru__taskA__transfer_rf_order__s42`,
+`tests/test_wave12.py` (geometry-vs-published checks; synthetic
+AM test — a signal modulated at the BPFO order puts >10× more
+band energy at BPFO than BPFI, and vice versa; comparison-block
+and baseline-carrying checks on all four records).
+
+Verification: full platform suite **142/142 passed** (130 at
+wave 11 + 12 wave-12 tests, including the schema tests over the
+four new records). Frame counts asserted in the runner against
+the wave-9 records before any fit (CWRU 1,122 windows; transfer
+frames 945 / 30,022) — no drift.
+
+Still open: the artificial→real Paderborn transfer; the
+controlled LSTM↔CNN-LSTM transfer pair; an IMS detector variant
+study (as a NEW protocol, never a silent re-tune); cross-rig
+bearing transfer via learned representations (a new method
+class — see §40 for why hand-crafted features are closed).
