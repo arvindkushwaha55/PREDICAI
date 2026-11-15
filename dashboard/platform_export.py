@@ -329,6 +329,16 @@ TRANSFER_VERDICTS = {
         "Fails — accuracy 0.125 vs 0.665 recording-wise in-domain. "
         "Normal recall 0.0 again; 12 kHz vs 64 kHz sampling also makes "
         "the same 2048-sample window cover 170.7 ms vs 32.0 ms.",
+    "cwru_to_paderborn__taskA__transfer_rf_spectral__s42":
+        "Still fails — accuracy 0.210 vs 0.950 in-domain, slightly "
+        "WORSE than the time-domain run (0.253). One genuine change: "
+        "the Normal class is recognised at all now (F1 0.195 vs "
+        "0.000). Spectral features did not fix cross-rig transfer.",
+    "paderborn_to_cwru__taskA__transfer_rf_spectral__s42":
+        "Still fails — accuracy 0.187 vs 0.665 recording-wise "
+        "in-domain, though better than the time-domain run (0.125; "
+        "F1-macro 0.286 vs 0.156). Normal F1 remains 0.000. "
+        "Spectral features did not fix cross-rig transfer.",
 }
 
 
@@ -427,10 +437,16 @@ def main() -> None:
     assert counts["records"] == len(entries), "INDEX/record count mismatch"
 
     # ---- per-dataset record counts ---------------------------------------
+    # Record-level dataset keys for scoped sub-runs fold into their
+    # registry dataset for the Datasets-view counts, so the cards
+    # reconcile with the record total (IMS Tests 2–3 are IMS records;
+    # the real-damage scope is a Paderborn record).
+    COUNT_ALIASES = {"ims_test2": "ims", "ims_test3": "ims",
+                     "paderborn_real": "paderborn"}
     per_dataset_counts: dict[str, int] = {}
     for e in experiments:
-        per_dataset_counts[e["dataset"]] = \
-            per_dataset_counts.get(e["dataset"], 0) + 1
+        key = COUNT_ALIASES.get(e["dataset"], e["dataset"])
+        per_dataset_counts[key] = per_dataset_counts.get(key, 0) + 1
     datasets_out = [
         {**d, "records": per_dataset_counts.get(d["id"], 0)}
         for d in DATASETS
@@ -467,6 +483,10 @@ def main() -> None:
         add_best(ds, "A", "F1 (test)", exp_only, "f1", lower=False)
     for ds in ("cwru", "paderborn"):
         add_best(ds, "A", "F1-macro", exp_only, "f1_macro", lower=False)
+    # Wave 10: Paderborn REAL-damage scope (fatigue pitting, not
+    # EDM) is a separate dataset key with its own F1-macro headline.
+    add_best("paderborn_real", "A", "F1-macro", exp_only, "f1_macro",
+             lower=False)
     for ds in ("cmapss_fd001", "cmapss_fd002", "cmapss_fd003",
                "cmapss_fd004"):
         add_best(ds, "B", "Test RMSE (cycles)", exp_only, "test_rmse",
@@ -496,6 +516,57 @@ def main() -> None:
                 f"alarm"),
             "protocol": ims_rec["split"]["protocol"],
         })
+
+    # IMS Tests 2–3 (Wave 9) get the same alarm-timing best-row
+    # treatment, built generically from each record's alarm_timing
+    # block: defect bearings are named with their warning (or the
+    # miss, stated as a miss), and healthy bearings that nevertheless
+    # sustained alarms are counted, not hidden.
+    def ims_display(rec: dict) -> str:
+        at = rec["metrics"]["alarm_timing"]
+        parts: list[str] = []
+        healthy_alarmed: list[str] = []
+        for key in sorted(at):
+            vals = at[key]
+            num = key.replace("bearing_", "")
+            warn = vals["snapshots_of_warning_before_run_end"]
+            if vals["documented_defect"]:
+                defect = vals["documented_defect"].replace(
+                    " (found at teardown)", "")
+                if warn > 0:
+                    parts.append(
+                        f"Bearing {num} ({defect}): first sustained "
+                        f"alarm {warn} snapshots before run end")
+                else:
+                    parts.append(
+                        f"Bearing {num} ({defect}): NO sustained "
+                        f"alarm — the protocol missed the failed "
+                        f"bearing")
+            elif vals["first_sustained_alarm_index"] is not None:
+                healthy_alarmed.append(num)
+        if healthy_alarmed:
+            parts.append(
+                f"bearings {', '.join(healthy_alarmed)} (no defect "
+                f"reported) also sustained alarms")
+        else:
+            parts.append("no sustained alarm on the healthy bearings")
+        return " · ".join(parts)
+
+    for test_id in ("ims_test2__taskC__isolation_forest__s42",
+                    "ims_test3__taskC__isolation_forest__s42"):
+        rec = records_by_id.get(test_id)
+        if rec is not None:
+            best.append({
+                "dataset": test_id.split("__")[0],
+                "task": "C",
+                "experiment_id": test_id,
+                "model": "isolation_forest",
+                "metric_label":
+                    "Alarm timing (no per-snapshot labels exist)",
+                "metric_value": None,
+                "metric_display": ims_display(rec),
+                "protocol": rec["split"]["protocol"],
+            })
 
     # ---- IMS alarm summary for the Research view --------------------------
     ims_out = None
