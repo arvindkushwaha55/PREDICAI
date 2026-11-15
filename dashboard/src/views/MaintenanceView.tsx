@@ -32,7 +32,7 @@ export function MaintenanceView() {
           <p className="text-sm text-slate-500 dark:text-slate-400">No service records.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="tabular mono w-full text-left text-sm">
+            <table className="tabular mono w-full min-w-[620px] text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-700 text-xs tracking-wide text-slate-500 dark:text-slate-400 uppercase">
                   <th className="py-2 pr-4">Date</th>

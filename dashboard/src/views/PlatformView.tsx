@@ -62,7 +62,7 @@ export function PlatformView() {
               source="Winner per dataset×task by the metric named on the row, computed at export time from the records. Cross-dataset score comparison is not meaningful; each row stands on its own protocol."
             />
             <div className="overflow-x-auto">
-              <table className="tabular mono w-full text-left text-sm">
+              <table className="tabular mono w-full min-w-[600px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700 text-xs tracking-wide text-slate-500 dark:text-slate-400 uppercase">
                     <th className="py-2 pr-4">Dataset</th>

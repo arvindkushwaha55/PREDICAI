@@ -25,7 +25,7 @@ function TransfersCard() {
         source="Each row: a model trained on the source dataset applied to the target with NO target fitting (source scaler, source features). In-domain references are the same target scored by a model trained on it. Negative results are reported as measured; they are the finding, not a failure of the table."
       />
       <div className="overflow-x-auto">
-        <table className="tabular mono w-full text-left text-sm">
+        <table className="tabular mono w-full min-w-[680px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 dark:border-slate-700 text-xs tracking-wide text-slate-500 dark:text-slate-400 uppercase">
               <th className="py-2 pr-4">Transfer</th>
@@ -189,7 +189,7 @@ function ImsCard() {
         source={`${ims.experiment_id} · ${ims.n_snapshots.toLocaleString("en-US")} snapshots, one Isolation Forest per bearing fitted ONLY on that bearing's first 30% of snapshots (early life). ${ims.framing}`}
       />
       <div className="overflow-x-auto">
-        <table className="tabular mono w-full text-left text-sm">
+        <table className="tabular mono w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 dark:border-slate-700 text-xs tracking-wide text-slate-500 dark:text-slate-400 uppercase">
               <th className="py-2 pr-4">Bearing</th>

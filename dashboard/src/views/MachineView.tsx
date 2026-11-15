@@ -65,7 +65,7 @@ export function MachineView({
           title={`${eng.machine_id}: predicted RUL across the replay`}
           source={eng.source}
         />
-        <div className="h-80 w-full">
+        <div className="h-64 w-full sm:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
@@ -164,7 +164,7 @@ export function MachineView({
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-2 flex gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
           <span>
             <span className="mr-1 inline-block h-0.5 w-4 bg-cyan-600 align-middle" />
             Predicted RUL (Rust edge API, logged during replay)

@@ -13,8 +13,8 @@ function EngineCard({
   return (
     <Card className="flex flex-col p-5" ticks>
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
+        <div className="min-w-0">
+          <div className="text-lg font-bold break-words text-slate-900 dark:text-slate-100">
             {engine.machine_id}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400">
@@ -29,13 +29,13 @@ function EngineCard({
         <div className="font-mono text-[11px] font-medium tracking-[0.14em] text-slate-500 uppercase dark:text-slate-400">
           Final predicted RUL
         </div>
-        <div className="mono mt-0.5 text-4xl font-bold text-cyan-800 dark:text-cyan-300">
+        <div className="mono mt-0.5 text-3xl font-bold text-cyan-800 sm:text-4xl dark:text-cyan-300">
           <CountUp value={engine.final.predicted_rul} format={fmt} />{" "}
           <span className="text-base font-semibold text-slate-500 dark:text-slate-400">cycles</span>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Stat
           label="True RUL (final)"
           value={`${fmt(engine.final.true_rul, 0)} cycles`}
@@ -58,7 +58,7 @@ function EngineCard({
         />
       </div>
 
-      <div className="mt-4 flex items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
         <LevelChip level={policy.level} />
         <span className="text-sm text-slate-600 dark:text-slate-400">{policy.action}</span>
       </div>

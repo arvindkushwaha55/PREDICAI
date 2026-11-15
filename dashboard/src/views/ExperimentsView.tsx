@@ -57,7 +57,7 @@ export function ExperimentsView() {
   );
 
   const selectCls =
-    "rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-2 py-1.5 text-sm text-slate-700 dark:text-slate-300 transition-colors duration-150";
+    "max-w-full rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-2 py-1.5 text-sm text-slate-700 dark:text-slate-300 transition-colors duration-150";
 
   return (
     <div className="stagger-cards space-y-6">
@@ -109,7 +109,7 @@ export function ExperimentsView() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="tabular mono w-full text-left text-sm">
+          <table className="tabular mono w-full min-w-[680px] text-left text-sm">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 text-xs tracking-wide text-slate-500 dark:text-slate-400 uppercase">
                 <th className="py-2 pr-4">Record</th>

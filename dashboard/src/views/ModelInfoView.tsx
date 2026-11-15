@@ -19,7 +19,7 @@ function MetricsTable() {
   ];
   return (
     <div className="overflow-x-auto">
-      <table className="tabular mono w-full text-left text-sm">
+      <table className="tabular mono w-full min-w-[560px] text-left text-sm">
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-700 text-xs tracking-wide text-slate-500 dark:text-slate-400 uppercase">
             <th className="py-2 pr-4">Split</th>
@@ -126,10 +126,10 @@ export function ModelInfoView({ api }: { api: ApiHealthState }) {
               key={k}
               className="flex items-baseline justify-between gap-4 border-b border-slate-100 py-1.5 dark:border-slate-800"
             >
-              <span className="font-mono text-[11px] font-medium tracking-wider text-slate-500 uppercase dark:text-slate-400">
+              <span className="shrink-0 font-mono text-[11px] font-medium tracking-wider text-slate-500 uppercase dark:text-slate-400">
                 {k}
               </span>
-              <span className="mono text-right text-[13px] font-medium text-slate-800 dark:text-slate-200">
+              <span className="mono min-w-0 text-right text-[13px] font-medium break-words text-slate-800 dark:text-slate-200">
                 {v}
               </span>
             </div>
