@@ -946,3 +946,116 @@ bearing features as the next transfer attempt; an IMS detector
 variant study (e.g. spectral snapshot features or a different
 threshold rule) — to be run as a NEW protocol with its own record,
 never as a silent re-tune of the wave-5/9 protocol.
+
+# Wave 10 (2026-11-15) — per-regime normalisation + Paderborn real damage
+
+## 34. Per-regime normalisation — method (Task B)
+
+Wave 2 scored FD002/FD004 with ONE global z-score scaler, mixing six
+operating regimes into a single mean/std per sensor. Wave 10 changes
+ONLY the scaling (`platform_lib/regime_pipeline.py`): regimes are
+derived from the TRAIN split's 3 setting columns by KMeans (k = 6,
+seed 42, settings standardised by their train-split std first so the
+small-range setting_2 is not swamped). The alternative — unique
+rounded setting combinations — was measured first and rejected:
+rounding to 2 decimals yields 11 combinations (jitter splits the
+x.00/x.01 variants) and rounding to 1 yields 7; neither is the
+documented 6-regime structure. The KMeans centroids land exactly on
+the six documented nominal conditions for both subsets —
+(0, 0, 100), (10, 0.25, 100), (20, 0.70, 100), (25, 0.62, 60),
+(35, 0.84, 100), (42, 0.84, 100) — with train-row sizes
+FD002 [6417, 6568, 6416, 10777, 6451, 6454] and
+FD004 [12195, 7380, 7276, 7250, 7331, 7299] (the 42-condition holds
+roughly double rows in both). One z-score scaler per regime is fit on
+that regime's TRAIN rows and applied to the 20 sensor features;
+val/test rows are assigned to the nearest train centroid. The 3
+setting features keep the wave-2 global scaler — within a regime a
+setting is near-constant by construction, so a per-regime z-score
+for it is undefined. Split, feature derivation (23 features), cap
+125, window 30, models and hyper-parameters are identical to wave 2;
+each record carries the wave-2 numbers as its comparison block.
+
+## 35. Per-regime results — before/after, as measured
+
+Test set, last window per engine (wave-2 global → wave-10 per-regime):
+
+| Subset | Model | RMSE | MAE | NASA | ΔRMSE | ΔNASA |
+|---|---|---|---|---|---|---|
+| FD002 | Ridge | 16.582 → **16.518** | 13.268 → **13.229** | 1267.2 → 1378.7 | −0.064 (−0.4%) | **+111.5 (worse)** |
+| FD004 | Ridge | 19.425 → **19.115** | 15.708 → **15.223** | 1779.1 → **1766.0** | −0.310 (−1.6%) | −13.1 |
+| FD002 | LSTM | 16.236 → **14.046** | 11.933 → **10.087** | 1099.8 → **1039.9** | **−2.191 (−13.5%)** | −59.9 |
+
+The FD004 LSTM was NOT re-run (CPU budget, stated in advance); its
+absence from the record set is deliberate, not an omission.
+
+Honest reading: for the flattened Ridge the change is negligible on
+RMSE/MAE and mixed on NASA — FD002's NASA score got WORSE (+111.5)
+despite the slightly better RMSE, i.e. per-regime scaling shifted
+the error distribution toward the late predictions NASA punishes.
+For the FD002 LSTM the same change is a large, real gain on all
+three metrics (−13.5% RMSE; best val RMSE 15.19, early stop at
+epoch 12, 464 s train) — 14.046 is now the best FD002 test RMSE in
+the platform (wave-2 LSTM 16.24, Ridge 16.58, XGBoost 17.49,
+RF 18.44). Scope of the claim, stated plainly: one seed (42), the
+LSTM measured on FD002 only. Whether it holds on FD004 or across
+seeds is unmeasured, not assumed.
+
+## 36. Paderborn — REAL-damage bearings (Task A)
+
+Waves 3–4 used the artificial EDM-seeded bearings. Wave 10 adds the
+dataset's REAL fatigue damage. Picks were verified from the OFFICIAL
+per-bearing damage-profile PDFs shipped inside each official archive
+(Lessmeier, KAt Paderborn) — read verbatim, not inferred from codes:
+
+- **KA04** (OuterRace): 1 damage — mode "fatigue", symptom
+  "Pitting", component OR, method "lifetime test", extent 1,
+  2 × 3 mm, cause "operating conditions and lubricant (overload,
+  wrong viscosity, contamination)".
+- **KI04** (InnerRace): primary damage — mode "fatigue (below the
+  surface)", symptom "Pitting", component IR, method "lifetime
+  test", extent 1, 2 × 1 mm; PLUS a documented secondary damage —
+  plastic deformation by foreign objects (particle-caused OR
+  indentations). It is in the record, not hidden; the class follows
+  the dataset's own primary-damage categorisation. (KI14's profile
+  was also read: same primary+secondary pattern; archive downloaded,
+  not extracted.)
+
+RF, same 10 time-domain features, same measurement-grouped split as
+wave 4 (192/48 measurements), K001 as Normal:
+
+| | Accuracy | F1-macro |
+|---|---|---|
+| Wave 10 — REAL damage (KA04/KI04) | **0.9977** | **0.9978** |
+| Wave 4 — artificial EDM (KA01/KI01), context only | 0.950 | 0.952 |
+
+Confusion (rows = true): Normal 1869/1875 (6 → InnerRace),
+InnerRace 2367/2375 (8 → Normal), OuterRace 1750/1750 (perfect).
+
+This is NOT a controlled artificial-vs-real comparison — different
+physical bearings, possibly different damage extents — so the
+correct claim is narrow: under the identical protocol, the real
+fatigue bearings in this scope are at least as separable as the
+artificial ones were, with OuterRace perfectly separated. The
+binding caveat is unchanged: one physical bearing per class, so
+this is within-bearing separability across measurements, not
+generalisation to unseen bearings. The actual artificial→real
+transfer experiment (train on EDM bearings, test on fatigue
+bearings) remains undone and is the natural next step.
+
+## 37. Wave-10 files, verification, and what remains
+
+Files: `platform_lib/regime_pipeline.py` (new),
+`platform_lib/benchmarking/run_wave10.py`,
+`platform_lib/adapters/paderborn.py` (KA04/KI04 added to BEARINGS;
+default load unchanged — the original 3 bearings are now the
+explicit DEFAULT_BEARINGS), 4 new experiment records (46 total),
+`tests/test_wave10.py`, `DATASET_REGISTRY.md` (Paderborn status).
+Verification: full platform suite **130/130 passed** (116 at wave 9
++ 10 wave-10 tests + 4 schema tests over the new records),
+including train-only regime-derivation unit tests and the
+damage-documentation record tests.
+
+Still open: the FD004 per-regime LSTM; the artificial→real
+Paderborn transfer; the controlled LSTM↔CNN-LSTM transfer pair;
+order-tracked bearing features; an IMS detector variant study (as a
+NEW protocol, never a silent re-tune).

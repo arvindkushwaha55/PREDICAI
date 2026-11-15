@@ -223,11 +223,20 @@ is public domain.
   same 10 time-domain features as CWRU (shared feature space), 30,022
   windows total. Phase currents are in the files for future
   electrical-fault work, not featurised here.
-- **Status:** **integrated** — `PaderbornAdapter`; no experiment run yet.
-  **Binding caveats:** one physical bearing per class in this scope —
-  split by measurement file at minimum, and no unseen-bearing
-  generalisation claim is possible; the dataset's *real*-damage bearings
-  (the artificial→real domain-shift opportunity) are not yet downloaded.
+- **Status:** **integrated** — `PaderbornAdapter`; experiment runs:
+  wave 4 (artificial EDM bearings, measurement-grouped RF) and
+  wave 10 (real-damage bearings). **Binding caveats:** one physical
+  bearing per class in each scope — split by measurement file at
+  minimum, and no unseen-bearing generalisation claim is possible.
+  Wave 10 additionally downloaded the *real*-damage bearings **KA04**
+  (outer-race fatigue pitting) and **KI04** (inner-race fatigue
+  pitting, primary damage), damage origin verified verbatim from the
+  official per-bearing damage-profile PDFs inside each archive
+  (method: lifetime test); KI14 was downloaded and profile-read but
+  not extracted (same primary+secondary profile as KI04). The
+  artificial→real domain-shift experiment itself (train artificial,
+  test real) remains undone — wave 10 ran the real bearings
+  in-domain only.
 
 ---
 
