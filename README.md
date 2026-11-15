@@ -16,6 +16,9 @@ predictions from a high-performance Rust edge engine.*
 ![Serving](https://img.shields.io/badge/serving-Rust%20%7C%20ONNX%20Runtime-red)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+**Live dashboard: [arvindkushwaha55.github.io/PREDICAI](https://arvindkushwaha55.github.io/PREDICAI/)**
+(the hosted build runs entirely on bundled data; the Live API panel needs the Rust edge API running locally)
+
 </div>
 
 ---
