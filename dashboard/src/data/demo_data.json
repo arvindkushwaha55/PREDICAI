@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-13T15:09:53+00:00",
+ "generated_at": "2026-11-15T15:09:00+00:00",
  "unit": "cycles",
  "policy_thresholds": {
-  "source": "maintenance/policy.py (policy version 1.0) \u2014 POLICY CHOICES for planning reviews, NOT scientifically validated failure boundaries",
+  "source": "maintenance/policy.py (policy version 1.0): POLICY CHOICES for planning reviews, NOT scientifically validated failure boundaries",
   "review_max_rul": 30,
   "inspection_max_rul": 50,
   "service_review_cycles": 300
@@ -11,7 +11,7 @@
   {
    "engine": 1,
    "machine_id": "ENGINE-001",
-   "source": "FD001 REPLAY \u2014 predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 1; exported from simulator/demo.db",
+   "source": "FD001 REPLAY: predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 1; exported from simulator/demo.db",
    "total_recorded_cycles": 31,
    "predictions_logged": 2,
    "cycle_alignment_verified": true,
@@ -46,7 +46,7 @@
   {
    "engine": 49,
    "machine_id": "ENGINE-049",
-   "source": "FD001 REPLAY \u2014 predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 49; exported from simulator/demo.db",
+   "source": "FD001 REPLAY: predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 49; exported from simulator/demo.db",
    "total_recorded_cycles": 303,
    "predictions_logged": 274,
    "cycle_alignment_verified": true,
@@ -1985,7 +1985,7 @@
   {
    "engine": 100,
    "machine_id": "ENGINE-100",
-   "source": "FD001 REPLAY \u2014 predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 100; exported from simulator/demo.db",
+   "source": "FD001 REPLAY: predictions logged by the Rust edge API (predictions_log.source = 'RUST EDGE') during the Part 10 simulator replay of NASA C-MAPSS FD001 test engine 100; exported from simulator/demo.db",
    "total_recorded_cycles": 198,
    "predictions_logged": 169,
    "cycle_alignment_verified": true,
@@ -3189,11 +3189,11 @@
  ],
  "maintenance": {
   "machine_id": "ENGINE-001",
-  "source": "SYNTHETIC DEMO DATA \u2014 FD001 contains no real service records. Generated at export time by the Part 8 maintenance module (seed_synthetic_demo + policy v1.0) on a throwaway database; simulator/demo.db itself was not modified.",
+  "source": "SYNTHETIC DEMO DATA: FD001 contains no real service records. Generated at export time by the Part 8 maintenance module (seed_synthetic_demo + policy v1.0) on a throwaway database; simulator/demo.db itself was not modified.",
   "machine": {
    "machine_id": "ENGINE-001",
    "display_name": "Demo Engine 001",
-   "registered_at": "2026-11-13 15:09:53",
+   "registered_at": "2026-11-15 15:09:00",
    "notes": "SYNTHETIC DEMO machine for PREDICAI demonstration."
   },
   "service_records": [
@@ -3203,9 +3203,9 @@
     "service_date": "2026-10-10",
     "service_cycle": 120,
     "service_type": "Major Maintenance",
-    "notes": "SYNTHETIC DEMO record \u2014 not a real service event.",
+    "notes": "SYNTHETIC DEMO record - not a real service event.",
     "is_synthetic": 1,
-    "created_at": "2026-11-13 15:09:53"
+    "created_at": "2026-11-15 15:09:00"
    },
    {
     "record_id": 2,
@@ -3213,21 +3213,21 @@
     "service_date": "2026-08-02",
     "service_cycle": 40,
     "service_type": "Minor Inspection",
-    "notes": "SYNTHETIC DEMO record \u2014 not a real service event.",
+    "notes": "SYNTHETIC DEMO record - not a real service event.",
     "is_synthetic": 1,
-    "created_at": "2026-11-13 15:09:53"
+    "created_at": "2026-11-15 15:09:00"
    }
   ],
   "recommendations": [
    {
     "rec_id": 1,
     "machine_id": "ENGINE-001",
-    "created_at": "2026-11-13 15:09:53",
+    "created_at": "2026-11-15 15:09:00",
     "predicted_rul": 117.60932159423828,
     "current_cycle": 440,
     "cycles_since_service": 320,
     "level": "INSPECTION",
-    "reason": "Schedule an inspection \u2014 predicted RUL 118 cycles; 320 cycles since last service; service interval is long, escalating to inspection; last service type: Major Maintenance.",
+    "reason": "Schedule an inspection - predicted RUL 118 cycles; 320 cycles since last service; service interval is long, escalating to inspection; last service type: Major Maintenance.",
     "policy_version": "1.0"
    }
   ],
@@ -3239,7 +3239,7 @@
   }
  },
  "model": {
-  "source": "ml/artifacts/model_metadata.json + metrics.json + explainability.json \u2014 real Kaggle training run (owner, 13 Nov 2026); no placeholder numbers",
+  "source": "ml/artifacts/model_metadata.json + metrics.json + explainability.json: real Kaggle training run (owner, 13 Nov 2026); no placeholder numbers",
   "architecture": "LSTM(14->128) -> Dropout 0.2 -> LSTM(128->64) -> Linear(64->32) -> ReLU -> Linear(32->1)",
   "model_file": "cmapss_lstm.onnx",
   "weights": "best_model.pt",
@@ -3303,7 +3303,7 @@
   },
   "explainability": {
    "note": "Attributions describe ASSOCIATION: which sensors the trained model relies on when it predicts RUL. They do not show that a sensor causes degradation or failure. Permutation importance measures reliance for accuracy on the validation split; Integrated Gradients measures how each sensor's deviation from the train-mean operating point moves an individual prediction. Sensors are correlated in C-MAPSS, so credit can be shared or shifted between correlated sensors.",
-   "split": "validation \u2014 engine-wise holdout, all windows",
+   "split": "validation - engine-wise holdout, all windows",
    "n_val_windows": 3272,
    "permutation_top5": [
     {
@@ -3361,7 +3361,7 @@
   }
  },
  "live_sample": {
-  "source": "edge/tests/fixtures/parity_windows.json (engine 1 case) \u2014 raw 30x14 sensor window from real FD001 test data; the same window the Rust parity test uses",
+  "source": "edge/tests/fixtures/parity_windows.json (engine 1 case): raw 30x14 sensor window from real FD001 test data; the same window the Rust parity test uses",
   "machine_id": "ENGINE-001",
   "window": [
    [
