@@ -60,12 +60,15 @@ function TransfersCard() {
         </table>
       </div>
       <p className="mt-3 text-xs text-slate-500">
-        Pattern across all six records: transfer works when the source
-        domain is at least as wide as the target (FD003→FD001, FD004→FD002)
-        and fails when the target contains structure the source never saw
-        (FD001→FD003's unseen fan fault mode; a different bearing rig's
-        “Normal”). Feature alignment alone does not fix distribution
-        shift.
+        Pattern across all {platform.transfers.length} records: transfer
+        works when the source domain is at least as wide as the target
+        (FD003→FD001, FD004→FD002) and fails when the target contains
+        structure the source never saw (FD001→FD003's unseen fan fault
+        mode; a different bearing rig's “Normal”). Feature alignment
+        alone does not fix distribution shift — Wave 9 tested that hope
+        directly: adding spectral + envelope features moved the bearing
+        transfers only marginally (one direction slightly worse, one
+        slightly better) and both still fail.
       </p>
     </Card>
   );
@@ -232,9 +235,14 @@ function ImsCard() {
         The honest success pattern for this design: sustained alarms on
         exactly the two bearings that failed (3 and 4 — 337 and 723
         snapshots of warning), and none on the two that did not (1 and 2).
-        That is what was measured. Bearings share one shaft and load, so
-        channels are not independent systems; Tests 2–3 remain
-        unextracted in the local archive.
+        That is what was measured — for Test 1. Tests 2–3 (Wave 9, same
+        protocol, no re-tuning) complicate the picture: in Test 2 the
+        failed bearing (1, outer race) alarmed first, 452 snapshots
+        before the end, but the healthy bearings also sustained alarms
+        later; in Test 3 the protocol missed the failed bearing (3,
+        outer race) entirely — no sustained alarm — while two healthy
+        bearings did alarm. Bearings share one shaft and load, so
+        channels are not independent systems.
       </p>
     </Card>
   );
