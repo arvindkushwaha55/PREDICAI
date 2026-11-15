@@ -30,7 +30,7 @@ export function SectionTitle({
 }) {
   return (
     <div className="mb-3">
-      <h2 className="flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.14em] text-slate-900 uppercase dark:text-slate-100">
+      <h2 className="flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.14em] break-words text-slate-900 uppercase dark:text-slate-100">
         <span className="inline-block h-2 w-2 shrink-0 bg-cyan-600 dark:bg-cyan-400" />
         {title}
       </h2>
@@ -81,7 +81,7 @@ export function Stat({
       <div className="font-mono text-[11px] font-medium tracking-[0.14em] text-slate-500 uppercase dark:text-slate-400">
         {label}
       </div>
-      <div className="tabular mono mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+      <div className="tabular mono mt-1 text-xl font-semibold break-words text-slate-900 dark:text-slate-100">
         {value}
       </div>
       {sub && <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{sub}</div>}

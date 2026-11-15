@@ -128,7 +128,7 @@ export function LiveApiPanel({ api }: { api: ApiHealthState }) {
             {api.health.model_path && (
               <>
                 {" "}
-                · <span className="text-slate-500 dark:text-slate-400">{api.health.model_path}</span>
+                · <span className="break-all text-slate-500 dark:text-slate-400">{api.health.model_path}</span>
               </>
             )}
           </span>
