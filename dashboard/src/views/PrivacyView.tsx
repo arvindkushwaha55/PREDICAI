@@ -86,10 +86,10 @@ export function PrivacyView() {
           <p>
             One panel (Model Info &amp; Live API) can check a small
             prediction API. In this hosted build it only attempts to
-            contact an API running on your own computer at
-            localhost:18080. No request is sent to any third-party server
-            by that panel. If no local API is running, the panel reports
-            it as offline and shows no substitute numbers.
+            contact an API running on your own computer. No request is
+            sent to any third-party server by that panel. If no local
+            API is running, the panel reports it as offline and shows
+            no substitute numbers.
           </p>
         </Block>
 
