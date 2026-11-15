@@ -1059,3 +1059,34 @@ Still open: the FD004 per-regime LSTM; the artificial→real
 Paderborn transfer; the controlled LSTM↔CNN-LSTM transfer pair;
 order-tracked bearing features; an IMS detector variant study (as a
 NEW protocol, never a silent re-tune).
+
+# Waves 9–11, closing note (2026-11-15)
+
+Waves 9–10 are documented in §§29–37 above. Wave 11 closed the loop
+on presentation and verification — no new experiments. The dashboard
+export (`dashboard/platform_export.py`) was refreshed and extended so
+`dashboard/src/data/platform_data.json` now carries all **46
+records** (it was generated at 37): 8 transfer records (the two
+Wave-9 spectral transfers gained verdicts written from their
+records), 14 best-result rows (adding the FD002 per-regime LSTM
+14.046 as FD002's best Task-B row, the Paderborn real-damage row,
+and IMS Test 2/3 alarm-timing rows whose display text is built from
+the records — Test 3's row states the miss as a miss), and
+Datasets-view record counts that reconcile exactly (38 card records
++ 8 transfers = 46). The Research view's two stale hardcoded
+passages were corrected: the transfer pattern now counts all 8
+records and notes the spectral outcome, and the IMS footer no
+longer claims Tests 2–3 are unextracted — it states the Test-2
+shared-shaft caveat and the Test-3 miss. README platform numbers
+were synced to the same counted values. The CWRU window-split
+exclusion from best results was re-verified after the refresh: the
+CWRU best row remains the recording-wise record (F1-macro 0.421).
+
+Final verification sweep (Wave 11, all run for real): platform
+suite **130/130 passed**; original Python suite **23/23** (CI
+command); Rust edge tests **15/15** (11 unit + 4 integration incl.
+ONNX parity); dashboard production build **green** (only the
+pre-existing >500 kB chunk advisory). Consistency audit: INDEX.json
+entries == record files on disk == platform_data.json counts ==
+README numbers (46 records; Task A 20 · B 20 · C 6; 10 of 20
+registry datasets integrated).
