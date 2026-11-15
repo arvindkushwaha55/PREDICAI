@@ -14,11 +14,24 @@ Archive SHA-256 (as downloaded):
     K001.rar  0f119ebdb28fb2f4d9fac1beb1319429f63f7ae1256c23c872f280f3560918e5
     KA01.rar  6a6be1e11132730cc6f560d51eacedcbfd5fd74b829e9d8d3728c6c8a7cd4c0e
     KI01.rar  b1dd6d99bb64d556f889fefaedb7e6e672900f5f015125615feaae776f055348
+    KA04.rar  6fc317157e2cd4cb55bc54d6fac1b1753f8ab31abcccd1ac68cbfb78e5e8299d
+    KI04.rar  8fde861a9ceac4b41fe8a030b4c5bbb4b9b9af0590d9338a8de0150b4661be77
+    KI14.rar  16911b5f8c723b568b6aa69397b00796fea41e43bf627a1a0158a7294f2b7a60
+              (downloaded wave 10; profile read, archive not extracted —
+              see the wave-10 runner for why KI04 was preferred)
 
-Integrated scope: 3 of the 32 bearings —
+Integrated scope: 3 of the 32 bearings by DEFAULT —
     K001  healthy (no damage)
     KA01  outer-race damage, artificial (EDM-seeded)
     KI01  inner-race damage, artificial (EDM-seeded)
+Wave 10 additionally downloaded the REAL-damage bearings KA04 / KI04
+(damage origin verified verbatim from the official per-bearing damage
+profile PDFs shipped inside each archive — KA04: mode "fatigue",
+symptom "Pitting", component OR, damage method "lifetime test";
+KI04: primary damage fatigue pitting on IR by lifetime test, plus a
+secondary documented OR plastic-deformation damage). They are in
+BEARINGS below but NOT in the default load: pass them explicitly via
+the `bearings` argument so the wave-3/4 scope is unchanged.
 Each bearing archive holds 80 measurement files: 4 operating conditions
 x 20 measurements of 4 s. Condition codes decode per the dataset
 documentation: N15/N09 = 1500/900 rpm, M07/M01 = 0.7/0.1 Nm torque,
@@ -62,7 +75,15 @@ BEARINGS = {
     "K001": ("Normal", "none (healthy bearing)"),
     "KA01": ("OuterRace", "artificial (EDM-seeded)"),
     "KI01": ("InnerRace", "artificial (EDM-seeded)"),
+    # Wave 10 — real fatigue damage (official damage-profile PDFs in
+    # each archive; see adapter docstring). Not in the default load.
+    "KA04": ("OuterRace", "real (fatigue pitting, lifetime test)"),
+    "KI04": ("InnerRace", "real (fatigue pitting, lifetime test; "
+                           "secondary OR indentations documented)"),
 }
+
+# The wave-3/4 integrated scope — the default load, unchanged.
+DEFAULT_BEARINGS = ("K001", "KA01", "KI01")
 LABELS = ["Normal", "InnerRace", "OuterRace"]
 
 _CONDITION_RE = re.compile(r"^(N\d+)_M(\d+)_F(\d+)$")
@@ -112,7 +133,7 @@ class PaderbornAdapter(DatasetAdapter):
     name = "paderborn"
 
     def __init__(self, raw_dir: str | Path,
-                 bearings: tuple[str, ...] = tuple(BEARINGS)) -> None:
+                 bearings: tuple[str, ...] = DEFAULT_BEARINGS) -> None:
         super().__init__(raw_dir)
         unknown = set(bearings) - set(BEARINGS)
         if unknown:
@@ -159,10 +180,12 @@ class PaderbornAdapter(DatasetAdapter):
             "target": "label (bearing condition diagnosed from a "
                       "2048-sample vibration window)",
             "maintenance_history": "absent",
-            "data_nature": "real test-rig recordings; KA01/KI01 damage "
-                           "is artificially EDM-seeded in this scope "
-                           "(the full dataset also contains real fatigue "
-                           "damage, not integrated here)",
+            "data_nature": "real test-rig recordings; damage origin "
+                           "per bearing as listed in `bearings` "
+                           "(artificial EDM-seeded for KA01/KI01; real "
+                           "fatigue pitting from lifetime tests for "
+                           "KA04/KI04, per the official damage-profile "
+                           "PDFs shipped in each archive)",
             "feature_columns": FEATURE_COLUMNS,
             "channel": CHANNEL,
             "window_len": WINDOW_LEN,
