@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { API_BASE, API_DISPLAY_URL, data, fmt } from "../lib/data";
+import { API_BASE, data, fmt } from "../lib/data";
 import type { HealthResponse, PredictResponse } from "../lib/types";
 import { Card, SectionTitle } from "./ui";
 
@@ -64,7 +64,7 @@ export function ApiStatusPill({ api }: { api: ApiHealthState }) {
   return (
     <button
       onClick={api.refresh}
-      title={`Rust edge API at ${API_DISPLAY_URL}. Click to re-check`}
+      title="Rust edge API on this computer. Click to re-check"
       className={`inline-flex items-center gap-2 rounded border px-2.5 py-1 text-xs font-bold tracking-wide transition-colors duration-150 ${styles}`}
     >
       <span className={`h-2 w-2 rounded-full ${dot} ${api.status === "live" ? "pulse-dot" : ""}`} />
@@ -114,7 +114,7 @@ export function LiveApiPanel({ api }: { api: ApiHealthState }) {
     <Card className="p-5" ticks>
       <SectionTitle
         title="Live API: Rust edge engine"
-        source={`GET /health and POST /predict_rul against the Rust API at ${API_DISPLAY_URL} (via the Vite dev proxy /api). Status below is measured in your browser, not assumed.`}
+        source="Status below is measured live in your browser against the Rust edge API running on this computer; it is not assumed."
       />
 
       <div className="flex flex-wrap items-center gap-3">
@@ -125,18 +125,12 @@ export function LiveApiPanel({ api }: { api: ApiHealthState }) {
             <strong>{api.health.model_loaded ? "true" : "false"}</strong> ·
             window {api.health.seq_len} cycles × {api.health.num_features}{" "}
             sensors
-            {api.health.model_path && (
-              <>
-                {" "}
-                · <span className="break-all text-slate-500 dark:text-slate-400">{api.health.model_path}</span>
-              </>
-            )}
           </span>
         )}
         {api.status === "offline" && (
           <span className="text-sm text-rose-700 dark:text-rose-300">
             Unreachable{api.error ? ` (${api.error})` : ""}. Start the edge
-            server on port 18080 and view this dashboard via{" "}
+            API on this computer and view this dashboard via{" "}
             <code className="rounded bg-slate-100 dark:bg-slate-800 px-1">npm run dev</code>:
             the API sends no CORS headers, so a statically served build
             cannot read it from the browser.
