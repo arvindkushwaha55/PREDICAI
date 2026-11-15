@@ -1,0 +1,126 @@
+{
+  "experiment_id": "ai4i2020__taskA__random_forest__s42",
+  "timestamp_utc": "2026-11-13T17:21:28+00:00",
+  "dataset": "ai4i2020",
+  "task": "A",
+  "model": "random_forest",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "stratified 80/20, seed 42",
+    "n_train": 8000,
+    "n_test": 2000,
+    "train_failures": 271,
+    "test_failures": 68,
+    "all_negative_baseline_accuracy": 0.966
+  },
+  "preprocessing": {
+    "features": [
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]",
+      "Type_H",
+      "Type_L",
+      "Type_M"
+    ],
+    "excluded_id_columns": [
+      "UDI",
+      "Product ID"
+    ],
+    "excluded_leakage_columns": [
+      "TWF",
+      "HDF",
+      "PWF",
+      "OSF",
+      "RNF"
+    ],
+    "categorical_encoding": "one-hot of Type (fixed domain levels L/M/H)",
+    "scaling": "StandardScaler inside pipeline (logistic regression only)"
+  },
+  "metrics": {
+    "accuracy": 0.98,
+    "precision": 0.9117647058823529,
+    "recall": 0.45588235294117646,
+    "f1": 0.6078431372549019,
+    "confusion_matrix": [
+      [
+        1929,
+        3
+      ],
+      [
+        37,
+        31
+      ]
+    ],
+    "roc_auc": 0.9635816283034954
+  },
+  "timing": {
+    "train_s": 1.9077,
+    "infer_ms_per_row": 0.0317
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "8d3f931d488c881ded36109ed526534d22aa48ad",
+  "notes": "Synthetic dataset; failure modes are deterministic rules of the features, so high scores reflect the rule structure, not real-world machine performance. Failure-mode flag columns excluded (target leakage).",
+  "extra": {
+    "permutation_importance_test_f1": [
+      {
+        "feature": "Torque [Nm]",
+        "importance_mean": 0.45217104162296123,
+        "importance_std": 0.03325018406236927
+      },
+      {
+        "feature": "Rotational speed [rpm]",
+        "importance_mean": 0.42804469582221305,
+        "importance_std": 0.03806301776771746
+      },
+      {
+        "feature": "Air temperature [K]",
+        "importance_mean": 0.19889708667077927,
+        "importance_std": 0.029013415993856418
+      },
+      {
+        "feature": "Process temperature [K]",
+        "importance_mean": 0.15400823926930501,
+        "importance_std": 0.019876628657819008
+      },
+      {
+        "feature": "Tool wear [min]",
+        "importance_mean": 0.14297953006683795,
+        "importance_std": 0.05432087418184649
+      },
+      {
+        "feature": "Type_L",
+        "importance_mean": 0.030985293677076718,
+        "importance_std": 0.042038361859512006
+      },
+      {
+        "feature": "Type_H",
+        "importance_mean": 0.013386019754436419,
+        "importance_std": 0.01686326224011696
+      },
+      {
+        "feature": "Type_M",
+        "importance_mean": 0.005064978766784201,
+        "importance_std": 0.020557328263096947
+      }
+    ]
+  }
+}
