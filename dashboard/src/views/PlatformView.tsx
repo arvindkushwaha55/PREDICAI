@@ -103,8 +103,9 @@ export function PlatformView() {
                 CWRU note: the wave-2 window-split record (accuracy 1.000)
                 is deliberately NOT the headline — windows from the same
                 recording sat in both splits. The recording-wise
-                leave-one-recording-out record above (F1-macro 0.421) is
-                the honest CWRU result.
+                leave-one-recording-out record above (F1-macro 0.689,
+                order-domain features, Wave 12) is the honest CWRU
+                result.
               </p>
             )}
             {task === "B" && (

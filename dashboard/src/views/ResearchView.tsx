@@ -68,7 +68,12 @@ function TransfersCard() {
         alone does not fix distribution shift — Wave 9 tested that hope
         directly: adding spectral + envelope features moved the bearing
         transfers only marginally (one direction slightly worse, one
-        slightly better) and both still fail.
+        slightly better) and both still fail. Wave 12 tested a third
+        family — order-domain features, which align the characteristic
+        defect frequencies in shaft-speed-relative units: in-domain
+        CWRU diagnosis jumped to 0.802, yet both transfers still fail
+        and Normal F1 is 0.000 again. With hand-crafted features, the
+        cross-rig question is closed negatively.
       </p>
     </Card>
   );
