@@ -109,6 +109,43 @@ function MoonIcon() {
   );
 }
 
+function MenuIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+      aria-hidden="true"
+    >
+      <path d="M4 6h16" />
+      <path d="M4 12h16" />
+      <path d="M4 18h16" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
+
 function SunIcon() {
   return (
     <svg
@@ -138,6 +175,7 @@ export default function App() {
   const [view, setView] = useState<View>("fleet");
   const [engine, setEngine] = useState<number>(49);
   const [theme, setTheme] = useState<Theme>(initialTheme);
+  const [navOpen, setNavOpen] = useState(false);
   const api = useApiHealth();
 
   useEffect(() => {
@@ -150,6 +188,22 @@ export default function App() {
     }
   }, [theme]);
 
+  /* While the mobile drawer is open, lock body scroll and let Escape
+     close it. Cleanup restores the previous overflow value. */
+  useEffect(() => {
+    if (!navOpen) return;
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setNavOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.documentElement.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [navOpen]);
+
   function openMachine(eng: number) {
     setEngine(eng);
     setView("machine");
@@ -158,7 +212,10 @@ export default function App() {
   const navButton = (item: { id: View; label: string; hint?: string }) => (
     <button
       key={item.id}
-      onClick={() => setView(item.id)}
+      onClick={() => {
+        setView(item.id);
+        setNavOpen(false);
+      }}
       className={
         view === item.id
           ? "block w-full rounded border-l-2 border-cyan-400 bg-slate-800 px-3 py-2 text-left transition-colors duration-150"
@@ -174,47 +231,101 @@ export default function App() {
     </button>
   );
 
+  /* Sidebar inner content (brand block, nav groups, footer note) is a
+     single shared block: the desktop aside and the mobile slide-over
+     drawer both render it, so the two navigations cannot drift apart. */
+  const sidebarContent = (
+    <>
+      <div className="border-b border-slate-800 px-5 py-5">
+        <div className="text-xl font-bold tracking-wide text-white">
+          PREDICAI
+        </div>
+        <div className="mt-0.5 text-xs text-slate-400">
+          Predict Today. Prevent Tomorrow.
+        </div>
+        <div className="mt-3 text-[11px] leading-relaxed text-slate-500">
+          Predictive maintenance · Remaining Useful Life on NASA C-MAPSS
+          FD001 · all RUL values in <strong>cycles</strong>
+        </div>
+      </div>
+      <nav className="flex-1 space-y-1 px-3 py-4">
+        {NAV.map(navButton)}
+        <div className="px-3 pt-4 pb-1 font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+          Platform · Phase 8
+        </div>
+        {NAV_PLATFORM.map(navButton)}
+        <div className="px-3 pt-4 pb-1 font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+          Legal
+        </div>
+        {NAV_LEGAL.map(navButton)}
+      </nav>
+      <div className="border-t border-slate-800 px-5 py-4 text-[11px] leading-relaxed text-slate-500">
+        Data: FD001 replay export + Part 8 synthetic maintenance demo.
+        Every panel labels its source.
+      </div>
+    </>
+  );
+
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="flex w-60 shrink-0 flex-col bg-slate-900 text-slate-200">
-        <div className="border-b border-slate-800 px-5 py-5">
-          <div className="text-xl font-bold tracking-wide text-white">
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      {/* Mobile top bar (below lg): brand + drawer trigger. From lg up
+          the full sidebar below takes over and this bar is hidden. */}
+      <div className="flex items-center justify-between gap-3 bg-slate-900 px-4 py-3 text-slate-200 lg:hidden">
+        <div className="min-w-0">
+          <div className="text-lg font-bold tracking-wide text-white">
             PREDICAI
           </div>
-          <div className="mt-0.5 text-xs text-slate-400">
+          <div className="text-[11px] text-slate-400">
             Predict Today. Prevent Tomorrow.
           </div>
-          <div className="mt-3 text-[11px] leading-relaxed text-slate-500">
-            Predictive maintenance · Remaining Useful Life on NASA C-MAPSS
-            FD001 · all RUL values in <strong>cycles</strong>
-          </div>
         </div>
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {NAV.map(navButton)}
-          <div className="px-3 pt-4 pb-1 font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-            Platform · Phase 8
-          </div>
-          {NAV_PLATFORM.map(navButton)}
-          <div className="px-3 pt-4 pb-1 font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-            Legal
-          </div>
-          {NAV_LEGAL.map(navButton)}
-        </nav>
-        <div className="border-t border-slate-800 px-5 py-4 text-[11px] leading-relaxed text-slate-500">
-          Data: FD001 replay export + Part 8 synthetic maintenance demo.
-          Every panel labels its source.
-        </div>
+        <button
+          onClick={() => setNavOpen(true)}
+          aria-label="Open navigation menu"
+          className="shrink-0 rounded border border-slate-700 px-2.5 py-2 text-slate-200 transition-colors duration-150 hover:bg-slate-800"
+        >
+          <MenuIcon />
+        </button>
+      </div>
+
+      {/* Sidebar (desktop, lg and up) */}
+      <aside className="hidden w-60 shrink-0 flex-col bg-slate-900 text-slate-200 lg:flex">
+        {sidebarContent}
       </aside>
+
+      {/* Mobile navigation drawer (below lg): the same sidebar content
+          in a slide-over panel. Closes on nav selection, backdrop tap,
+          the X button, or Escape. */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden ${navOpen ? "" : "pointer-events-none"}`}
+        aria-hidden={!navOpen}
+      >
+        <div
+          onClick={() => setNavOpen(false)}
+          className={`absolute inset-0 bg-slate-950/60 transition-opacity duration-200 motion-reduce:transition-none ${navOpen ? "opacity-100" : "opacity-0"}`}
+        />
+        <aside
+          className={`absolute inset-y-0 left-0 flex w-64 flex-col overflow-y-auto bg-slate-900 text-slate-200 shadow-2xl transition-transform duration-200 ease-out motion-reduce:transition-none ${navOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <button
+            onClick={() => setNavOpen(false)}
+            aria-label="Close navigation menu"
+            className="absolute top-4 right-4 rounded border border-slate-700 px-2 py-1.5 text-slate-300 transition-colors duration-150 hover:bg-slate-800"
+          >
+            <CloseIcon />
+          </button>
+          {sidebarContent}
+        </aside>
+      </div>
 
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-700 dark:bg-slate-900">
-          <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+          <h1 className="text-base font-bold text-slate-900 sm:text-lg dark:text-slate-100">
             {TITLES[view]}
           </h1>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="hidden text-xs text-slate-500 sm:inline dark:text-slate-400">
               Rust edge API · localhost:18080
             </span>
             <ApiStatusPill api={api} />
@@ -237,7 +348,7 @@ export default function App() {
           </div>
         </header>
 
-        <main className="flex-1 px-6 py-6">
+        <main className="flex-1 px-3 py-4 sm:px-6 sm:py-6">
           <div key={view} className="view-enter">
           {view === "fleet" && <FleetView onOpen={openMachine} />}
           {view === "machine" && (
@@ -259,7 +370,7 @@ export default function App() {
         </main>
 
         <footer className="border-t border-slate-200 bg-white px-6 py-3 text-xs text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <span>
               Demo build: FD001 replay data; not connected to real machines.
               · Data exported {data.generated_at} by dashboard/data_export.py

@@ -8,6 +8,10 @@
    page background in both themes; in the dark theme the page goes to
    near-black slate and the grid is slightly more visible. */
 body {
+  /* Last-resort guard: no page-level horizontal scroll on narrow
+     screens (wide tables scroll inside their own overflow-x-auto
+     wrappers instead). */
+  overflow-x: clip;
   background-color: var(--color-slate-100);
   background-image:
     linear-gradient(to right, rgb(15 23 42 / 0.05) 1px, transparent 1px),
