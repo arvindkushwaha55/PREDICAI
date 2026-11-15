@@ -133,8 +133,9 @@ over three task families: **A** failure/fault classification, **B** RUL
 regression, **C** anomaly detection. A central registry tracks 20 dataset
 entries; **10 are integrated** (adapters + local data + experiment
 records): C-MAPSS FD001–FD004, AI4I 2020, SECOM, CWRU, Paderborn
-(3 bearings), IMS (Test 1) and the NASA Li-ion Battery set. **37
-experiment records** (Task A 16 · B 17 · C 4, all seed 42) live in
+(artificial EDM + real fatigue-damage bearings), IMS (Tests 1–3) and
+the NASA Li-ion Battery set. **46
+experiment records** (Task A 20 · B 20 · C 6, all seed 42) live in
 `platform/experiments/`, each with its split protocol stated — splits are
 asset/recording-wise wherever windows from one machine could otherwise
 leak across train/test.
@@ -159,6 +160,18 @@ Headline results, stated as measured (full detail in
   (no per-snapshot labels exist): first sustained alarms 337 and 723
   snapshots before the end of the run on the two bearings with
   documented teardown defects, none on the two without.
+- Waves 9–10, reported as measured: adding spectral + envelope
+  features did **not** fix bearing transfer (CWRU recording-wise
+  0.679 vs 0.665; both cross-rig transfers still fail). IMS Tests 2–3
+  ran under the identical protocol — Test 2's failed bearing alarmed
+  first (452 snapshots early; healthy bearings also alarmed later),
+  and Test 3's failed bearing was **missed entirely**; the protocol
+  was not re-tuned after seeing that. Per-regime normalisation gives
+  FD002 a new best: LSTM RMSE **14.05** (global normalisation: 16.24).
+  Paderborn *real* fatigue-damage bearings (KA04/KI04) score **0.9977**
+  accuracy under the identical grouped protocol — within-bearing
+  separability with one physical bearing per class, not
+  unseen-bearing generalisation.
 
 Platform documents:
 [`platform/DATASET_REGISTRY.md`](platform/DATASET_REGISTRY.md) ·
