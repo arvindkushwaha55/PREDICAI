@@ -1,4 +1,4 @@
-"""PREDICAI — Part 11 / Phase F: dashboard data export.
+"""PREDICAI: Part 11 / Phase F: dashboard data export.
 
 Builds `src/data/demo_data.json` for the React dashboard from REAL project
 artifacts only. Nothing is invented:
@@ -16,14 +16,14 @@ artifacts only. Nothing is invented:
   definition as preprocessing/simulator.
 - Maintenance: demo.db ships with EMPTY maintenance tables, so the records
   are produced at export time by the Part 8 maintenance module itself
-  (`seed_synthetic_demo()` on a throwaway DB — demo.db is opened read-only
+  (`seed_synthetic_demo()` on a throwaway DB; demo.db is opened read-only
   and never modified), plus one recommendation computed by the module's own
   `make_recommendation()` from ENGINE-001's REAL final replay prediction.
   Every record keeps its is_synthetic flag.
 - Model info: `ml/artifacts/model_metadata.json`, `metrics.json`,
   `explainability.json` (real Kaggle training run, 13 Nov 2026).
 - Live sample window: `edge/tests/fixtures/parity_windows.json`, engine 1
-  case — the exact raw 30x14 window the Rust parity test uses.
+  case: the exact raw 30x14 window the Rust parity test uses.
 
 Run:  ../.venv/bin/python data_export.py
 """
@@ -106,7 +106,7 @@ def export_engines(db: sqlite3.Connection) -> list[dict]:
                 "engine": eng,
                 "machine_id": mid,
                 "source": (
-                    "FD001 REPLAY — predictions logged by the Rust edge API "
+                    "FD001 REPLAY: predictions logged by the Rust edge API "
                     "(predictions_log.source = 'RUST EDGE') during the Part 10 "
                     "simulator replay of NASA C-MAPSS FD001 test engine "
                     f"{eng}; exported from simulator/demo.db"
@@ -140,7 +140,7 @@ def export_maintenance(final_pred_rul: float) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         db = MaintenanceDB(Path(tmp) / "export.db")
         db.seed_synthetic_demo()
-        # The synthetic demo machine's reference "current cycle" is 440 —
+        # The synthetic demo machine's reference "current cycle" is 440,
         # the same value the Part 8 module's own tests use
         # (maintenance/test_maintenance.py). The predicted RUL is real:
         # ENGINE-001's final replay prediction from simulator/demo.db.
@@ -160,7 +160,7 @@ def export_maintenance(final_pred_rul: float) -> dict:
     return {
         "machine_id": "ENGINE-001",
         "source": (
-            "SYNTHETIC DEMO DATA — FD001 contains no real service records. "
+            "SYNTHETIC DEMO DATA: FD001 contains no real service records. "
             "Generated at export time by the Part 8 maintenance module "
             "(seed_synthetic_demo + policy v1.0) on a throwaway database; "
             "simulator/demo.db itself was not modified."
@@ -191,7 +191,7 @@ def export_model() -> dict:
     return {
         "source": (
             "ml/artifacts/model_metadata.json + metrics.json + "
-            "explainability.json — real Kaggle training run (owner, "
+            "explainability.json: real Kaggle training run (owner, "
             "13 Nov 2026); no placeholder numbers"
         ),
         "architecture": meta["architecture"],
@@ -244,7 +244,7 @@ def export_live_sample() -> dict:
     case = next(c for c in fx["cases"] if c["engine"] == 1)
     return {
         "source": (
-            "edge/tests/fixtures/parity_windows.json (engine 1 case) — raw "
+            "edge/tests/fixtures/parity_windows.json (engine 1 case): raw "
             "30x14 sensor window from real FD001 test data; the same window "
             "the Rust parity test uses"
         ),
@@ -254,6 +254,21 @@ def export_live_sample() -> dict:
         "true_rul": case["true_rul_clipped"],
     }
 
+
+
+def _no_em_dash(obj):
+    """Display normalisation: the dashboard style bans em dashes
+    (U+2014) in displayed text. Any string copied from an upstream
+    record or module (protocol, notes, verdicts, maintenance text)
+    is rewritten to the spaced-hyphen form here, at export time.
+    The source records and modules are never edited."""
+    if isinstance(obj, str):
+        return obj.replace(" \u2014 ", " - ").replace("\u2014", "-")
+    if isinstance(obj, list):
+        return [_no_em_dash(v) for v in obj]
+    if isinstance(obj, dict):
+        return {k: _no_em_dash(v) for k, v in obj.items()}
+    return obj
 
 def main() -> None:
     db = sqlite3.connect(f"file:{REPO / 'simulator' / 'demo.db'}?mode=ro", uri=True)
@@ -265,7 +280,7 @@ def main() -> None:
         "unit": "cycles",
         "policy_thresholds": {
             "source": (
-                "maintenance/policy.py (policy version 1.0) — POLICY CHOICES "
+                "maintenance/policy.py (policy version 1.0): POLICY CHOICES "
                 "for planning reviews, NOT scientifically validated failure "
                 "boundaries"
             ),
@@ -278,6 +293,7 @@ def main() -> None:
         "model": export_model(),
         "live_sample": export_live_sample(),
     }
+    data = _no_em_dash(data)
     dest = HERE / "src" / "data" / "demo_data.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(data, indent=1))

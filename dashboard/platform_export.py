@@ -1,4 +1,4 @@
-"""PREDICAI — Phase 8 (Wave 7): platform data export for the dashboard.
+"""PREDICAI: Phase 8 (Wave 7): platform data export for the dashboard.
 
 Builds `src/data/platform_data.json` from the platform experiment store.
 NOTHING is invented here either:
@@ -10,12 +10,12 @@ NOTHING is invented here either:
 - Datasets: the DATASETS table below is copied faithfully from
   `platform/DATASET_REGISTRY.md` (the operational registry, verified
   2026-11-15, Waves 1-3 + wave-5 IMS update). If the registry changes,
-  update the registry first, then this table — the registry is the
+  update the registry first, then this table; the registry is the
   source, this table is a transcription for the dashboard.
 - "Best result" rows are computed from the records with the metric named
   on the row. One deliberate editorial rule, carried from the platform
   reports: the wave-2 CWRU window-split record (accuracy 1.000) is
-  EXCLUDED from best-result computation — its own notes call it
+  EXCLUDED from best-result computation; its own notes call it
   non-generalisable; the recording-wise record is the CWRU headline.
 
 Run:  ../.venv/bin/python platform_export.py
@@ -31,17 +31,18 @@ REPO = HERE.parent
 EXP_DIR = REPO / "platform" / "experiments"
 
 # ---------------------------------------------------------------------------
-# Dataset facts — SOURCE: platform/DATASET_REGISTRY.md (verified 2026-11-15).
+# Dataset facts. SOURCE: platform/DATASET_REGISTRY.md (verified 2026-11-15).
 # Fields per entry: id (matches the `dataset` key used in experiment
 # records where one exists), name, source, licence, tasks (A/B/C),
 # status, adapter, note. Licence strings quote/summarise the registry;
-# "not confirmed / not stated" is preserved verbatim in spirit — it does
+# "not confirmed / not stated" is preserved verbatim in spirit; it does
 # NOT mean public domain.
 # ---------------------------------------------------------------------------
 DATASETS: list[dict] = [
     {
         "id": "cmapss_fd001",
-        "name": "C-MAPSS FD001 — Turbofan Degradation",
+        "specs": [['Operating conditions', '1'], ['Fault modes', '1 (HPC)'], ['Train rows', '20,631'], ['Train engines', '100']],
+        "name": "C-MAPSS FD001: Turbofan Degradation",
         "source": "NASA Ames PCoE (PHM mirror)",
         "licence": "NASA research use; formal licence text not confirmed",
         "tasks": ["B"],
@@ -51,7 +52,8 @@ DATASETS: list[dict] = [
     },
     {
         "id": "cmapss_fd002",
-        "name": "C-MAPSS FD002 — Turbofan Degradation",
+        "specs": [['Operating conditions', '6'], ['Fault modes', '1'], ['Train rows', '53,759'], ['Train engines', '260'], ['Features', '23']],
+        "name": "C-MAPSS FD002: Turbofan Degradation",
         "source": "NASA Ames PCoE (PHM mirror)",
         "licence": "NASA research use; formal licence text not confirmed",
         "tasks": ["B"],
@@ -61,7 +63,8 @@ DATASETS: list[dict] = [
     },
     {
         "id": "cmapss_fd003",
-        "name": "C-MAPSS FD003 — Turbofan Degradation",
+        "specs": [['Operating conditions', '1'], ['Fault modes', '2 (HPC + fan)'], ['Train rows', '24,720'], ['Train engines', '100'], ['Features', '15']],
+        "name": "C-MAPSS FD003: Turbofan Degradation",
         "source": "NASA Ames PCoE (PHM mirror)",
         "licence": "NASA research use; formal licence text not confirmed",
         "tasks": ["B"],
@@ -71,66 +74,73 @@ DATASETS: list[dict] = [
     },
     {
         "id": "cmapss_fd004",
-        "name": "C-MAPSS FD004 — Turbofan Degradation",
+        "specs": [['Operating conditions', '6'], ['Fault modes', '2'], ['Train rows', '61,249'], ['Train engines', '249']],
+        "name": "C-MAPSS FD004: Turbofan Degradation",
         "source": "NASA Ames PCoE (PHM mirror)",
         "licence": "NASA research use; formal licence text not confirmed",
         "tasks": ["B"],
         "status": "integrated",
         "adapter": "CMapssAdapter",
-        "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. With global normalisation the LSTM wins RMSE/MAE but loses the NASA score to Ridge; the per-regime LSTM (Wave 12, RMSE 15.37) is FD004's best and retakes the NASA lead — recorded as measured.",
+        "note": "6 operating conditions, 2 fault modes. Train 61,249 rows / 249 engines. With global normalisation the LSTM wins RMSE/MAE but loses the NASA score to Ridge; the per-regime LSTM (Wave 12, RMSE 15.37) is FD004's best and retakes the NASA lead, recorded as measured.",
     },
     {
         "id": "ai4i2020",
+        "specs": [['Rows', '10,000'], ['Columns', '14'], ['Failure rows', '339 (about 3.4%)']],
         "name": "AI4I 2020 Predictive Maintenance",
         "source": "UCI ML Repository",
         "licence": "CC BY 4.0",
         "tasks": ["A", "C"],
         "status": "integrated",
         "adapter": "AI4IAdapter",
-        "note": "10,000 × 14; binary machine-failure label (339 failures, ≈3.4%). Data is SYNTHETIC (rule-generated failures) — the 5 failure-mode flags define the target and are declared leakage columns, never features.",
+        "note": "10,000 × 14; binary machine-failure label (339 failures, ≈3.4%). Data is SYNTHETIC (rule-generated failures); the 5 failure-mode flags define the target and are declared leakage columns, never features.",
     },
     {
         "id": "secom",
+        "specs": [['Rows', '1,567'], ['Sensor columns', '590'], ['Features after pipeline', '450'], ['Fail rows', '104 (about 6.6%)']],
         "name": "SECOM Manufacturing",
         "source": "UCI ML Repository",
         "licence": "CC BY 4.0",
         "tasks": ["A", "C"],
         "status": "integrated",
         "adapter": "SECOMAdapter",
-        "note": "1,567 rows × 590 anonymised sensor columns; 104 fails (≈6.6%). Heavy missingness → 450 features survive the wave-1 pipeline. Features are anonymised — explanations cite sensor indices only.",
+        "note": "1,567 rows × 590 anonymised sensor columns; 104 fails (≈6.6%). Heavy missingness → 450 features survive the wave-1 pipeline. Features are anonymised; explanations cite sensor indices only.",
     },
     {
         "id": "cwru",
+        "specs": [['Sampling rate', '12 kHz'], ['Signal', 'Drive-end vibration'], ['Classes', 'Normal / InnerRace / Ball / OuterRace']],
         "name": "CWRU Bearing",
         "source": "Case Western Reserve University",
         "licence": "Not stated on official page",
         "tasks": ["A"],
         "status": "integrated",
         "adapter": "CWRUAdapter",
-        "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation with order-domain features (accuracy 0.802, Wave 12; time-domain features scored 0.665) — see Research view.",
+        "note": "Drive-end vibration at 12 kHz; Normal / InnerRace / Ball / OuterRace. Fault DIAGNOSIS of seeded faults, not prediction. Headline result is the recording-wise evaluation with order-domain features (accuracy 0.802, Wave 12; time-domain features scored 0.665); see Research view.",
     },
     {
         "id": "paderborn",
+        "specs": [['Bearings in dataset', '32'], ['Bearings integrated', '3'], ['Windows (integrated scope)', '30,022']],
         "name": "Paderborn Bearing",
         "source": "KAt-DataCenter, Paderborn University",
         "licence": "CC BY-NC 4.0 (confirmed on official page)",
         "tasks": ["A"],
         "status": "integrated",
         "adapter": "PaderbornAdapter",
-        "note": "Integrated scope: 3 of 32 bearings (K001 healthy, KA01 outer-race, KI01 inner-race) → 30,022 windows. Non-commercial licence. One physical bearing per class — no unseen-bearing generalisation claim.",
+        "note": "Integrated scope: 3 of 32 bearings (K001 healthy, KA01 outer-race, KI01 inner-race) → 30,022 windows. Non-commercial licence. One physical bearing per class; no unseen-bearing generalisation claim.",
     },
     {
         "id": "ims",
+        "specs": [['Snapshots (Test 1)', '2,156'], ['Channels', '8'], ['Sampling rate', '20 kHz']],
         "name": "IMS Bearing (Run-to-Failure)",
         "source": "NASA PCoE / University of Cincinnati",
         "licence": "Not stated on PCoE page",
         "tasks": ["C", "B"],
         "status": "integrated",
         "adapter": "IMSAdapter",
-        "note": "Test 1 integrated (wave 5, after the user approved the 1.08 GB download): 2,156 snapshots × 8 channels at 20 kHz. Teardown ground truth: bearing 3 inner-race + bearing 4 roller defects. No per-snapshot labels — evaluation is alarm timing only.",
+        "note": "Test 1 integrated (wave 5, after the user approved the 1.08 GB download): 2,156 snapshots × 8 channels at 20 kHz. Teardown ground truth: bearing 3 inner-race + bearing 4 roller defects. No per-snapshot labels; evaluation is alarm timing only.",
     },
     {
         "id": "nasa_battery",
+        "specs": [['Batteries', '4 (B0005, B0006, B0007, B0018)'], ['Discharge-cycle rows', '636'], ['End-of-life threshold', 'Capacity below 1.4 Ah']],
         "name": "NASA Li-ion Battery Aging",
         "source": "NASA Ames PCoE",
         "licence": "No named licence; acknowledgement requested",
@@ -167,7 +177,7 @@ DATASETS: list[dict] = [
         "tasks": ["A"],
         "status": "blocked",
         "adapter": None,
-        "note": "BLOCKED — the official site is gone: mfpt.org redirects domain-wide to ASNT, which offers no dataset, download or licence. No unofficial mirror was substituted.",
+        "note": "BLOCKED: the official site is gone: mfpt.org redirects domain-wide to ASNT, which offers no dataset, download or licence. No unofficial mirror was substituted.",
     },
     {
         "id": "mimii",
@@ -187,7 +197,7 @@ DATASETS: list[dict] = [
         "tasks": ["A"],
         "status": "blocked",
         "adapter": None,
-        "note": "BLOCKED — no direct download exists; access requires a Kaggle account and acceptance of competition rules (≈14.3 GB, 4,264 anonymised features, ≈0.58% failures).",
+        "note": "BLOCKED: no direct download exists; access requires a Kaggle account and acceptance of competition rules (≈14.3 GB, 4,264 anonymised features, ≈0.58% failures).",
     },
     {
         "id": "milling",
@@ -197,7 +207,7 @@ DATASETS: list[dict] = [
         "tasks": ["A", "B"],
         "status": "researched",
         "adapter": None,
-        "note": "167 milling runs; label = measured flank wear VB (mm). Some runs have missing VB and a few are flagged corrupted in the dataset's own notes — to be excluded and documented, never silently repaired.",
+        "note": "167 milling runs; label = measured flank wear VB (mm). Some runs have missing VB and a few are flagged corrupted in the dataset's own notes; to be excluded and documented, never silently repaired.",
     },
     {
         "id": "hydraulic",
@@ -207,7 +217,7 @@ DATASETS: list[dict] = [
         "tasks": ["A"],
         "status": "researched",
         "adapter": None,
-        "note": "2,205 cycles × 17 sensors; multi-output graded condition classes (cooler / valve / pump leakage / accumulator) — condition grades, not failure events. Not run-to-failure.",
+        "note": "2,205 cycles × 17 sensors; multi-output graded condition classes (cooler / valve / pump leakage / accumulator): condition grades, not failure events. Not run-to-failure.",
     },
     {
         "id": "metropt3",
@@ -217,13 +227,13 @@ DATASETS: list[dict] = [
         "tasks": ["C"],
         "status": "researched",
         "adapter": None,
-        "note": "1,516,948 rows × 15 features, Jan–Aug 2020. Ground truth = timestamped maintenance reports only, no per-row labels — evaluation must be event-based.",
+        "note": "1,516,948 rows × 15 features, Jan–Aug 2020. Ground truth = timestamped maintenance reports only, no per-row labels; evaluation must be event-based.",
     },
     {
         "id": "automotive_engine",
         "name": "Automotive Engine Health",
-        "source": "—",
-        "licence": "—",
+        "source": "-",
+        "licence": "-",
         "tasks": [],
         "status": "not-found",
         "adapter": None,
@@ -277,7 +287,7 @@ def primary_metrics(record: dict) -> dict:
 def reference_blocks(extra: dict) -> list[dict]:
     """All in-domain reference blocks a transfer record carries.
 
-    Both the source-side and target-side in-domain results are kept —
+    Both the source-side and target-side in-domain results are kept;
     picking just one would hide half of what the record documents.
     """
     out = []
@@ -302,54 +312,54 @@ def degradation_block(extra: dict) -> dict | None:
     return None
 
 
-# Verdicts for the Research view — one line each, written from the
+# Verdicts for the Research view: one line each, written from the
 # records' own notes + degradation blocks (numbers re-checked at export
 # time against the record; the line is a summary, the record is truth).
 TRANSFER_VERDICTS = {
     "cmapss_fd001_to_fd003__taskB__transfer_lstm__s42":
-        "Not deployable — cross-domain RMSE 48.80 vs 15.04 in-domain on "
+        "Not deployable: cross-domain RMSE 48.80 vs 15.04 in-domain on "
         "FD003 (+224%). FD003's second (fan) fault mode was never seen "
         "in FD001 training.",
     "cmapss_fd003_to_fd001__taskB__transfer_cnn_lstm__s42":
-        "Near in-domain — RMSE 15.82 vs 13.73 shipped in-domain (+15%). "
+        "Near in-domain: RMSE 15.82 vs 13.73 shipped in-domain (+15%). "
         "Wide→narrow transfer (2 fault modes → 1) largely works; the "
         "reverse direction does not.",
     "cmapss_fd002_to_fd004__taskB__transfer_ridge__s42":
-        "Fails — RMSE 51.38 vs 19.43 in-domain Ridge on FD004 (+165%), "
+        "Fails: RMSE 51.38 vs 19.43 in-domain Ridge on FD004 (+165%), "
         "despite an identical 23-feature space. The shift is in the "
         "distributions / fault modes, not the features.",
     "cmapss_fd004_to_fd002__taskB__transfer_ridge__s42":
-        "Near in-domain — RMSE 18.07 vs 16.58 in-domain Ridge on FD002 "
+        "Near in-domain: RMSE 18.07 vs 16.58 in-domain Ridge on FD002 "
         "(+9%). Again the wide→narrow direction (2 fault modes → 1).",
     "cwru_to_paderborn__taskA__transfer_rf__s42":
-        "Fails — accuracy 0.253 vs 0.950 in-domain. The Normal class is "
+        "Fails: accuracy 0.253 vs 0.950 in-domain. The Normal class is "
         "never recognised on the target rig (recall 0.0): 'Normal' is "
         "rig-specific with time-domain features.",
     "paderborn_to_cwru__taskA__transfer_rf__s42":
-        "Fails — accuracy 0.125 vs 0.665 recording-wise in-domain. "
+        "Fails: accuracy 0.125 vs 0.665 recording-wise in-domain. "
         "Normal recall 0.0 again; 12 kHz vs 64 kHz sampling also makes "
         "the same 2048-sample window cover 170.7 ms vs 32.0 ms.",
     "cwru_to_paderborn__taskA__transfer_rf_spectral__s42":
-        "Still fails — accuracy 0.210 vs 0.950 in-domain, slightly "
+        "Still fails: accuracy 0.210 vs 0.950 in-domain, slightly "
         "WORSE than the time-domain run (0.253). One genuine change: "
         "the Normal class is recognised at all now (F1 0.195 vs "
         "0.000). Spectral features did not fix cross-rig transfer.",
     "paderborn_to_cwru__taskA__transfer_rf_spectral__s42":
-        "Still fails — accuracy 0.187 vs 0.665 recording-wise "
+        "Still fails: accuracy 0.187 vs 0.665 recording-wise "
         "in-domain, though better than the time-domain run (0.125; "
         "F1-macro 0.286 vs 0.156). Normal F1 remains 0.000. "
         "Spectral features did not fix cross-rig transfer.",
     "cwru_to_paderborn__taskA__transfer_rf_order__s42":
-        "Still fails — accuracy 0.335 is the best of the three "
+        "Still fails: accuracy 0.335 is the best of the three "
         "feature families in this direction (time-domain 0.253, "
         "spectral 0.210), but F1-macro fell to 0.169 and Normal F1 "
         "is back to 0.000 (spectral had reached 0.195). Aligning "
         "the characteristic defect frequencies in shaft-speed-"
         "relative units did not transfer 'Normal' across rigs.",
     "paderborn_to_cwru__taskA__transfer_rf_order__s42":
-        "Still fails — accuracy 0.163, between the time-domain "
+        "Still fails: accuracy 0.163, between the time-domain "
         "(0.125) and spectral (0.187) runs; F1-macro 0.206. Normal "
-        "F1 is 0.000 — as in the time-domain family — so the third "
+        "F1 is 0.000, as in the time-domain family, so the third "
         "hand-crafted feature family closes the cross-rig question "
         "negatively: order features transform in-domain diagnosis "
         "(0.802 recording-wise) but do not cross rigs.",
@@ -379,6 +389,21 @@ def xai_ranking(record: dict) -> tuple[list[dict], str]:
             return ranking, key
     return [], ""
 
+
+
+def _no_em_dash(obj):
+    """Display normalisation: the dashboard style bans em dashes
+    (U+2014) in displayed text. Any string copied from an upstream
+    record or module (protocol, notes, verdicts, maintenance text)
+    is rewritten to the spaced-hyphen form here, at export time.
+    The source records and modules are never edited."""
+    if isinstance(obj, str):
+        return obj.replace(" \u2014 ", " - ").replace("\u2014", "-")
+    if isinstance(obj, list):
+        return [_no_em_dash(v) for v in obj]
+    if isinstance(obj, dict):
+        return {k: _no_em_dash(v) for k, v in obj.items()}
+    return obj
 
 def main() -> None:
     index = json.loads((EXP_DIR / "INDEX.json").read_text())
@@ -462,7 +487,8 @@ def main() -> None:
         key = COUNT_ALIASES.get(e["dataset"], e["dataset"])
         per_dataset_counts[key] = per_dataset_counts.get(key, 0) + 1
     datasets_out = [
-        {**d, "records": per_dataset_counts.get(d["id"], 0)}
+        {**d, "records": per_dataset_counts.get(d["id"], 0),
+         "specs": d.get("specs", [])}
         for d in DATASETS
     ]
 
@@ -554,7 +580,7 @@ def main() -> None:
                 else:
                     parts.append(
                         f"Bearing {num} ({defect}): NO sustained "
-                        f"alarm — the protocol missed the failed "
+                        f"alarm: the protocol missed the failed "
                         f"bearing")
             elif vals["first_sustained_alarm_index"] is not None:
                 healthy_alarmed.append(num)
@@ -627,6 +653,7 @@ def main() -> None:
         "best_results": best,
         "ims_alarms": ims_out,
     }
+    data = _no_em_dash(data)
     dest = HERE / "src" / "data" / "platform_data.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(data, indent=1))
