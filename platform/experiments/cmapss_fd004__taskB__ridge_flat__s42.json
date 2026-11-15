@@ -1,0 +1,117 @@
+{
+  "experiment_id": "cmapss_fd004__taskB__ridge_flat__s42",
+  "timestamp_utc": "2026-11-15T04:38:16+00:00",
+  "dataset": "cmapss_fd004",
+  "task": "B",
+  "model": "ridge_flat",
+  "model_params": {
+    "alpha": 1.0,
+    "input": "flattened (30 x F) windows, predictions clipped at >= 0"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine",
+    "n_train_engines": 199,
+    "n_val_engines": 50,
+    "n_train_windows": 42960,
+    "n_val_windows": 11068,
+    "n_test_engines": 237
+  },
+  "preprocessing": {
+    "features": [
+      "setting_1",
+      "setting_2",
+      "setting_3",
+      "sensor_1",
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_5",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_10",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_18",
+      "sensor_19",
+      "sensor_20",
+      "sensor_21"
+    ],
+    "n_features": 23,
+    "feature_derivation": "candidates = 3 settings + 21 sensors; dropped train-split std < 0.005 (see rul_pipeline.py)",
+    "dropped_candidates": [
+      {
+        "column": "sensor_16",
+        "train_std": 0.004688894872662265
+      }
+    ],
+    "rul_cap": 125,
+    "seq_len": 30,
+    "scaling": "z-score (ddof=0) fit on train engines only"
+  },
+  "metrics": {
+    "test_last_window_per_engine": {
+      "rmse": 19.425004959106445,
+      "mae": 15.708367347717285,
+      "nasa_score": 1779.1453175774552
+    },
+    "val_all_windows": {
+      "rmse": 19.33798599243164,
+      "mae": 14.37508487701416,
+      "nasa_score": 2291986.0299430713
+    }
+  },
+  "timing": {
+    "train_s": 0.617,
+    "infer_ms_per_row": 0.00061
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "fcf8d64a27fba7f5de93563d46e0aa3f0683ac36",
+  "notes": "FD004 = 6 operating conditions, 2 fault mode(s). Feature set derived from FD004's own train split by the std<0.005 rule: settings kept = ['setting_1', 'setting_2', 'setting_3']; dropped = ['sensor_16']. simulated (C-MAPSS tool), not real engines",
+  "extra": {
+    "candidate_train_stds": {
+      "setting_1": 14.767538018352742,
+      "setting_2": 0.3105434505212479,
+      "setting_3": 14.255730373307163,
+      "sensor_1": 26.413626373417163,
+      "sensor_2": 37.32345626439043,
+      "sensor_3": 106.13003117131076,
+      "sensor_4": 119.27838549077295,
+      "sensor_5": 3.618925444585502,
+      "sensor_6": 5.438577800190934,
+      "sensor_7": 146.74069123601487,
+      "sensor_8": 145.38252713667822,
+      "sensor_9": 336.76293205281644,
+      "sensor_10": 0.1276666809530989,
+      "sensor_11": 3.243806581181728,
+      "sensor_12": 138.34621197110388,
+      "sensor_13": 128.23331460265464,
+      "sensor_14": 85.64811557171231,
+      "sensor_15": 0.7504148591444342,
+      "sensor_16": 0.004688894872662265,
+      "sensor_17": 27.79840777986731,
+      "sensor_18": 145.5043972139085,
+      "sensor_19": 5.370846418143471,
+      "sensor_20": 9.926355384356894,
+      "sensor_21": 5.956568793690791
+    }
+  }
+}

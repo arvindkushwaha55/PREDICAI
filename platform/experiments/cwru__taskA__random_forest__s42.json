@@ -1,0 +1,158 @@
+{
+  "experiment_id": "cwru__taskA__random_forest__s42",
+  "timestamp_utc": "2026-11-15T04:45:41+00:00",
+  "dataset": "cwru",
+  "task": "A",
+  "model": "random_forest",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "per-window time-domain statistics of the drive-end vibration series"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "stratified 80/20 over WINDOWS, seed 42 \u2014 windows from the same recording appear in both splits (see notes; this inflates the score vs a recording-wise split)",
+    "n_train": 236,
+    "n_test": 60,
+    "class_counts_total": {
+      "Normal": 119,
+      "InnerRace": 59,
+      "Ball": 59,
+      "OuterRace": 59
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak"
+    ],
+    "windowing": "non-overlapping windows of 2048 samples over the DE channel of each recording",
+    "recordings": [
+      {
+        "file": "97.mat",
+        "condition": "normal_0",
+        "label": "Normal",
+        "n_samples": 243938,
+        "n_windows": 119,
+        "official_url": "https://engineering.case.edu/sites/default/files/97.mat"
+      },
+      {
+        "file": "105.mat",
+        "condition": "IR007_0",
+        "label": "InnerRace",
+        "n_samples": 121265,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/105.mat"
+      },
+      {
+        "file": "118.mat",
+        "condition": "B007_0",
+        "label": "Ball",
+        "n_samples": 122571,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/118.mat"
+      },
+      {
+        "file": "130.mat",
+        "condition": "OR007@6_0",
+        "label": "OuterRace",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "official_url": "https://engineering.case.edu/sites/default/files/130.mat"
+      }
+    ]
+  },
+  "metrics": {
+    "accuracy": 1.0,
+    "precision_macro": 1.0,
+    "recall_macro": 1.0,
+    "f1_macro": 1.0,
+    "confusion_matrix": [
+      [
+        24,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        12,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        12,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        12
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "Ball",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 24
+      },
+      "InnerRace": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 12
+      },
+      "Ball": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 12
+      },
+      "OuterRace": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 12
+      }
+    }
+  },
+  "timing": {
+    "train_s": 1.5028,
+    "infer_ms_per_row": 3.63227
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "fcf8d64a27fba7f5de93563d46e0aa3f0683ac36",
+  "notes": "LIMITATION (binding): the split is over windows, not recordings \u2014 adjacent windows of one recording share its fault signature, so these scores are optimistic relative to a recording-wise split and must not be quoted as generalisation performance. Only 4 recordings (one per class, 0 hp load, 0.007-inch faults) are integrated in this wave. real test-rig recordings; faults are EDM-seeded single-point defects on a 2 hp motor rig, not field failures",
+  "extra": {}
+}

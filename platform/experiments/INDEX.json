@@ -129,6 +129,96 @@
         "test_mae": 10.512,
         "test_nasa": 451.8
       }
+    },
+    {
+      "experiment_id": "cmapss_fd004__taskB__ridge_flat__s42",
+      "dataset": "cmapss_fd004",
+      "task": "B",
+      "model": "ridge_flat",
+      "file": "cmapss_fd004__taskB__ridge_flat__s42.json",
+      "timestamp_utc": "2026-11-15T04:38:16+00:00",
+      "headline": {
+        "test_rmse": 19.425,
+        "test_mae": 15.708,
+        "test_nasa": 1779.1
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd001_to_fd003__taskB__transfer_lstm__s42",
+      "dataset": "cmapss_fd001_to_fd003",
+      "task": "B",
+      "model": "transfer_lstm",
+      "file": "cmapss_fd001_to_fd003__taskB__transfer_lstm__s42.json",
+      "timestamp_utc": "2026-11-15T04:38:24+00:00",
+      "headline": {
+        "test_rmse": 48.8,
+        "test_mae": 30.673,
+        "test_nasa": 956059.4
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd002__taskB__ridge_flat__s42",
+      "dataset": "cmapss_fd002",
+      "task": "B",
+      "model": "ridge_flat",
+      "file": "cmapss_fd002__taskB__ridge_flat__s42.json",
+      "timestamp_utc": "2026-11-15T04:38:37+00:00",
+      "headline": {
+        "test_rmse": 16.582,
+        "test_mae": 13.268,
+        "test_nasa": 1267.2
+      }
+    },
+    {
+      "experiment_id": "ai4i2020__taskA__shap_lightgbm__s42",
+      "dataset": "ai4i2020",
+      "task": "A",
+      "model": "shap_lightgbm",
+      "file": "ai4i2020__taskA__shap_lightgbm__s42.json",
+      "timestamp_utc": "2026-11-15T04:44:17+00:00",
+      "headline": {
+        "f1": 0.782,
+        "top_feature": "Torque [Nm]",
+        "top5_overlap_with_permutation": 5
+      }
+    },
+    {
+      "experiment_id": "cwru__taskA__random_forest__s42",
+      "dataset": "cwru",
+      "task": "A",
+      "model": "random_forest",
+      "file": "cwru__taskA__random_forest__s42.json",
+      "timestamp_utc": "2026-11-15T04:45:41+00:00",
+      "headline": {
+        "accuracy": 1.0,
+        "f1_macro": 1.0
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd002__taskB__lstm__s42",
+      "dataset": "cmapss_fd002",
+      "task": "B",
+      "model": "lstm",
+      "file": "cmapss_fd002__taskB__lstm__s42.json",
+      "timestamp_utc": "2026-11-15T04:38:41+00:00",
+      "headline": {
+        "test_rmse": 16.236,
+        "test_mae": 11.933,
+        "test_nasa": 1099.8
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd004__taskB__lstm__s42",
+      "dataset": "cmapss_fd004",
+      "task": "B",
+      "model": "lstm",
+      "file": "cmapss_fd004__taskB__lstm__s42.json",
+      "timestamp_utc": "2026-11-15T04:59:34+00:00",
+      "headline": {
+        "test_rmse": 18.809,
+        "test_mae": 13.538,
+        "test_nasa": 2141.5
+      }
     }
   ]
 }

@@ -1,0 +1,180 @@
+{
+  "experiment_id": "ai4i2020__taskA__shap_lightgbm__s42",
+  "timestamp_utc": "2026-11-15T04:44:17+00:00",
+  "dataset": "ai4i2020",
+  "task": "A",
+  "model": "shap_lightgbm",
+  "model_params": {
+    "model": "LGBMClassifier(n_estimators=300, class_weight='balanced') \u2014 identical config to the wave-1 lightgbm record",
+    "explainer": "shap.TreeExplainer",
+    "shap_version": "0.54.1",
+    "explained_class": "1 (Machine failure)",
+    "n_explained_rows": 2000
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "stratified 80/20, seed 42 (identical to wave-1 AI4I records)",
+    "n_train": 8000,
+    "n_test": 2000,
+    "train_failures": 271,
+    "test_failures": 68
+  },
+  "preprocessing": {
+    "features": [
+      "Air temperature [K]",
+      "Process temperature [K]",
+      "Rotational speed [rpm]",
+      "Torque [Nm]",
+      "Tool wear [min]",
+      "Type_H",
+      "Type_L",
+      "Type_M"
+    ],
+    "excluded_id_columns": [
+      "UDI",
+      "Product ID"
+    ],
+    "excluded_leakage_columns": [
+      "TWF",
+      "HDF",
+      "PWF",
+      "OSF",
+      "RNF"
+    ],
+    "categorical_encoding": "one-hot of Type (fixed domain levels L/M/H)"
+  },
+  "metrics": {
+    "accuracy": 0.9855,
+    "precision": 0.8,
+    "recall": 0.7647058823529411,
+    "f1": 0.7819548872180451,
+    "confusion_matrix": [
+      [
+        1919,
+        13
+      ],
+      [
+        16,
+        52
+      ]
+    ],
+    "roc_auc": 0.9703142126415784
+  },
+  "timing": {
+    "train_s": 134.778,
+    "infer_ms_per_row": 0.08932
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "fcf8d64a27fba7f5de93563d46e0aa3f0683ac36",
+  "notes": "Explainability record (Phase 7): the LightGBM model was retrained with the exact wave-1 config and split so the attributions belong to a real, scored model; `metrics` are that retrained model's test metrics. SHAP values are TreeExplainer attributions for the failure class on the model's raw (log-odds) output scale.",
+  "extra": {
+    "shap_mean_abs_ranking": [
+      {
+        "feature": "Torque [Nm]",
+        "mean_abs_shap": 1.3619783489785742
+      },
+      {
+        "feature": "Tool wear [min]",
+        "mean_abs_shap": 1.2604292978793277
+      },
+      {
+        "feature": "Air temperature [K]",
+        "mean_abs_shap": 1.1442815155585073
+      },
+      {
+        "feature": "Rotational speed [rpm]",
+        "mean_abs_shap": 0.9427059860583727
+      },
+      {
+        "feature": "Process temperature [K]",
+        "mean_abs_shap": 0.9045630548443511
+      },
+      {
+        "feature": "Type_M",
+        "mean_abs_shap": 0.21952417900813023
+      },
+      {
+        "feature": "Type_H",
+        "mean_abs_shap": 0.21785434009090737
+      },
+      {
+        "feature": "Type_L",
+        "mean_abs_shap": 0.09853261693868967
+      }
+    ],
+    "shap_compute_s": 9.326,
+    "comparison_with_permutation_importance": {
+      "permutation_source": "wave-1 record ai4i2020__taskA__random_forest__s42 (Random Forest, test-F1 permutation importance)",
+      "caveat": "different model (RF vs LightGBM) and different method (permutation vs SHAP) \u2014 this compares rankings, not identical quantities",
+      "top5_shap": [
+        "Torque [Nm]",
+        "Tool wear [min]",
+        "Air temperature [K]",
+        "Rotational speed [rpm]",
+        "Process temperature [K]"
+      ],
+      "top5_permutation": [
+        "Torque [Nm]",
+        "Rotational speed [rpm]",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Tool wear [min]"
+      ],
+      "top5_overlap": [
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Tool wear [min]",
+        "Torque [Nm]"
+      ],
+      "spearman_rho_all_features": 0.7380952380952381,
+      "spearman_p_value": 0.03655276105286081,
+      "permutation_ranking": [
+        {
+          "feature": "Torque [Nm]",
+          "importance_mean": 0.45217104162296123
+        },
+        {
+          "feature": "Rotational speed [rpm]",
+          "importance_mean": 0.42804469582221305
+        },
+        {
+          "feature": "Air temperature [K]",
+          "importance_mean": 0.19889708667077927
+        },
+        {
+          "feature": "Process temperature [K]",
+          "importance_mean": 0.15400823926930501
+        },
+        {
+          "feature": "Tool wear [min]",
+          "importance_mean": 0.14297953006683795
+        },
+        {
+          "feature": "Type_L",
+          "importance_mean": 0.030985293677076718
+        },
+        {
+          "feature": "Type_H",
+          "importance_mean": 0.013386019754436419
+        },
+        {
+          "feature": "Type_M",
+          "importance_mean": 0.005064978766784201
+        }
+      ]
+    }
+  }
+}

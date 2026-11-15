@@ -1,0 +1,594 @@
+{
+  "experiment_id": "cmapss_fd001_to_fd003__taskB__transfer_lstm__s42",
+  "timestamp_utc": "2026-11-15T04:38:24+00:00",
+  "dataset": "cmapss_fd001_to_fd003",
+  "task": "B",
+  "model": "transfer_lstm",
+  "model_params": {
+    "architecture": "LSTM(128)->LSTM(64)->head 32->1 (shipped FD001 model, weights unchanged)",
+    "weights": "ml/artifacts/best_model.pt (owner Kaggle GPU run)",
+    "training": "none \u2014 zero-shot transfer, no FD003 fitting of any kind (no fine-tuning, no scaler fitting)"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "zero-shot cross-dataset transfer: shipped FD001 model applied to the official FD003 test set, last window per engine; FD003 data used for scoring only",
+    "n_test_engines": 100,
+    "source_dataset": "cmapss_fd001",
+    "target_dataset": "cmapss_fd003"
+  },
+  "preprocessing": {
+    "features": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21"
+    ],
+    "n_features": 14,
+    "feature_set": "FD001's exact 14 sensors from ml/artifacts/preprocessing.json (sensor_6 excluded, as the shipped model expects)",
+    "scaling": "z-score with FD001 train-split statistics from ml/artifacts/preprocessing.json \u2014 source-fitted; no FD003 statistics used anywhere",
+    "rul_cap": 125,
+    "seq_len": 30
+  },
+  "metrics": {
+    "test_last_window_per_engine": {
+      "rmse": 48.800132751464844,
+      "mae": 30.672740936279297,
+      "nasa_score": 956059.3639758674
+    }
+  },
+  "timing": {
+    "train_s": 0.0,
+    "infer_ms_per_row": 0.17526
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "fcf8d64a27fba7f5de93563d46e0aa3f0683ac36",
+  "notes": "Zero-shot FD001 -> FD003 transfer. FD003 adds a second fault mode (fan) that FD001 training never contains, and FD003 sensor distributions differ; degradation vs both in-domain references is the expected and reportable result. train_s = 0.0 because no training was performed in this run.",
+  "extra": {
+    "reference_fd001_in_domain": {
+      "rmse": 13.728736877441406,
+      "mae": 9.885571479797363,
+      "nasa_score": 431.2853960321513,
+      "source": "ml/artifacts/metrics.json (shipped model on FD001 test, same last-window protocol)"
+    },
+    "reference_fd003_in_domain_lstm": {
+      "rmse": 15.04255199432373,
+      "mae": 10.51198959350586,
+      "nasa_score": 451.76100997094403,
+      "source": "platform record cmapss_fd003__taskB__lstm__s42 (local CPU run, FD003-native 15 features)"
+    },
+    "degradation_vs_fd003_in_domain": {
+      "rmse_delta": 33.75758075714111,
+      "rmse_pct_increase": 224.41392105461526,
+      "mae_delta": 20.160751342773438,
+      "nasa_delta": 955607.6029658965
+    },
+    "degradation_vs_fd001_in_domain": {
+      "rmse_delta": 35.07139587402344,
+      "rmse_pct_increase": 255.45974248841173
+    },
+    "per_engine": [
+      {
+        "engine": 1,
+        "y_true": 44.0,
+        "y_pred": 124.80906677246094
+      },
+      {
+        "engine": 2,
+        "y_true": 51.0,
+        "y_pred": 58.59067153930664
+      },
+      {
+        "engine": 3,
+        "y_true": 27.0,
+        "y_pred": 124.74220275878906
+      },
+      {
+        "engine": 4,
+        "y_true": 120.0,
+        "y_pred": 121.99970245361328
+      },
+      {
+        "engine": 5,
+        "y_true": 101.0,
+        "y_pred": 124.74740600585938
+      },
+      {
+        "engine": 6,
+        "y_true": 99.0,
+        "y_pred": 109.77042388916016
+      },
+      {
+        "engine": 7,
+        "y_true": 71.0,
+        "y_pred": 46.24358367919922
+      },
+      {
+        "engine": 8,
+        "y_true": 55.0,
+        "y_pred": 56.52439880371094
+      },
+      {
+        "engine": 9,
+        "y_true": 55.0,
+        "y_pred": 70.43991088867188
+      },
+      {
+        "engine": 10,
+        "y_true": 66.0,
+        "y_pred": 72.80393981933594
+      },
+      {
+        "engine": 11,
+        "y_true": 77.0,
+        "y_pred": 86.26943969726562
+      },
+      {
+        "engine": 12,
+        "y_true": 115.0,
+        "y_pred": 104.23419189453125
+      },
+      {
+        "engine": 13,
+        "y_true": 115.0,
+        "y_pred": 117.55854797363281
+      },
+      {
+        "engine": 14,
+        "y_true": 31.0,
+        "y_pred": 30.108428955078125
+      },
+      {
+        "engine": 15,
+        "y_true": 108.0,
+        "y_pred": 124.80650329589844
+      },
+      {
+        "engine": 16,
+        "y_true": 56.0,
+        "y_pred": 124.79025268554688
+      },
+      {
+        "engine": 17,
+        "y_true": 125.0,
+        "y_pred": 124.92485809326172
+      },
+      {
+        "engine": 18,
+        "y_true": 125.0,
+        "y_pred": 124.80126953125
+      },
+      {
+        "engine": 19,
+        "y_true": 85.0,
+        "y_pred": 112.2235107421875
+      },
+      {
+        "engine": 20,
+        "y_true": 56.0,
+        "y_pred": 124.86544799804688
+      },
+      {
+        "engine": 21,
+        "y_true": 18.0,
+        "y_pred": 124.19195556640625
+      },
+      {
+        "engine": 22,
+        "y_true": 119.0,
+        "y_pred": 124.93913269042969
+      },
+      {
+        "engine": 23,
+        "y_true": 78.0,
+        "y_pred": 124.73090362548828
+      },
+      {
+        "engine": 24,
+        "y_true": 9.0,
+        "y_pred": 124.24711608886719
+      },
+      {
+        "engine": 25,
+        "y_true": 58.0,
+        "y_pred": 54.68878936767578
+      },
+      {
+        "engine": 26,
+        "y_true": 11.0,
+        "y_pred": 10.91536808013916
+      },
+      {
+        "engine": 27,
+        "y_true": 88.0,
+        "y_pred": 124.92578887939453
+      },
+      {
+        "engine": 28,
+        "y_true": 125.0,
+        "y_pred": 124.19737243652344
+      },
+      {
+        "engine": 29,
+        "y_true": 124.0,
+        "y_pred": 122.32003784179688
+      },
+      {
+        "engine": 30,
+        "y_true": 89.0,
+        "y_pred": 124.74297332763672
+      },
+      {
+        "engine": 31,
+        "y_true": 79.0,
+        "y_pred": 72.7851333618164
+      },
+      {
+        "engine": 32,
+        "y_true": 55.0,
+        "y_pred": 69.17158508300781
+      },
+      {
+        "engine": 33,
+        "y_true": 71.0,
+        "y_pred": 74.56278991699219
+      },
+      {
+        "engine": 34,
+        "y_true": 65.0,
+        "y_pred": 100.21864318847656
+      },
+      {
+        "engine": 35,
+        "y_true": 87.0,
+        "y_pred": 124.98420715332031
+      },
+      {
+        "engine": 36,
+        "y_true": 125.0,
+        "y_pred": 124.78498840332031
+      },
+      {
+        "engine": 37,
+        "y_true": 125.0,
+        "y_pred": 119.97268676757812
+      },
+      {
+        "engine": 38,
+        "y_true": 22.0,
+        "y_pred": 23.436681747436523
+      },
+      {
+        "engine": 39,
+        "y_true": 8.0,
+        "y_pred": 124.41051483154297
+      },
+      {
+        "engine": 40,
+        "y_true": 41.0,
+        "y_pred": 124.53620910644531
+      },
+      {
+        "engine": 41,
+        "y_true": 125.0,
+        "y_pred": 124.87181091308594
+      },
+      {
+        "engine": 42,
+        "y_true": 115.0,
+        "y_pred": 114.23192596435547
+      },
+      {
+        "engine": 43,
+        "y_true": 125.0,
+        "y_pred": 124.85723114013672
+      },
+      {
+        "engine": 44,
+        "y_true": 69.0,
+        "y_pred": 64.46928405761719
+      },
+      {
+        "engine": 45,
+        "y_true": 111.0,
+        "y_pred": 122.53092956542969
+      },
+      {
+        "engine": 46,
+        "y_true": 7.0,
+        "y_pred": 124.25176239013672
+      },
+      {
+        "engine": 47,
+        "y_true": 125.0,
+        "y_pred": 123.58523559570312
+      },
+      {
+        "engine": 48,
+        "y_true": 55.0,
+        "y_pred": 57.674835205078125
+      },
+      {
+        "engine": 49,
+        "y_true": 125.0,
+        "y_pred": 124.83529663085938
+      },
+      {
+        "engine": 50,
+        "y_true": 11.0,
+        "y_pred": 17.064340591430664
+      },
+      {
+        "engine": 51,
+        "y_true": 78.0,
+        "y_pred": 86.92276000976562
+      },
+      {
+        "engine": 52,
+        "y_true": 120.0,
+        "y_pred": 121.67908477783203
+      },
+      {
+        "engine": 53,
+        "y_true": 87.0,
+        "y_pred": 103.37699890136719
+      },
+      {
+        "engine": 54,
+        "y_true": 87.0,
+        "y_pred": 124.02437591552734
+      },
+      {
+        "engine": 55,
+        "y_true": 55.0,
+        "y_pred": 41.39861297607422
+      },
+      {
+        "engine": 56,
+        "y_true": 93.0,
+        "y_pred": 106.4615478515625
+      },
+      {
+        "engine": 57,
+        "y_true": 88.0,
+        "y_pred": 73.17015075683594
+      },
+      {
+        "engine": 58,
+        "y_true": 40.0,
+        "y_pred": 42.251930236816406
+      },
+      {
+        "engine": 59,
+        "y_true": 49.0,
+        "y_pred": 35.61724853515625
+      },
+      {
+        "engine": 60,
+        "y_true": 125.0,
+        "y_pred": 116.82775115966797
+      },
+      {
+        "engine": 61,
+        "y_true": 125.0,
+        "y_pred": 124.85254669189453
+      },
+      {
+        "engine": 62,
+        "y_true": 58.0,
+        "y_pred": 124.88692474365234
+      },
+      {
+        "engine": 63,
+        "y_true": 117.0,
+        "y_pred": 125.02000427246094
+      },
+      {
+        "engine": 64,
+        "y_true": 28.0,
+        "y_pred": 124.60261535644531
+      },
+      {
+        "engine": 65,
+        "y_true": 115.0,
+        "y_pred": 124.57154846191406
+      },
+      {
+        "engine": 66,
+        "y_true": 87.0,
+        "y_pred": 107.79792022705078
+      },
+      {
+        "engine": 67,
+        "y_true": 92.0,
+        "y_pred": 124.86521911621094
+      },
+      {
+        "engine": 68,
+        "y_true": 103.0,
+        "y_pred": 124.8999252319336
+      },
+      {
+        "engine": 69,
+        "y_true": 100.0,
+        "y_pred": 120.10751342773438
+      },
+      {
+        "engine": 70,
+        "y_true": 63.0,
+        "y_pred": 57.30150604248047
+      },
+      {
+        "engine": 71,
+        "y_true": 35.0,
+        "y_pred": 124.74120330810547
+      },
+      {
+        "engine": 72,
+        "y_true": 45.0,
+        "y_pred": 124.95535278320312
+      },
+      {
+        "engine": 73,
+        "y_true": 99.0,
+        "y_pred": 110.52450561523438
+      },
+      {
+        "engine": 74,
+        "y_true": 117.0,
+        "y_pred": 124.92669677734375
+      },
+      {
+        "engine": 75,
+        "y_true": 45.0,
+        "y_pred": 124.74432373046875
+      },
+      {
+        "engine": 76,
+        "y_true": 27.0,
+        "y_pred": 23.153413772583008
+      },
+      {
+        "engine": 77,
+        "y_true": 86.0,
+        "y_pred": 124.8099365234375
+      },
+      {
+        "engine": 78,
+        "y_true": 20.0,
+        "y_pred": 124.37554931640625
+      },
+      {
+        "engine": 79,
+        "y_true": 18.0,
+        "y_pred": 24.11284065246582
+      },
+      {
+        "engine": 80,
+        "y_true": 125.0,
+        "y_pred": 124.5110855102539
+      },
+      {
+        "engine": 81,
+        "y_true": 15.0,
+        "y_pred": 124.6627426147461
+      },
+      {
+        "engine": 82,
+        "y_true": 6.0,
+        "y_pred": 124.39833068847656
+      },
+      {
+        "engine": 83,
+        "y_true": 125.0,
+        "y_pred": 118.71013641357422
+      },
+      {
+        "engine": 84,
+        "y_true": 104.0,
+        "y_pred": 89.36994934082031
+      },
+      {
+        "engine": 85,
+        "y_true": 56.0,
+        "y_pred": 124.83950805664062
+      },
+      {
+        "engine": 86,
+        "y_true": 25.0,
+        "y_pred": 24.083091735839844
+      },
+      {
+        "engine": 87,
+        "y_true": 68.0,
+        "y_pred": 57.452972412109375
+      },
+      {
+        "engine": 88,
+        "y_true": 125.0,
+        "y_pred": 124.85076904296875
+      },
+      {
+        "engine": 89,
+        "y_true": 41.0,
+        "y_pred": 124.82504272460938
+      },
+      {
+        "engine": 90,
+        "y_true": 51.0,
+        "y_pred": 55.98651885986328
+      },
+      {
+        "engine": 91,
+        "y_true": 81.0,
+        "y_pred": 106.26668548583984
+      },
+      {
+        "engine": 92,
+        "y_true": 14.0,
+        "y_pred": 124.4010238647461
+      },
+      {
+        "engine": 93,
+        "y_true": 67.0,
+        "y_pred": 124.92240905761719
+      },
+      {
+        "engine": 94,
+        "y_true": 10.0,
+        "y_pred": 124.23689270019531
+      },
+      {
+        "engine": 95,
+        "y_true": 125.0,
+        "y_pred": 124.88955688476562
+      },
+      {
+        "engine": 96,
+        "y_true": 113.0,
+        "y_pred": 124.82105255126953
+      },
+      {
+        "engine": 97,
+        "y_true": 123.0,
+        "y_pred": 124.54263305664062
+      },
+      {
+        "engine": 98,
+        "y_true": 17.0,
+        "y_pred": 19.28693962097168
+      },
+      {
+        "engine": 99,
+        "y_true": 8.0,
+        "y_pred": 124.37428283691406
+      },
+      {
+        "engine": 100,
+        "y_true": 28.0,
+        "y_pred": 124.50588989257812
+      }
+    ]
+  }
+}
