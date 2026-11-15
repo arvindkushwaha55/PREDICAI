@@ -348,3 +348,222 @@ platform/data/raw/cwru/{97,105,118,130}.mat       official CWRU downloads (gitig
 
 Run commands (from `platform/`):
 `../.venv/bin/python -m platform_lib.benchmarking.run_wave2 --set fd002|fd004|transfer|shap|cwru`
+
+---
+
+# Wave 4 — Model expansion & leakage-safe evaluation (2026-11-15)
+
+**Records:** 12 new (29 total in `platform/experiments/`). **Code:**
+`platform/platform_lib/benchmarking/run_wave4.py`; **tests:**
+`platform/tests/test_wave4.py` — full platform suite **64/64 passed**.
+Seed 42 everywhere; the existing FD001 system and all earlier records
+are untouched.
+
+Wave 4's theme: broaden the model zoo where waves 1–2 used one family
+per task, and replace the two weakest split protocols in the earlier
+records with leakage-safe ones (CWRU recording-wise, Paderborn
+measurement-grouped, battery leave-one-battery-out). Environment as in
+wave 1, plus one CPU lesson recorded in §15.
+
+## 13. FD001 — GRU vs the shipped LSTM (Task B)
+
+Identical shipped pipeline, split and recipe; only the recurrent cell
+changes (GRU 128→64, same head). Local CPU, early stop at epoch 17
+(best val epoch 7), train 583 s.
+
+| Model | Val RMSE (all windows) | Test RMSE | Test MAE | Test NASA |
+|---|---|---|---|---|
+| LSTM (shipped, Kaggle GPU) | 13.01 | 13.73 | 9.89 | 431.3 |
+| **GRU (wave 4, local CPU)** | **12.53** | **13.22** | **9.67** | **305.9** |
+
+Reading: on this seed and protocol the GRU is marginally ahead of the
+shipped LSTM on every metric, with ~25% fewer recurrent parameters.
+That is a single-seed, single-split comparison — it shows the GRU is a
+credible alternative cell for this data, not that GRUs are "better"
+in general; the shipped LSTM remains the deployed model (its ONNX /
+Rust serving path is built and parity-tested).
+
+## 14. FD003 — CNN-LSTM vs LSTM (Task B), checkpoint saved
+
+Conv1d frontend (15→64→32, k=3) feeding the shipped LSTM stack, on
+FD003's own 15-feature pipeline. Early stop at epoch 21, train 392 s.
+
+| Model | Val RMSE | Test RMSE | Test MAE | Test NASA |
+|---|---|---|---|---|
+| LSTM (wave 1) | **11.02** | 15.04 | 10.51 | 451.8 |
+| **CNN-LSTM (wave 4)** | 11.54 | **13.17** | **9.10** | **290.5** |
+
+Reading: the ranking flips between validation and the official test —
+the plain LSTM's best-val checkpoint is better on val, the CNN-LSTM
+generalises better to the test engines. Both numbers are reported;
+picking the CNN-LSTM "because test" would be test-set selection, so
+the honest claim is narrower: the convolutional frontend did not hurt
+and its test-set degradation gap (val→test) is smaller here.
+**Checkpoint saved** — `platform/artifacts/fd003_cnn_lstm.pt` plus a
+preprocessing sidecar (features + scaler, same contract shape as
+`ml/artifacts/preprocessing.json`) — which unblocks the wave-5
+FD003 → FD001 transfer that wave 2 had to skip.
+
+## 15. FD002 — tree regressors on flattened windows (Task B)
+
+Random Forest and XGBoost regressors on flattened (30 × 23) windows,
+official last-window protocol. Training windows subsampled to 10,000
+of 37,051 (uniform, seed 42; val/test not subsampled) — recorded in
+both records. The RF configuration itself had to be reduced for this
+VM: three attempts (300 trees, max_features 1.0 at 20k/10k subsample;
+300 trees, max_features 0.3 at 10k) each failed to finish the fit
+stage in ~15 min of wall time on the throttled shared CPU, so the
+recorded RF is 100 trees, max_features 0.3 (train 295 s; XGBoost's
+histogram method needed no reduction, 75 s). The full story is in the
+record's `cpu_feasibility_note`.
+
+| Model | Val RMSE | Test RMSE | Test MAE | Test NASA |
+|---|---|---|---|---|
+| Ridge (wave 2) | 17.01 | 16.58 | 13.27 | 1267.2 |
+| LSTM (wave 2) | 17.04 | **16.24** | **11.93** | **1099.8** |
+| XGBoost reg (wave 4) | 19.29 | 17.49 | 13.69 | 1710.2 |
+| Random Forest reg (wave 4) | 20.66 | 18.44 | 14.90 | 1979.2 |
+
+Reading: flattened-window trees lose to both the linear baseline and
+the LSTM on FD002. Flattening destroys the temporal order the trees
+cannot recover from raw lags, and the 10k subsample further limits
+them; the result is reported as measured, with the subsample caveat
+attached — it should not be quoted as "trees can't do RUL", only as
+"this flattened, subsampled configuration underperforms here".
+
+## 16. AI4I — SVM and MLP complete the classifier set (Task A)
+
+Same stratified split as wave 1 (test: 2,000 rows, 68 failures;
+all-negative baseline accuracy 0.9660).
+
+| Model | Accuracy | Precision | Recall | F1 | ROC-AUC | Confusion [[TN,FP],[FN,TP]] |
+|---|---|---|---|---|---|---|
+| LightGBM (wave 1, best F1) | 0.986 | — | 0.765 | **0.782** | 0.970 | — |
+| MLP (64,32) (wave 4) | 0.980 | 0.700 | 0.721 | 0.710 | **0.976** | [[1911, 21], [19, 49]] |
+| SVM RBF, balanced (wave 4) | 0.917 | 0.279 | **0.912** | 0.428 | 0.961 | [[1772, 160], [6, 62]] |
+
+Reading: the MLP has the best ranking quality (AUC 0.976) but a lower
+F1 than LightGBM at the 0.5 threshold. The balanced SVM is a
+recall-first detector: it catches 62/68 failures but raises 160 false
+alarms (precision 0.28) — on a real line that trade might be chosen
+deliberately, but as an F1 competitor it is far behind. The AI4I
+synthetic-data caveat from §1 applies unchanged.
+
+## 17. SECOM — One-Class SVM and autoencoder (Task C)
+
+Both fitted on PASS rows of the train split only (1,170 rows), same
+450 surviving features and split as wave 1; fail-rate prior
+104/1567 ≈ 0.0664 sets the OCSVM ν and the autoencoder's threshold
+quantile. Test: 314 rows, 21 fails.
+
+| Model | Precision | Recall | F1 | False alarm rate | Confusion [[TN,FP],[FN,TP]] |
+|---|---|---|---|---|---|
+| Isolation Forest (wave 1) | — | 0.238 | **0.244** | 0.051 | — |
+| One-Class SVM (wave 4) | 0.091 | 0.143 | 0.111 | 0.102 | [[263, 30], [18, 3]] |
+| Autoencoder (wave 4) | 0.050 | 0.048 | 0.049 | 0.065 | [[274, 19], [20, 1]] |
+
+Reading: neither newcomer beats the wave-1 Isolation Forest. The
+autoencoder is the weakest: at the threshold implied by the fail-rate
+prior it flags ~6.5% of passes yet catches only 1 of 21 fails —
+reconstruction error on 450 anonymised, heavily-imputed channels is a
+poor anomaly score here. With 21 test fails, all three F1 estimates
+are high-variance; the defensible conclusion is that SECOM's
+unsupervised signal is weak for every method tried so far, not that
+one algorithm is proven superior.
+
+## 18. CWRU — the recording-wise re-evaluation (Task A)
+
+Wave 2's CWRU score (accuracy/F1 = 1.000) came from a window-wise
+split over 4 recordings — every test window's recording was also in
+training. Wave 4 downloads 8 more official recordings (0.014″ and
+0.021″ faults at 0 hp; normal baselines at 1 and 2 hp — each file's
+identity self-verified by its internal `X<id>_DE_time` variable;
+99.mat as served bundles X098 alongside X099, and the self-identified
+X099 series is the one used) for **12 recordings, 3 per class**, and
+evaluates the same Random Forest (same features) by
+**leave-one-recording-out**: pooled out-of-fold accuracy **0.665**,
+F1-macro **0.421**.
+
+Per held-out recording (accuracy): normal_0/1/2 = 1.000 / 1.000 /
+1.000; B007 = 1.000, B014 = 0.373, B021 = 0.949; IR007/IR014/IR021 =
+0.000 / 0.000 / 0.000; OR007/OR014 = 0.000 / 0.000, OR021 = 0.305.
+
+Pooled confusion (rows = true): Normal [591, 0, 0, 0]; InnerRace
+[0, 0, 122, 55]; Ball [3, 19, 137, 18]; OuterRace [1, 100, 58, 18].
+
+Reading — the most informative result of this wave: **healthy vs
+faulty transfers perfectly** across recordings (Normal recall 1.000),
+and Ball partially (F1 0.555), but **fault location does not
+transfer at all for InnerRace** (0/177 correct; IR windows are read
+as Ball or OuterRace) and barely for OuterRace (F1 0.134). With only
+time-domain amplitude statistics, *which* component is failing is
+entangled with *how big* the fault is, so an unseen diameter of one
+fault looks like a known diameter of another. The standard remedy is
+frequency-domain evidence (envelope spectra at the characteristic
+fault frequencies), which this feature set lacks — that, not more
+trees, is the honest next step for CWRU. The wave-2 1.000 stands in
+its record with its caveat; this record supersedes it as the number
+to quote for CWRU diagnosis.
+
+## 19. NASA Battery — leave-one-battery-out RUL (Task B)
+
+Target: discharge cycles until capacity first falls below 1.4 Ah
+(70% of the 2 Ah rating). LOBO over B0005/B0006/B0018; **B0007
+excluded as censored** (never crosses 1.4 Ah — last recorded
+1.432 Ah — so it has no observed EOL label). Random Forest on
+cycle index + per-cycle discharge statistics; a small LSTM on
+10-cycle capacity windows (first 10 cycles of each held-out battery
+unscored — no full window).
+
+| Held out | RF RMSE | RF MAE | LSTM RMSE | LSTM MAE |
+|---|---|---|---|---|
+| B0005 (168 cycles) | 11.87 | 9.62 | 13.45 | 9.38 |
+| B0006 (168 cycles) | 7.13 | 4.86 | 19.82 | 11.56 |
+| B0018 (132 cycles) | 7.77 | 6.01 | 7.49 | 5.45 |
+| **Pooled** | **9.27** | **6.90** | 14.92 | 9.08 |
+
+Reading: the Random Forest is the better battery model here, and it
+is not close on B0006, where the capacity-only LSTM overfits the two
+training batteries' fade shapes. Each LOBO fold trains on just two
+batteries (~300 cycles), so both models are data-starved by
+construction; the per-battery rows, not the pooled row, are the
+honest unit of reporting. Errors of ~7–12 cycles on lives of
+97–125 cycles are a reasonable first benchmark for this dataset in
+the platform, not a validated prognostic.
+
+## 20. Paderborn — measurement-grouped Random Forest (Task A)
+
+30,022 windows from 240 measurements (3 bearings × 80), split by
+**GroupShuffleSplit on measurement id** (192 train / 48 test
+measurements) — no measurement on both sides. Accuracy **0.950**,
+F1-macro **0.952** (train 28 s). Per-class F1: Normal 0.928,
+InnerRace 0.937, OuterRace 0.992; the dominant confusion is
+Normal ↔ InnerRace (108 + 164 windows).
+
+Reading, with its binding caveat: there is still only **one physical
+bearing per class**, so this measures within-bearing separability
+across measurements and operating conditions — a stricter and more
+honest number than a window-wise split would give, but not evidence
+about unseen bearings. Paderborn data is CC BY-NC 4.0
+(non-commercial use only).
+
+## 21. Wave-4 files, and what remains for waves 5–6
+
+```
+platform/platform_lib/benchmarking/run_wave4.py    all wave-4 runners
+platform/tests/test_wave4.py                       wave-4 tests (suite 64/64)
+platform/artifacts/fd003_cnn_lstm.pt               FD003 CNN-LSTM checkpoint (wave-5 transfer)
+platform/artifacts/fd003_cnn_lstm_preprocessing.json  its feature/scaler sidecar
+platform/experiments/                              12 new records (29 total) + INDEX.json
+platform/data/raw/cwru/{98,99,169,185,197,209,222,234}.mat  official CWRU downloads (gitignored)
+```
+
+Run commands (from `platform/`):
+`../.venv/bin/python -m platform_lib.benchmarking.run_wave4 --set gru|cnnlstm|fd002trees|ai4i|secom|cwru|battery|paderborn`
+
+Remaining for waves 5–6: FD003 → FD001 zero-shot transfer (now
+unblocked by the saved checkpoint); FD002 → FD004 transfer (both
+six-condition, FD004 adds the fan fault mode); SHAP/permutation for
+the new best models; CWRU frequency-domain features (the §18
+finding); per-regime normalisation for FD002/FD004 (wave-2 finding,
+still open); dashboard integration of the platform results.
