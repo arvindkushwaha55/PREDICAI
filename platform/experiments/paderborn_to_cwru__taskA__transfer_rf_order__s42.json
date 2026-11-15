@@ -1,0 +1,224 @@
+{
+  "experiment_id": "paderborn_to_cwru__taskA__transfer_rf_order__s42",
+  "timestamp_utc": "2026-11-15T13:16:22+00:00",
+  "dataset": "paderborn_to_cwru",
+  "task": "A",
+  "model": "transfer_rf_order",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "wave-12 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 9 order-domain features (platform_lib.features.order): envelope-spectrum energy shares in +-2% bands at the bearing's BPFO, BPFI, BSF (ball-defect order = 2*ball-spin) and FTF characteristic orders and their 2nd harmonics, plus order-domain spectral entropy. Orders are computed per dataset from the actual bearing geometry (CWRU: SKF 6205-2RS JEM, 9 balls, Bd 0.3126 in, Pd 1.537 in -> BPFO 3.5848 / BPFI 5.4152 / BSF 4.7134 / FTF 0.3983; Paderborn: 6203, 8 balls, Bd 6.75 mm, Pd 28.55 mm -> BPFO 3.0543 / BPFI 4.9457 / BSF 3.9932 / FTF 0.3818) and each window is read at ITS recording's shaft speed, so the features are shaft-speed-relative by construction. Residual confounds, stated not hidden: true order resolution is 1/(revolutions per window) \u2014 0.196 orders on CWRU windows (5.11 rev) but 1.25/2.08 orders on Paderborn windows (0.80 rev at N15, 0.48 rev at N09), coarser than the spacing between characteristic orders; slip moves true defect rates ~1-2% off the kinematic orders (hence the +-2% bands); rig transfer functions and sensor placement still differ.",
+    "training": "fit on ALL paderborn windows of the shared label set; no target data in training"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "zero-shot cross-dataset transfer: Random Forest trained on all paderborn windows, tested on all cwru windows; label set restricted to the shared ['Normal', 'InnerRace', 'OuterRace']. Identical to the wave-5/9 transfer protocols \u2014 the ONLY change is the feature set (19 combined time + order).",
+    "source_dataset": "paderborn",
+    "target_dataset": "cwru",
+    "n_train_windows": 30022,
+    "n_test_windows": 945,
+    "train_class_counts": {
+      "OuterRace": 10015,
+      "Normal": 10006,
+      "InnerRace": 10001
+    },
+    "test_class_counts": {
+      "Normal": 591,
+      "InnerRace": 177,
+      "OuterRace": 177
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak",
+      "ord_bpfo",
+      "ord_bpfi",
+      "ord_bsf",
+      "ord_ftf",
+      "ord_bpfo_h2",
+      "ord_bpfi_h2",
+      "ord_bsf_h2",
+      "ord_ftf_h2",
+      "order_entropy"
+    ],
+    "feature_note": "wave-12 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 9 order-domain features (platform_lib.features.order): envelope-spectrum energy shares in +-2% bands at the bearing's BPFO, BPFI, BSF (ball-defect order = 2*ball-spin) and FTF characteristic orders and their 2nd harmonics, plus order-domain spectral entropy. Orders are computed per dataset from the actual bearing geometry (CWRU: SKF 6205-2RS JEM, 9 balls, Bd 0.3126 in, Pd 1.537 in -> BPFO 3.5848 / BPFI 5.4152 / BSF 4.7134 / FTF 0.3983; Paderborn: 6203, 8 balls, Bd 6.75 mm, Pd 28.55 mm -> BPFO 3.0543 / BPFI 4.9457 / BSF 3.9932 / FTF 0.3818) and each window is read at ITS recording's shaft speed, so the features are shaft-speed-relative by construction. Residual confounds, stated not hidden: true order resolution is 1/(revolutions per window) \u2014 0.196 orders on CWRU windows (5.11 rev) but 1.25/2.08 orders on Paderborn windows (0.80 rev at N15, 0.48 rev at N09), coarser than the spacing between characteristic orders; slip moves true defect rates ~1-2% off the kinematic orders (hence the +-2% bands); rig transfer functions and sensor placement still differ.",
+    "windowing": "non-overlapping 2048-sample windows in both datasets \u2014 the window TIME SPAN still differs by sampling rate: 2048 samples = 170.7 ms at CWRU's 12 kHz vs 32.0 ms at Paderborn's 64 kHz, i.e. 5.11 shaft revolutions vs 0.80 (N15) / 0.48 (N09). True order resolution is therefore 0.196 orders on CWRU but 1.25/2.08 orders on Paderborn \u2014 coarser than the spacing between the characteristic orders themselves; the order features on Paderborn windows are blunt by construction of the shared 2048-sample protocol.",
+    "excluded": "CWRU 'Ball' class excluded (Paderborn scope has no ball-fault bearing); CWRU windows of that class are dropped from BOTH training (when CWRU is the source) and scoring",
+    "scaling": "none (tree model, as in the wave-5/9 records)"
+  },
+  "metrics": {
+    "accuracy": 0.16296296296296298,
+    "f1_macro": 0.2060968660968661,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        591
+      ],
+      [
+        9,
+        95,
+        73
+      ],
+      [
+        0,
+        118,
+        59
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 591
+      },
+      "InnerRace": {
+        "precision": 0.4460093896713615,
+        "recall": 0.536723163841808,
+        "f1": 0.48717948717948717,
+        "support": 177
+      },
+      "OuterRace": {
+        "precision": 0.08160442600276625,
+        "recall": 0.3333333333333333,
+        "f1": 0.13111111111111112,
+        "support": 177
+      }
+    }
+  },
+  "timing": {
+    "train_s": 86.3662,
+    "infer_ms_per_row": 0.20146
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "24ace7409d8ea9cc2a0c21381a1d89879b4fb5ab",
+  "notes": "Zero-shot paderborn -> cwru bearing-fault transfer with the wave-12 order-domain feature set \u2014 the wave-5/9 transfer re-run with the feature set as the only changed variable. The order features align the characteristic defect frequencies of the two DIFFERENT bearings (6205 vs 6203) in shaft-speed-relative units, which neither the time-domain nor the rate-free spectral sets attempted. What remains unaligned, documented rather than corrected: rig transfer functions, sensor placement and mounting; load regimes; fault sizes/geometries; and \u2014 binding on the Paderborn side \u2014 a 2048-sample window holds less than one shaft revolution, so the true order resolution there (1.25-2.08 orders) is coarser than the order spacing. Both earlier baselines are carried in extra; the result is reported as measured, whether or not it improves.",
+  "extra": {
+    "wave5_time_domain_baseline": {
+      "accuracy": 0.12486772486772486,
+      "f1_macro": 0.15577010495745386,
+      "normal_precision": 0.0,
+      "normal_recall": 0.0,
+      "normal_f1": 0.0,
+      "record": "paderborn_to_cwru__taskA__transfer_rf__s42"
+    },
+    "wave9_spectral_baseline": {
+      "accuracy": 0.1873015873015873,
+      "f1_macro": 0.2857142857142857,
+      "normal_precision": 0.0,
+      "normal_recall": 0.0,
+      "normal_f1": 0.0,
+      "record": "paderborn_to_cwru__taskA__transfer_rf_spectral__s42"
+    },
+    "delta_vs_wave5_time_domain": {
+      "accuracy_delta": 0.03809523809523811,
+      "f1_macro_delta": 0.05032676113941223,
+      "normal_f1_delta": 0.0
+    },
+    "delta_vs_wave9_spectral": {
+      "accuracy_delta": -0.024338624338624326,
+      "f1_macro_delta": -0.07961741961741961,
+      "normal_f1_delta": 0.0
+    },
+    "reference_target_in_domain": {
+      "accuracy": 0.6648841354723708,
+      "f1_macro": 0.4214028868431701,
+      "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over 12 recordings; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording a",
+      "source": "platform record cwru__taskA__random_forest_recordingwise__s42 (time-domain features)"
+    },
+    "reference_source_in_domain": {
+      "accuracy": 0.9499001331557922,
+      "f1_macro": 0.9519874629693527,
+      "source": "platform record paderborn__taskA__random_forest__s42 (time-domain features)"
+    },
+    "accuracy_delta_vs_target_in_domain": -0.5019211725094078,
+    "order_physics": {
+      "cwru": {
+        "bearing": "SKF 6205-2RS JEM (CWRU drive end)",
+        "n_balls": 9,
+        "ball_diameter": 0.3126,
+        "pitch_diameter": 1.537,
+        "contact_angle_deg": 0.0,
+        "geometry_source": "CWRU Bearing Data Center bearing information (drive-end test bearing SKF 6205-2RS JEM): 9 balls, ball diameter 0.3126 in, pitch diameter 1.537 in, contact angle 0 deg",
+        "computed_orders": {
+          "bpfo": 3.58478,
+          "bpfi": 5.41522,
+          "ftf": 0.39831,
+          "bsf_spin": 2.35672,
+          "bsf": 4.71344
+        },
+        "published_multipliers_crosscheck": {
+          "bpfi": 5.4152,
+          "bpfo": 3.5848,
+          "bsf_defect_2xbsf": 4.7135,
+          "ftf": 0.39828
+        },
+        "bsf_convention": "the `bsf` feature sits at 2*BSF (ball-defect repetition rate: a ball defect strikes both raceways once per ball revolution); `bsf_spin` is the pure ball spin frequency",
+        "sample_rate_hz": 12000,
+        "speeds": "per-recording: in-file X<id>RPM scalar where the file ships one (10 of 12 recordings, all 1796-1797 rpm); CWRU catalogue nominal by load otherwise (98.mat 1 hp -> 1772, 99.mat 2 hp -> 1750)",
+        "revolutions_per_window": 5.11,
+        "true_order_resolution": 0.196
+      },
+      "paderborn": {
+        "bearing": "6203 (Paderborn KAt-DataCenter test bearing)",
+        "n_balls": 8,
+        "ball_diameter": 6.75,
+        "pitch_diameter": 28.55,
+        "contact_angle_deg": 0.0,
+        "geometry_source": "6203 nominal geometry as used for the Paderborn KAt-DataCenter bearing: 8 balls, ball diameter 6.75 mm, pitch diameter 28.55 mm, contact angle 0 deg",
+        "computed_orders": {
+          "bpfo": 3.05429,
+          "bpfi": 4.94571,
+          "ftf": 0.38179,
+          "bsf_spin": 1.9966,
+          "bsf": 3.9932
+        },
+        "published_multipliers_crosscheck": {
+          "bpfi": 4.9457,
+          "bpfo": 3.0543,
+          "bsf_spin": 1.9966
+        },
+        "bsf_convention": "the `bsf` feature sits at 2*BSF (ball-defect repetition rate: a ball defect strikes both raceways once per ball revolution); `bsf_spin` is the pure ball spin frequency",
+        "sample_rate_hz": 64000,
+        "speeds": "per-measurement nominal from the condition code (N15 -> 1500 rpm, N09 -> 900 rpm), cross-checked against the recorded speed channel (means 1499.6 / 899.7 rpm, std 0.18 rpm)",
+        "revolutions_per_window": {
+          "N15": 0.8,
+          "N09": 0.48
+        },
+        "true_order_resolution": {
+          "N15": 1.25,
+          "N09": 2.08
+        }
+      },
+      "band_definition": "envelope-spectrum energy share within +-2% of the target order (8x zero-padded envelope spectrum; nearest single bin if the band holds no bin centre); normalised by total non-DC envelope-spectrum energy"
+    }
+  }
+}

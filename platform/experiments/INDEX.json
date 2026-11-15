@@ -585,6 +585,58 @@
         "test_mae": 10.087,
         "test_nasa": 1039.9
       }
+    },
+    {
+      "experiment_id": "cwru__taskA__random_forest_order_recordingwise__s42",
+      "dataset": "cwru",
+      "task": "A",
+      "model": "random_forest_order_recordingwise",
+      "file": "cwru__taskA__random_forest_order_recordingwise__s42.json",
+      "timestamp_utc": "2026-11-15T13:09:54+00:00",
+      "headline": {
+        "accuracy": 0.8021,
+        "f1_macro": 0.6889,
+        "innerrace_correct": 109
+      }
+    },
+    {
+      "experiment_id": "cwru_to_paderborn__taskA__transfer_rf_order__s42",
+      "dataset": "cwru_to_paderborn",
+      "task": "A",
+      "model": "transfer_rf_order",
+      "file": "cwru_to_paderborn__taskA__transfer_rf_order__s42.json",
+      "timestamp_utc": "2026-11-15T13:14:53+00:00",
+      "headline": {
+        "accuracy": 0.3347,
+        "f1_macro": 0.1692,
+        "normal_f1": 0.0
+      }
+    },
+    {
+      "experiment_id": "paderborn_to_cwru__taskA__transfer_rf_order__s42",
+      "dataset": "paderborn_to_cwru",
+      "task": "A",
+      "model": "transfer_rf_order",
+      "file": "paderborn_to_cwru__taskA__transfer_rf_order__s42.json",
+      "timestamp_utc": "2026-11-15T13:16:22+00:00",
+      "headline": {
+        "accuracy": 0.163,
+        "f1_macro": 0.2061,
+        "normal_f1": 0.0
+      }
+    },
+    {
+      "experiment_id": "cmapss_fd004__taskB__lstm_perregime__s42",
+      "dataset": "cmapss_fd004",
+      "task": "B",
+      "model": "lstm_perregime",
+      "file": "cmapss_fd004__taskB__lstm_perregime__s42.json",
+      "timestamp_utc": "2026-11-15T13:09:31+00:00",
+      "headline": {
+        "test_rmse": 15.372,
+        "test_mae": 10.864,
+        "test_nasa": 1457.4
+      }
     }
   ]
 }

@@ -1,0 +1,390 @@
+{
+  "experiment_id": "cwru__taskA__random_forest_order_recordingwise__s42",
+  "timestamp_utc": "2026-11-15T13:09:54+00:00",
+  "dataset": "cwru",
+  "task": "A",
+  "model": "random_forest_order_recordingwise",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "wave-12 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 9 order-domain features (platform_lib.features.order): envelope-spectrum energy shares in +-2% bands at the bearing's BPFO, BPFI, BSF (ball-defect order = 2*ball-spin) and FTF characteristic orders and their 2nd harmonics, plus order-domain spectral entropy. Orders are computed per dataset from the actual bearing geometry (CWRU: SKF 6205-2RS JEM, 9 balls, Bd 0.3126 in, Pd 1.537 in -> BPFO 3.5848 / BPFI 5.4152 / BSF 4.7134 / FTF 0.3983; Paderborn: 6203, 8 balls, Bd 6.75 mm, Pd 28.55 mm -> BPFO 3.0543 / BPFI 4.9457 / BSF 3.9932 / FTF 0.3818) and each window is read at ITS recording's shaft speed, so the features are shaft-speed-relative by construction. Residual confounds, stated not hidden: true order resolution is 1/(revolutions per window) \u2014 0.196 orders on CWRU windows (5.11 rev) but 1.25/2.08 orders on Paderborn windows (0.80 rev at N15, 0.48 rev at N09), coarser than the spacing between characteristic orders; slip moves true defect rates ~1-2% off the kinematic orders (hence the +-2% bands); rig transfer functions and sensor placement still differ."
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "RECORDING-WISE leave-one-recording-out (LeaveOneGroupOut over the SAME 12 recordings as waves 4/9; groups = recording id): in every fold the held-out recording's windows are the test set and NO window from that recording appears in training. Metrics are computed on the pooled out-of-fold predictions. Protocol, recordings, model config and seed are identical to waves 4/9 \u2014 the ONLY change is the feature set.",
+    "n_recordings": 12,
+    "n_windows": 1122,
+    "recordings_per_class": {
+      "Ball": 177,
+      "InnerRace": 177,
+      "Normal": 591,
+      "OuterRace": 177
+    },
+    "class_window_counts": {
+      "Normal": 591,
+      "InnerRace": 177,
+      "Ball": 177,
+      "OuterRace": 177
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak",
+      "ord_bpfo",
+      "ord_bpfi",
+      "ord_bsf",
+      "ord_ftf",
+      "ord_bpfo_h2",
+      "ord_bpfi_h2",
+      "ord_bsf_h2",
+      "ord_ftf_h2",
+      "order_entropy"
+    ],
+    "feature_note": "wave-12 feature set: the 10 time-domain statistics of the earlier waves (untouched) + 9 order-domain features (platform_lib.features.order): envelope-spectrum energy shares in +-2% bands at the bearing's BPFO, BPFI, BSF (ball-defect order = 2*ball-spin) and FTF characteristic orders and their 2nd harmonics, plus order-domain spectral entropy. Orders are computed per dataset from the actual bearing geometry (CWRU: SKF 6205-2RS JEM, 9 balls, Bd 0.3126 in, Pd 1.537 in -> BPFO 3.5848 / BPFI 5.4152 / BSF 4.7134 / FTF 0.3983; Paderborn: 6203, 8 balls, Bd 6.75 mm, Pd 28.55 mm -> BPFO 3.0543 / BPFI 4.9457 / BSF 3.9932 / FTF 0.3818) and each window is read at ITS recording's shaft speed, so the features are shaft-speed-relative by construction. Residual confounds, stated not hidden: true order resolution is 1/(revolutions per window) \u2014 0.196 orders on CWRU windows (5.11 rev) but 1.25/2.08 orders on Paderborn windows (0.80 rev at N15, 0.48 rev at N09), coarser than the spacing between characteristic orders; slip moves true defect rates ~1-2% off the kinematic orders (hence the +-2% bands); rig transfer functions and sensor placement still differ.",
+    "windowing": "non-overlapping windows of 2048 samples over the DE channel of each recording (identical to waves 2/4/9)",
+    "recordings": [
+      {
+        "file": "97.mat",
+        "condition": "normal_0",
+        "label": "Normal",
+        "n_samples": 243938,
+        "n_windows": 119,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X097RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/97.mat"
+      },
+      {
+        "file": "98.mat",
+        "condition": "normal_1",
+        "label": "Normal",
+        "n_samples": 483903,
+        "n_windows": 236,
+        "shaft_rpm": 1772.0,
+        "rpm_source": "CWRU catalogue nominal for 1 hp load (this file ships no RPM scalar)",
+        "official_url": "https://engineering.case.edu/sites/default/files/98.mat"
+      },
+      {
+        "file": "99.mat",
+        "condition": "normal_2",
+        "label": "Normal",
+        "n_samples": 485063,
+        "n_windows": 236,
+        "shaft_rpm": 1750.0,
+        "rpm_source": "CWRU catalogue nominal for 2 hp load (this file ships no RPM scalar)",
+        "official_url": "https://engineering.case.edu/sites/default/files/99.mat"
+      },
+      {
+        "file": "105.mat",
+        "condition": "IR007_0",
+        "label": "InnerRace",
+        "n_samples": 121265,
+        "n_windows": 59,
+        "shaft_rpm": 1797.0,
+        "rpm_source": "in-file variable X105RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/105.mat"
+      },
+      {
+        "file": "169.mat",
+        "condition": "IR014_0",
+        "label": "InnerRace",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X169RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/169.mat"
+      },
+      {
+        "file": "209.mat",
+        "condition": "IR021_0",
+        "label": "InnerRace",
+        "n_samples": 122136,
+        "n_windows": 59,
+        "shaft_rpm": 1797.0,
+        "rpm_source": "in-file variable X209RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/209.mat"
+      },
+      {
+        "file": "118.mat",
+        "condition": "B007_0",
+        "label": "Ball",
+        "n_samples": 122571,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X118RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/118.mat"
+      },
+      {
+        "file": "185.mat",
+        "condition": "B014_0",
+        "label": "Ball",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X185RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/185.mat"
+      },
+      {
+        "file": "222.mat",
+        "condition": "B021_0",
+        "label": "Ball",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X222RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/222.mat"
+      },
+      {
+        "file": "130.mat",
+        "condition": "OR007@6_0",
+        "label": "OuterRace",
+        "n_samples": 121991,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X130RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/130.mat"
+      },
+      {
+        "file": "197.mat",
+        "condition": "OR014@6_0",
+        "label": "OuterRace",
+        "n_samples": 121846,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X197RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/197.mat"
+      },
+      {
+        "file": "234.mat",
+        "condition": "OR021@6_0",
+        "label": "OuterRace",
+        "n_samples": 122426,
+        "n_windows": 59,
+        "shaft_rpm": 1796.0,
+        "rpm_source": "in-file variable X234RPM",
+        "official_url": "https://engineering.case.edu/sites/default/files/234.mat"
+      }
+    ]
+  },
+  "metrics": {
+    "accuracy": 0.8021390374331551,
+    "f1_macro": 0.6889083886237561,
+    "confusion_matrix": [
+      [
+        591,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        109,
+        65,
+        3
+      ],
+      [
+        3,
+        1,
+        141,
+        32
+      ],
+      [
+        1,
+        0,
+        117,
+        59
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "Ball",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.9932773109243698,
+        "recall": 1.0,
+        "f1": 0.9966273187183811,
+        "support": 591
+      },
+      "InnerRace": {
+        "precision": 0.990909090909091,
+        "recall": 0.615819209039548,
+        "f1": 0.759581881533101,
+        "support": 177
+      },
+      "Ball": {
+        "precision": 0.43653250773993807,
+        "recall": 0.7966101694915254,
+        "f1": 0.564,
+        "support": 177
+      },
+      "OuterRace": {
+        "precision": 0.6276595744680851,
+        "recall": 0.3333333333333333,
+        "f1": 0.4354243542435424,
+        "support": 177
+      }
+    }
+  },
+  "timing": {
+    "train_s": 20.9533,
+    "infer_ms_per_row": 1.29057
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "24ace7409d8ea9cc2a0c21381a1d89879b4fb5ab",
+  "notes": "Wave-12 counterpart of the wave-4/9 recording-wise records: identical protocol, recordings, model and seed; the only change is the feature set (10 time-domain -> 19 combined time + order-domain). The three-way comparison lives in extra.comparison_previous_feature_sets. Recording-wise evaluation still does NOT cover unseen fault diameters combined with unseen loads jointly, nor different machines. Data note (as wave 4): 99.mat as served bundles X098 alongside X099; the self-identified X099_DE_time series (2 hp normal) is the one used, read at the catalogue's 1750 rpm for its load (the file ships no RPM scalar).",
+  "extra": {
+    "per_recording_accuracy": [
+      {
+        "recording": "B007_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 0.7457627118644068
+      },
+      {
+        "recording": "B014_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 0.6440677966101694
+      },
+      {
+        "recording": "B021_0",
+        "label": "Ball",
+        "n_windows": 59,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "IR007_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.8983050847457628
+      },
+      {
+        "recording": "IR014_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "IR021_0",
+        "label": "InnerRace",
+        "n_windows": 59,
+        "accuracy": 0.9491525423728814
+      },
+      {
+        "recording": "OR007@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "OR014@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "OR021@6_0",
+        "label": "OuterRace",
+        "n_windows": 59,
+        "accuracy": 0.0
+      },
+      {
+        "recording": "normal_0",
+        "label": "Normal",
+        "n_windows": 119,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "normal_1",
+        "label": "Normal",
+        "n_windows": 236,
+        "accuracy": 1.0
+      },
+      {
+        "recording": "normal_2",
+        "label": "Normal",
+        "n_windows": 236,
+        "accuracy": 1.0
+      }
+    ],
+    "comparison_previous_feature_sets": {
+      "wave4_time_domain_only": {
+        "accuracy": 0.6648841354723708,
+        "f1_macro": 0.4214028868431701,
+        "innerrace_correct": 0,
+        "innerrace_support": 177,
+        "innerrace_f1": 0.0,
+        "record": "cwru__taskA__random_forest_recordingwise__s42"
+      },
+      "wave9_combined_spectral": {
+        "accuracy": 0.679144385026738,
+        "f1_macro": 0.4173853104065304,
+        "innerrace_correct": 15,
+        "innerrace_support": 177,
+        "innerrace_f1": 0.13215859030837004,
+        "record": "cwru__taskA__random_forest_spectral_recordingwise__s42"
+      },
+      "wave12_combined_order": {
+        "accuracy": 0.8021390374331551,
+        "f1_macro": 0.6889083886237561,
+        "innerrace_correct": 109,
+        "innerrace_support": 177,
+        "innerrace_f1": 0.759581881533101
+      },
+      "delta_accuracy_vs_wave4": 0.13725490196078427,
+      "delta_accuracy_vs_wave9": 0.12299465240641705,
+      "delta_f1_macro_vs_wave4": 0.267505501780586,
+      "delta_f1_macro_vs_wave9": 0.27152307821722577
+    },
+    "order_physics_cwru": {
+      "bearing": "SKF 6205-2RS JEM (CWRU drive end)",
+      "n_balls": 9,
+      "ball_diameter": 0.3126,
+      "pitch_diameter": 1.537,
+      "contact_angle_deg": 0.0,
+      "geometry_source": "CWRU Bearing Data Center bearing information (drive-end test bearing SKF 6205-2RS JEM): 9 balls, ball diameter 0.3126 in, pitch diameter 1.537 in, contact angle 0 deg",
+      "computed_orders": {
+        "bpfo": 3.58478,
+        "bpfi": 5.41522,
+        "ftf": 0.39831,
+        "bsf_spin": 2.35672,
+        "bsf": 4.71344
+      },
+      "published_multipliers_crosscheck": {
+        "bpfi": 5.4152,
+        "bpfo": 3.5848,
+        "bsf_defect_2xbsf": 4.7135,
+        "ftf": 0.39828
+      },
+      "bsf_convention": "the `bsf` feature sits at 2*BSF (ball-defect repetition rate: a ball defect strikes both raceways once per ball revolution); `bsf_spin` is the pure ball spin frequency",
+      "sample_rate_hz": 12000,
+      "speeds": "per-recording: in-file X<id>RPM scalar where the file ships one (10 of 12 recordings, all 1796-1797 rpm); CWRU catalogue nominal by load otherwise (98.mat 1 hp -> 1772, 99.mat 2 hp -> 1750)",
+      "revolutions_per_window": 5.11,
+      "true_order_resolution": 0.196
+    }
+  }
+}
