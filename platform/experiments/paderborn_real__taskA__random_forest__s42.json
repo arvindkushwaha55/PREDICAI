@@ -1,0 +1,201 @@
+{
+  "experiment_id": "paderborn_real__taskA__random_forest__s42",
+  "timestamp_utc": "2026-11-15T12:12:19+00:00",
+  "dataset": "paderborn_real",
+  "task": "A",
+  "model": "random_forest",
+  "model_params": {
+    "n_estimators": 300,
+    "class_weight": "balanced",
+    "n_jobs": -1,
+    "features": "per-window time-domain statistics of the vibration_1 channel (64 kHz) \u2014 same 10 features as the wave-4 artificial-damage run"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "MEASUREMENT-GROUPED split: GroupShuffleSplit by source_file (measurement id), 80/20, seed 42 \u2014 identical protocol to wave 4; the ONLY change vs wave 4 is the bearing set (real fatigue damage instead of artificial EDM damage). NOTE: one physical bearing per class, so train and test share bearings (different measurements of them).",
+    "n_train": 24021,
+    "n_test": 6000,
+    "n_measurements_train": 192,
+    "n_measurements_test": 48,
+    "class_counts_total": {
+      "InnerRace": 10011,
+      "Normal": 10006,
+      "OuterRace": 10004
+    }
+  },
+  "preprocessing": {
+    "features": [
+      "mean",
+      "std",
+      "rms",
+      "skewness",
+      "kurtosis",
+      "crest_factor",
+      "peak",
+      "min",
+      "max",
+      "peak_to_peak"
+    ],
+    "windowing": "non-overlapping windows of 2048 samples over the vibration_1 channel of each 4 s measurement",
+    "bearings": [
+      {
+        "bearing": "K001",
+        "label": "Normal",
+        "damage_origin": "none (healthy bearing)",
+        "n_measurements": 80,
+        "n_windows": 10006
+      },
+      {
+        "bearing": "KA04",
+        "label": "OuterRace",
+        "damage_origin": "real (fatigue pitting, lifetime test)",
+        "n_measurements": 80,
+        "n_windows": 10004
+      },
+      {
+        "bearing": "KI04",
+        "label": "InnerRace",
+        "damage_origin": "real (fatigue pitting, lifetime test; secondary OR indentations documented)",
+        "n_measurements": 80,
+        "n_windows": 10011
+      }
+    ],
+    "licence": "CC BY-NC 4.0 (non-commercial; citation required)"
+  },
+  "metrics": {
+    "accuracy": 0.9976666666666667,
+    "f1_macro": 0.9977733489251301,
+    "confusion_matrix": [
+      [
+        1869,
+        6,
+        0
+      ],
+      [
+        8,
+        2367,
+        0
+      ],
+      [
+        0,
+        0,
+        1750
+      ]
+    ],
+    "confusion_labels": [
+      "Normal",
+      "InnerRace",
+      "OuterRace"
+    ],
+    "per_class": {
+      "Normal": {
+        "precision": 0.9957378795950985,
+        "recall": 0.9968,
+        "f1": 0.996268656716418,
+        "support": 1875
+      },
+      "InnerRace": {
+        "precision": 0.9974715549936789,
+        "recall": 0.9966315789473684,
+        "f1": 0.9970513900589723,
+        "support": 2375
+      },
+      "OuterRace": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1750
+      }
+    }
+  },
+  "timing": {
+    "train_s": 14.8414,
+    "infer_ms_per_row": 0.01666
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "701c0fa322191399e3662808ad4b7118ea7b9643",
+  "notes": "Caveat (binding): one physical bearing per class (K001 healthy, KA04 outer-race REAL fatigue pitting, KI04 inner-race REAL fatigue pitting as its primary damage). The measurement-grouped split removes window-level leakage, but the score measures within-bearing separability across measurements and operating conditions \u2014 NOT generalisation to unseen bearings, and NOT an artificial-vs-real damage comparison (different bearings, not the same bearing before/after). KI04's official profile documents a SECONDARY outer-race damage (particle-caused indentations) alongside its primary inner-race pitting; it is recorded in extra.bearing_documentation, not hidden. CC BY-NC 4.0 data: non-commercial use only. real test-rig recordings; damage origin per bearing as listed in `bearings` (artificial EDM-seeded for KA01/KI01; real fatigue pitting from lifetime tests for KA04/KI04, per the official damage-profile PDFs shipped in each archive)",
+  "extra": {
+    "documentation_source": "official per-bearing damage-profile PDF shipped inside each official .rar archive (e.g. KA04/KA04.pdf), 'Profile of rolling bearing damage', Dipl.-Ing. Christian Lessmeier, Chair of Design and Drive Technology, Paderborn University \u2014 fields copied verbatim, read 2026-11-15",
+    "bearing_documentation": [
+      {
+        "bearing": "K001",
+        "label": "Normal",
+        "damage_origin": "none (healthy bearing)",
+        "documented_damage": null,
+        "archive_sha256": "0f119ebdb28fb2f4d9fac1beb1319429f63f7ae1256c23c872f280f3560918e5"
+      },
+      {
+        "bearing": "KA04",
+        "label": "OuterRace",
+        "damage_origin": "real (fatigue pitting, accelerated lifetime test)",
+        "documented_damage": {
+          "number_of_damages": 1,
+          "mode": "fatigue",
+          "symptom": "Pitting",
+          "component": "OR (outer ring)",
+          "position_of_damage": "raceway",
+          "damage_combination": "S (single damage)",
+          "length_mm": 2,
+          "width_mm": 3,
+          "extent_of_damage": 1,
+          "characteristic_of_damage": "single point",
+          "damage_method": "lifetime test",
+          "cause_of_damage": "operating conditions and lubricant (overload, wrong viscosity, contamination)"
+        },
+        "archive_sha256": "6fc317157e2cd4cb55bc54d6fac1b1753f8ab31abcccd1ac68cbfb78e5e8299d"
+      },
+      {
+        "bearing": "KI04",
+        "label": "InnerRace",
+        "damage_origin": "real (fatigue pitting, accelerated lifetime test; primary damage)",
+        "documented_damage": {
+          "number_of_damages": 2,
+          "damage_1_primary": {
+            "mode": "fatigue (below the surface)",
+            "symptom": "Pitting",
+            "component": "IR (inner ring)",
+            "position_of_damage": "raceway",
+            "damage_combination": "M (multiple damage)",
+            "length_mm": 2,
+            "width_mm": 1,
+            "extent_of_damage": 1,
+            "characteristic_of_damage": "single point",
+            "damage_method": "lifetime test"
+          },
+          "damage_2_secondary": {
+            "mode": "plastic deformation (by foreign objects)",
+            "symptom": "particle-caused indentations",
+            "component": "OR (outer ring)",
+            "position_of_damage": "raceway",
+            "extent_of_damage": "n/a",
+            "characteristic_of_damage": "single point",
+            "damage_method": "lifetime test"
+          },
+          "classification_note": "the bearing is categorised by its primary damage (inner-race fatigue pitting); the secondary outer-race indentations are part of its official profile and are stated here, not hidden"
+        },
+        "archive_sha256": "8fde861a9ceac4b41fe8a030b4c5bbb4b9b9af0590d9338a8de0150b4661be77"
+      }
+    ],
+    "comparison_wave4_artificial": {
+      "record": "paderborn__taskA__random_forest__s42",
+      "note": "wave-4 run on the ARTIFICIAL EDM bearings (KA01/KI01) under the identical protocol; shown for context only \u2014 different physical bearings, so this is not a controlled artificial-vs-real comparison",
+      "accuracy": 0.9499001331557922,
+      "f1_macro": 0.9519874629693527,
+      "wave10_real_accuracy": 0.9976666666666667,
+      "wave10_real_f1_macro": 0.9977733489251301
+    }
+  }
+}

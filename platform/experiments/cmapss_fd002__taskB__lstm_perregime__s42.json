@@ -1,0 +1,257 @@
+{
+  "experiment_id": "cmapss_fd002__taskB__lstm_perregime__s42",
+  "timestamp_utc": "2026-11-15T12:12:49+00:00",
+  "dataset": "cmapss_fd002",
+  "task": "B",
+  "model": "lstm_perregime",
+  "model_params": {
+    "hidden_1": 128,
+    "hidden_2": 64,
+    "head_dim": 32,
+    "dropout": 0.2,
+    "epochs": 60,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "grad_clip": 1.0,
+    "patience": 10,
+    "seed": 42,
+    "device": "cpu (local run)",
+    "architecture": "LSTM(128)->LSTM(64)->head 32->1 (same as wave 2 / shipped FD001 recipe)"
+  },
+  "seed": 42,
+  "split": {
+    "protocol": "engine-wise 80/20 train/val (seed 42) + official provided test set, last window per engine \u2014 IDENTICAL to wave 2; the ONLY change vs wave 2 is the normalisation (per-regime sensor scaling)",
+    "n_train_engines": 208,
+    "n_val_engines": 52,
+    "n_train_windows": 37051,
+    "n_val_windows": 9168,
+    "n_test_engines": 253
+  },
+  "preprocessing": {
+    "features": [
+      "setting_1",
+      "setting_2",
+      "setting_3",
+      "sensor_1",
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_5",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_10",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_18",
+      "sensor_19",
+      "sensor_20",
+      "sensor_21"
+    ],
+    "n_features": 23,
+    "feature_derivation": "candidates = 3 settings + 21 sensors; dropped train-split std < 0.005 (same rule as wave 2, see rul_pipeline.py)",
+    "dropped_candidates": [
+      {
+        "column": "sensor_16",
+        "train_std": 0.004709677777415721
+      }
+    ],
+    "rul_cap": 125,
+    "seq_len": 30,
+    "scaling": "PER-REGIME z-score (ddof=0) for the 20 sensor features: KMeans k=6 regimes derived from the TRAIN split's settings only; one scaler per regime fit on that regime's train rows; val/test rows assigned to the nearest train centroid. The 3 setting features keep the wave-2 global train-split z-score (within a regime a setting is near-constant by construction, so a per-regime z-score for it is undefined).",
+    "regimes": {
+      "k": 6,
+      "method": "KMeans (k=6, seed 42, n_init=10) on the train split's 3 setting columns, standardised by train-split std; val/test rows assigned to the nearest train centroid",
+      "train_sizes_rows": [
+        6417,
+        6568,
+        6416,
+        10777,
+        6451,
+        6454
+      ],
+      "val_sizes_rows": [
+        1585,
+        1554,
+        1628,
+        2681,
+        1645,
+        1583
+      ],
+      "test_sizes_rows": [
+        5042,
+        5063,
+        5148,
+        8483,
+        5107,
+        5148
+      ],
+      "centroids_raw_settings": [
+        {
+          "setting_1": 25.003,
+          "setting_2": 0.6205,
+          "setting_3": 60.0
+        },
+        {
+          "setting_1": 20.003,
+          "setting_2": 0.7005,
+          "setting_3": 100.0
+        },
+        {
+          "setting_1": 0.0015,
+          "setting_2": 0.0005,
+          "setting_3": 100.0
+        },
+        {
+          "setting_1": 42.003,
+          "setting_2": 0.8405,
+          "setting_3": 100.0
+        },
+        {
+          "setting_1": 10.003,
+          "setting_2": 0.2505,
+          "setting_3": 100.0
+        },
+        {
+          "setting_1": 35.0031,
+          "setting_2": 0.8405,
+          "setting_3": 100.0
+        }
+      ],
+      "zero_std_fallbacks": [
+        {
+          "regime": 0,
+          "feature": "sensor_18"
+        },
+        {
+          "regime": 1,
+          "feature": "sensor_18"
+        },
+        {
+          "regime": 1,
+          "feature": "sensor_19"
+        },
+        {
+          "regime": 2,
+          "feature": "sensor_18"
+        },
+        {
+          "regime": 2,
+          "feature": "sensor_19"
+        },
+        {
+          "regime": 3,
+          "feature": "sensor_1"
+        },
+        {
+          "regime": 3,
+          "feature": "sensor_18"
+        },
+        {
+          "regime": 3,
+          "feature": "sensor_19"
+        },
+        {
+          "regime": 4,
+          "feature": "sensor_18"
+        },
+        {
+          "regime": 4,
+          "feature": "sensor_19"
+        },
+        {
+          "regime": 5,
+          "feature": "sensor_18"
+        },
+        {
+          "regime": 5,
+          "feature": "sensor_19"
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "test_last_window_per_engine": {
+      "rmse": 14.04554557800293,
+      "mae": 10.086538314819336,
+      "nasa_score": 1039.9086266166291
+    },
+    "val_all_windows": {
+      "rmse": 15.19426441192627,
+      "mae": 10.94321060180664,
+      "nasa_score": 50636.849154389274
+    }
+  },
+  "timing": {
+    "train_s": 464.4,
+    "infer_ms_per_row": 0.14556
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-44-generic-x86_64-with-glibc2.39",
+    "libraries": {
+      "numpy": "1.26.4",
+      "pandas": "2.1.4+dfsg",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.11.4",
+      "torch": "2.15.0+cpu",
+      "xgboost": "3.4.1",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "git_commit": "701c0fa322191399e3662808ad4b7118ea7b9643",
+  "notes": "FD002 = 6 operating conditions, 1 fault mode(s). Wave-10 per-regime normalisation re-run of the wave-2 lstm experiment; split, features, cap, windowing and model are unchanged \u2014 only the scaling differs, so the delta vs the comparison block is the normalisation effect as measured. simulated (C-MAPSS tool), not real engines",
+  "extra": {
+    "candidate_train_stds": {
+      "setting_1": 14.72747943501706,
+      "setting_2": 0.30954419582953885,
+      "setting_3": 14.241372337018015,
+      "sensor_1": 26.36620549634248,
+      "sensor_2": 37.25951880604652,
+      "sensor_3": 105.85315587141535,
+      "sensor_4": 118.9856620149637,
+      "sensor_5": 3.60895944083591,
+      "sensor_6": 5.424336496300797,
+      "sensor_7": 145.79856977582224,
+      "sensor_8": 145.19764160517943,
+      "sensor_9": 335.52683706616534,
+      "sensor_10": 0.12726716951832848,
+      "sensor_11": 3.2302902616902487,
+      "sensor_12": 137.46308177338068,
+      "sensor_13": 128.10137777008597,
+      "sensor_14": 84.8611442015036,
+      "sensor_15": 0.7489316714243992,
+      "sensor_16": 0.004709677777415721,
+      "sensor_17": 27.730186536446002,
+      "sensor_18": 145.31549526479003,
+      "sensor_19": 5.3654370279715335,
+      "sensor_20": 9.85562364585196,
+      "sensor_21": 5.913247311814864
+    },
+    "epochs_run": 12,
+    "best_val_rmse": 15.1943,
+    "comparison_wave2_global_normalisation": {
+      "wave2_global": {
+        "record": "cmapss_fd002__taskB__lstm__s42.json",
+        "rmse": 16.236255645751953,
+        "mae": 11.932707786560059,
+        "nasa_score": 1099.7764954014747
+      },
+      "wave10_perregime": {
+        "rmse": 14.04554557800293,
+        "mae": 10.086538314819336,
+        "nasa_score": 1039.9086266166291
+      },
+      "delta_rmse": -2.1907100677490234,
+      "delta_mae": -1.8461694717407227,
+      "delta_nasa": -59.86786878484554,
+      "delta_rmse_pct": -13.49270494100775
+    }
+  }
+}
