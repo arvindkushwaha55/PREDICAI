@@ -125,6 +125,51 @@ machine, localhost, 1,000 sequential requests, each including prediction +
 SQLite log write): **p50 1.36 ms · p95 2.23 ms** (mean 1.51 ms). Local
 development-machine numbers, not a production guarantee.*
 
+## Platform (Phase 8 expansion)
+
+Alongside the FD001 system above — which it does not modify — `platform/`
+generalises PREDICAI into a multi-dataset, multi-model research platform
+over three task families: **A** failure/fault classification, **B** RUL
+regression, **C** anomaly detection. A central registry tracks 20 dataset
+entries; **10 are integrated** (adapters + local data + experiment
+records): C-MAPSS FD001–FD004, AI4I 2020, SECOM, CWRU, Paderborn
+(3 bearings), IMS (Test 1) and the NASA Li-ion Battery set. **37
+experiment records** (Task A 16 · B 17 · C 4, all seed 42) live in
+`platform/experiments/`, each with its split protocol stated — splits are
+asset/recording-wise wherever windows from one machine could otherwise
+leak across train/test.
+
+Headline results, stated as measured (full detail in
+[`platform/EXPERIMENTS_REPORT.md`](platform/EXPERIMENTS_REPORT.md)):
+
+- The shipped FD001 LSTM (RMSE **13.73**) remains the deployed model. A
+  GRU on the identical protocol scored **13.22** — one seed, marginally
+  ahead, recorded as such and not swapped in on that evidence.
+- FD003 CNN-LSTM: RMSE **13.17**, ahead of the FD003 LSTM (15.04).
+- CWRU bearing diagnosis: the window-split Random Forest scores 1.000 —
+  but that measures *within-recording* separability. The honest
+  recording-wise re-evaluation scores **0.665**; both numbers are kept,
+  the caveat travels with them.
+- Cross-dataset transfer mostly fails, and is documented failing:
+  FD001→FD003 RMSE 48.80 (unseen fault mode) vs FD003→FD001 15.82;
+  FD002→FD004 51.38 vs FD004→FD002 18.07; CWRU↔Paderborn accuracy
+  0.253 / 0.125 — fault *location* does not transfer across rigs on
+  time-domain features.
+- IMS Test 1 anomaly detection is reported as **alarm timing only**
+  (no per-snapshot labels exist): first sustained alarms 337 and 723
+  snapshots before the end of the run on the two bearings with
+  documented teardown defects, none on the two without.
+
+Platform documents:
+[`platform/DATASET_REGISTRY.md`](platform/DATASET_REGISTRY.md) ·
+[`platform/DATASET_RESEARCH.md`](platform/DATASET_RESEARCH.md) ·
+[`platform/EXPERIMENTS_REPORT.md`](platform/EXPERIMENTS_REPORT.md) ·
+[`platform/FAULT_DIAGNOSIS.md`](platform/FAULT_DIAGNOSIS.md)
+
+The dashboard gained four views fed from the experiment records —
+**Platform**, **Datasets**, **Experiments** and **Research** — alongside
+the original Fleet / Machine / Maintenance / Model Info views.
+
 ## Tech stack
 
 | Layer | Technology |
@@ -192,6 +237,7 @@ PREDICAI/
 ├── maintenance/          # SQLite maintenance history + policy engine
 ├── simulator/            # FD001 replay → Rust API
 ├── dashboard/            # React + TypeScript monitoring UI
+├── platform/             # Phase 8 multi-dataset platform (registry, adapters, experiments)
 └── tests/e2e/            # end-to-end integration tests
 ```
 
