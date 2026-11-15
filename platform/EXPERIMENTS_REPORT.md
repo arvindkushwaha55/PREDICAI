@@ -761,3 +761,188 @@ per-regime normalisation for FD002/FD004; frequency-domain bearing
 features for a second CWRU↔Paderborn transfer attempt; Paderborn's
 real-damage bearings; a controlled LSTM↔CNN-LSTM transfer pair to
 remove §23's architecture confound.
+
+---
+
+# Wave 9 (2026-11-15) — frequency-domain bearing features + IMS completion
+
+Wave 9 attacks the two open problems named in the Waves 1–8 closing
+note: the missing frequency-domain bearing features (re-running the
+two honest protocols of waves 4–5 with features as the ONLY changed
+variable) and IMS Tests 2–3. The headline, stated before the tables:
+**the spectral features did not fix either bearing problem, and the
+identical IMS protocol that succeeded on Tests 1–2 misses Test 3's
+failed bearing.** All three results are reported as measured; no
+protocol was re-tuned after seeing an outcome.
+
+## 29. The wave-9 feature set — design and the rate-freedom choice
+
+New module `platform_lib/features/spectral.py`. The combined set is
+the untouched 10 time-domain statistics plus 14 spectral/envelope
+features (24 total): dominant frequency, spectral centroid, spectral
+entropy, energy in 8 log-spaced bands, and Hilbert-envelope features
+(envelope-spectrum peak amplitude and frequency, envelope kurtosis).
+
+Binding design choice: CWRU records at 12 kHz and Paderborn at
+64 kHz, so every spectral quantity is expressed in RATE-FREE units —
+frequencies and band edges as fractions of Nyquist (bands over
+0.005–1.0 × Nyquist), band energies normalised by total spectral
+energy, envelope peak amplitude normalised by total envelope
+magnitude. The identical definitions therefore apply to both
+datasets. The records also state the limit of this choice: it
+removes the sampling-rate confound only. Shaft speeds differ
+independently of sampling rates, so defect frequencies expressed
+relative to shaft rotation are NOT aligned, and a 2048-sample window
+still spans 170.7 ms of rotation on CWRU vs 32.0 ms on Paderborn.
+
+## 30. CWRU recording-wise, re-run with spectral features (Task A)
+
+Record: `cwru__taskA__random_forest_spectral_recordingwise__s42`.
+Same 12 recordings, same leave-one-recording-out protocol, same RF
+(300 trees, balanced), same seed as §18 — features are the only
+change.
+
+| Metric | Wave 4 (time only) | Wave 9 (combined) | Δ |
+|---|---|---|---|
+| Accuracy | 0.665 | 0.679 | +0.014 |
+| F1-macro | 0.421 | 0.417 | −0.004 |
+| InnerRace correct | 0 / 177 | 15 / 177 | — |
+| InnerRace F1 | 0.000 | 0.132 | +0.132 |
+| OuterRace F1 | 0.134 | 0.008 | −0.126 |
+| Ball F1 | 0.555 | 0.534 | −0.021 |
+| Normal F1 | 0.997 | 0.996 | −0.001 |
+
+Honest reading: this is a reshuffle, not a fix. Accuracy moved
++0.014 while F1-macro went slightly DOWN. InnerRace is no longer
+literally never recognised (15/177, recall 0.085), but OuterRace
+collapsed in exchange (1/177 correct). Per-recording detail (in the
+record) shows the same structure as wave 4: Normal and Ball
+recordings largely recognised, fault-location classes confused with
+each other on unseen recordings. With three recordings per class,
+each held-out fold is also a new fault diameter — the spectral
+signature of a 0.007″ defect evidently does not pin down the class
+of a 0.021″ one under these features either. **Conclusion: fault
+location still does not generalise across recordings on CWRU with
+window-level spectral features, just as it did not with time-domain
+features.**
+
+## 31. CWRU ↔ Paderborn transfer, re-run with spectral features (Task A)
+
+Records: `cwru_to_paderborn__taskA__transfer_rf_spectral__s42`,
+`paderborn_to_cwru__taskA__transfer_rf_spectral__s42`. Same zero-shot
+protocol as §25 (all-source → all-target, shared 3-class label set).
+
+| Direction | Metric | Wave 5 (time only) | Wave 9 (combined) | Δ |
+|---|---|---|---|---|
+| CWRU → Paderborn | accuracy | 0.253 | 0.210 | −0.043 |
+| | F1-macro | 0.205 | 0.171 | −0.034 |
+| | Normal F1 | 0.000 | 0.195 | +0.195 |
+| Paderborn → CWRU | accuracy | 0.125 | 0.187 | +0.062 |
+| | F1-macro | 0.156 | 0.286 | +0.130 |
+| | Normal F1 | 0.000 | 0.000 | 0.000 |
+
+Honest reading, per direction:
+
+- **CWRU → Paderborn got worse overall**, with one genuine change:
+  Normal is partially visible for the first time (F1 0.195, recall
+  0.255 — a quarter of Paderborn's healthy windows recognised),
+  while InnerRace collapsed to 13 / 10,001 correct. The wave-5
+  "Normal is a property of the rig" finding is dented in this
+  direction, not overturned.
+- **Paderborn → CWRU improved on paper, but the improvement is one
+  class deep**: InnerRace is recognised perfectly (177/177,
+  F1 0.857) while Normal (0/591) and OuterRace (0/177) are missed
+  entirely. A classifier that finds exactly one of three classes
+  has not transferred; it has found one coincidentally aligned
+  signature.
+
+**Conclusion: cross-rig bearing transfer remains a failure in both
+directions with spectral features.** Removing the sampling-rate
+confound was necessary-but-not-sufficient; the remaining confounds
+(shaft-speed-relative frequencies, rig/bearing/sensor differences,
+5.3× window time span) dominate. The principled next attack — not
+attempted here — is shaft-speed-normalised features (order tracking
+/ characteristic-frequency ratios), which requires the speed channel
+Paderborn carries and CWRU's per-recording RPM metadata.
+
+## 32. IMS Tests 2 and 3 — the protocol completes the dataset, and misses once (Task C)
+
+Records: `ims_test2__taskC__isolation_forest__s42`,
+`ims_test3__taskC__isolation_forest__s42`. Protocol IDENTICAL to
+§26 (constants and alarm helper imported from the wave-5 runner):
+per-bearing Isolation Forest on the first 30% of snapshots,
+train-q95 threshold, alarm = first run of ≥10 consecutive
+exceedances. One documented data difference: Tests 2–3 recorded
+ONE accelerometer per bearing (4 channels), so each detector uses
+5 features instead of Test 1's 10. Ground truth was verified
+against the Readme Document inside the official archive (zip
+SHA-256 re-verified, exact match): Test 2 — bearing 1 outer-race
+failure; Test 3 — bearing 3 outer-race failure.
+
+**Test 2** (984 snapshots, 2004-02-12 → 2004-02-19):
+
+| Bearing | Documented defect | First sustained alarm | Last-decile exceedance |
+|---|---|---|---|
+| 1 | **outer-race failure** | **532** (452 before end) | 1.000 |
+| 4 | none reported | 655 | 1.000 |
+| 2 | none reported | 722 | 1.000 |
+| 3 | none reported | 879 | 1.000 |
+
+The failed bearing alarms FIRST, 452 snapshots (≈3.1 days) before
+the run ends — the success ordering. The honest caveat: unlike
+Test 1, the healthy bearings also sustain alarms later, and by the
+last decile every bearing exceeds its threshold 100% of the time —
+on a shared shaft the failing bearing's vibration is not private,
+and this protocol cannot attribute the end-of-run anomaly to one
+bearing by exceedance alone, only by alarm ORDER.
+
+**Test 3** (4,448 snapshots, 2004-03-04 → 2004-04-04):
+
+| Bearing | Documented defect | First sustained alarm | Last-decile exceedance |
+|---|---|---|---|
+| 3 | **outer-race failure** | **never** | 0.196 |
+| 4 | none reported | 2036 | 0.697 |
+| 1 | none reported | 2325 | 0.034 |
+| 2 | none reported | never | 0.306 |
+
+**The protocol misses Test 3's failed bearing.** Bearing 3 never
+sustains 10 consecutive above-threshold snapshots; its last-decile
+exceedance (0.196) is above its 0.05 train baseline, so a weak
+late-run elevation exists in the record, but it does not meet the
+alarm bar that Tests 1–2 met — and the strongest late-run signal
+sits on bearing 4, which has no reported defect (shaft coupling is
+the standing caveat; no cause is claimed). The protocol was NOT
+re-tuned after this result: loosening the sustained-run length or
+threshold until bearing 3 fires would be fitting the evaluation to
+the answer. Stated plainly: with per-snapshot time-domain channel
+statistics and this detector, IMS stands at two tests where the
+failed bearing is caught early (Tests 1–2) and one where it is not
+(Test 3).
+
+Archive quirk found during extraction: `3rd_test.rar` contains
+6,324 files. The first 4,448 are exactly the Readme-documented
+experiment (ending 2004-04-04 19:01:57 to the second); the
+remaining 1,876 (to 2004-04-18) postdate the documented experiment
+and teardown and are stored separately
+(`3rd_test_beyond_documented_period/`), unused. The Readme does not
+say what they are; nothing is assumed about them.
+
+## 33. Wave-9 files, verification, and what remains
+
+Files: `platform_lib/features/spectral.py` (new),
+`platform_lib/benchmarking/run_wave9.py`,
+`platform_lib/benchmarking/run_wave9_ims.py`,
+`platform_lib/adapters/ims.py` (generalised to Tests 1–3; Test 1
+behaviour unchanged), 5 new experiment records (42 total),
+`tests/test_wave9.py`, `DATASET_REGISTRY.md` (IMS status: Tests
+1–3). Verification: full platform suite **116/116 passed**
+(96 at wave 8 + 20 wave-9 additions), including the global schema
+test over all 42 records and the IMS alarm-timing framing tests.
+
+Still open (unchanged items restated): per-regime normalisation for
+FD002/FD004; Paderborn's real-damage bearings; the controlled
+LSTM↔CNN-LSTM transfer pair; shaft-speed-normalised (order-tracked)
+bearing features as the next transfer attempt; an IMS detector
+variant study (e.g. spectral snapshot features or a different
+threshold rule) — to be run as a NEW protocol with its own record,
+never as a silent re-tune of the wave-5/9 protocol.

@@ -31,7 +31,7 @@ is public domain.
 | SECOM | UCI ML Repository | CC BY 4.0 | A, C | **integrated** | `SECOMAdapter` |
 | CWRU Bearing | Case Western Reserve Univ. | Not stated on official page | A (C secondary) | **integrated** (4 recordings) | `CWRUAdapter` |
 | Paderborn Bearing | KAt-DataCenter, Paderborn Univ. | **CC BY-NC 4.0** (confirmed on official page) | A (C secondary) | **integrated** (3 of 32 bearings) | `PaderbornAdapter` |
-| IMS Bearing | NASA PCoE / Univ. Cincinnati | Not stated on PCoE page | C, B | **integrated** (Test 1, wave 5 — user approved the 1.08 GB download) | `IMSAdapter` |
+| IMS Bearing | NASA PCoE / Univ. Cincinnati | Not stated on PCoE page | C, B | **integrated** (Tests 1–3 — Test 1 wave 5, Tests 2–3 wave 9) | `IMSAdapter` |
 | FEMTO-ST PRONOSTIA | FEMTO-ST / NASA PCoE mirrors | Not confirmed | B (C secondary) | researched-only | — |
 | XJTU-SY Bearing | Xi'an Jiaotong Univ. (researcher page) | Not stated | B (C secondary) | researched-only | — |
 | MFPT Bearing | MFPT Society (mfpt.org) | Not stated (live page gone) | A | **blocked** — official site retired; domain redirects to ASNT, no data offered | — |
@@ -243,19 +243,43 @@ is public domain.
   the working official route.
 - **Tasks:** C (primary), B (derived time-to-failure labels, not yet
   attempted).
-- **Status:** **integrated (Test 1)** — `IMSAdapter`; wave-5 Task-C
-  record `ims__taskC__isolation_forest__s42`. Downloaded 2026-11-15
-  after the user approved lifting wave 3's size gate for this
-  archive: zip 1,075,597,174 B, SHA-256
-  `21001ac266c465f5d345ec42d7b508c6a6328487fd9d4d7774422dd5ea10ad83`.
+- **Status:** **integrated (Tests 1–3)** — `IMSAdapter` (all three
+  tests supported since wave 9). Task-C records:
+  `ims__taskC__isolation_forest__s42` (Test 1, wave 5),
+  `ims_test2__taskC__isolation_forest__s42` and
+  `ims_test3__taskC__isolation_forest__s42` (wave 9, identical
+  protocol). Downloaded 2026-11-15 after the user approved lifting
+  wave 3's size gate for this archive: zip 1,075,597,174 B, SHA-256
+  `21001ac266c465f5d345ec42d7b508c6a6328487fd9d4d7774422dd5ea10ad83`
+  (re-verified against the local copy in wave 9 — exact match).
   The archive is triple-nested (zip → IMS.7z → per-test .rar) —
   the wave-3 "unverified community note" about nesting turned out
-  to be accurate. Only 1st_test.rar was extracted: 2,156 snapshot
-  files (20,480 points × 8 channels at 20 kHz, 2003-10-22 →
-  2003-11-25). Tests 2–3 remain unextracted in the local archive.
-- **Ground truth (Test 1, teardown):** bearing 3 inner-race defect,
-  bearing 4 roller-element defect; bearings 1–2 no defect reported.
-  No per-snapshot labels exist — evaluation is alarm timing only.
+  to be accurate. Test 1: 2,156 snapshot files (20,480 points ×
+  8 channels at 20 kHz, 2003-10-22 → 2003-11-25). Tests 2–3
+  (extracted wave 9 from the retained local archive, no
+  re-download): 984 files (2004-02-12 → 2004-02-19) and 4,448
+  files (2004-03-04 → 2004-04-04), both 20,480 points × 4 channels
+  (ONE accelerometer per bearing, vs Test 1's two). Archive quirk:
+  3rd_test.rar contains 6,324 files — the first 4,448 are exactly
+  the Readme-documented experiment; the remaining 1,876
+  (2004-04-04 19:11 → 2004-04-18) postdate the documented
+  experiment and its teardown, and are kept separately in
+  `3rd_test_beyond_documented_period/`, unused.
+- **Ground truth (teardown, from the Readme Document inside the
+  archive; verified wave 9):** Test 1 — bearing 3 inner-race
+  defect, bearing 4 roller-element defect. Test 2 — bearing 1
+  outer-race failure. Test 3 — bearing 3 outer-race failure. All
+  other bearings: no defect reported. No per-snapshot labels exist
+  — evaluation is alarm timing only.
+- **Wave-9 alarm-timing outcomes (identical protocol):** Test 2 —
+  the failed bearing 1 alarms FIRST of the four, at snapshot
+  532/984 (452 before run end); the healthy bearings also sustain
+  alarms later (655–879), so Test 2 shows correct ordering, not
+  silence elsewhere. Test 3 — the protocol MISSES the failed
+  bearing 3 (no sustained alarm; last-decile exceedance 0.196 vs
+  the 0.05 train baseline), while bearings 4 and 1 (no defect
+  reported) sustain alarms at 2036 and 2325. Reported as measured;
+  the protocol was not re-tuned after seeing this result.
 - **Binding caveats:** one rig, one run per test; the four bearings
   share a shaft and load, so channels are not independent systems.
 
