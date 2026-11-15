@@ -64,7 +64,7 @@ export function ExperimentsView() {
       <Card className="p-5" ticks>
         <SectionTitle
           title={`Experiment registry: ${rows.length} of ${platform.counts.records} records`}
-          source="One row per record JSON in platform/experiments/. Headline metrics are the records' own curated headlines; the protocol column states the split each score was measured under; scores under different protocols are not interchangeable."
+          source="One row per experiment record. Headline metrics are the records' own curated headlines; the protocol column states the split each score was measured under; scores under different protocols are not interchangeable."
         />
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">

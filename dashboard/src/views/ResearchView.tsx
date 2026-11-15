@@ -139,7 +139,7 @@ function XaiCard() {
             Permutation + Integrated Gradients: shipped FD001 LSTM
           </h3>
           <p className="mb-2 text-[11px] text-slate-400 dark:text-slate-500">
-            From demo_data.json (ml/artifacts/explainability.json),{" "}
+            From the recorded explainability results,{" "}
             {fd.split}, n = {fd.n_val_windows.toLocaleString("en-US")}{" "}
             windows. Also shown in full in Model Info.
           </p>

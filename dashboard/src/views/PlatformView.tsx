@@ -42,9 +42,8 @@ export function PlatformView() {
           />
         </div>
         <p className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-500 dark:text-slate-400">
-          Every number on the platform pages comes from a record JSON in{" "}
-          <span className="font-mono">platform/experiments/</span>, exported{" "}
-          {platform.generated_at} by dashboard/platform_export.py. Scores
+          Every number on the platform pages comes from an experiment
+          record, exported {platform.generated_at}. Scores
           from different datasets or protocols are never averaged together,
           and a record's caveats travel with its score; see the Research
           view for the cases where the honest headline is the weaker

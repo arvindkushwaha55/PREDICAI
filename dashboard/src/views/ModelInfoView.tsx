@@ -118,7 +118,7 @@ export function ModelInfoView({ api }: { api: ApiHealthState }) {
       <Card className="p-5" ticks>
         <SectionTitle
           title="Technical specification"
-          source="Architecture and training configuration as recorded in ml/artifacts (model_metadata.json and the run's training config) for the shipped model. Values are read from the export, not re-measured in the browser."
+          source="Architecture and training configuration as recorded for the shipped model's training run. Values are read from the export, not re-measured in the browser."
         />
         <div className="grid gap-x-10 sm:grid-cols-2">
           {SPEC_ROWS.map(([k, v]) => (
