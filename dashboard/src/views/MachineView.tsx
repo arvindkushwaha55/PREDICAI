@@ -27,8 +27,8 @@ export function MachineView({
 }) {
   const eng = data.engines.find((e) => e.engine === engine) ?? data.engines[0];
   const policy = policyForRul(eng.final.predicted_rul);
-  const gridStroke = dark ? "#334155" : "#e2e8f0";
-  const axisFill = dark ? "#94a3b8" : "#64748b";
+  const gridStroke = dark ? "#3f3f46" : "#e2e8f0";
+  const axisFill = dark ? "#a1a1aa" : "#64748b";
   const predictedStroke = dark ? "#22d3ee" : "#0891b2";
   const reducedMotion =
     typeof window !== "undefined" &&
@@ -100,14 +100,14 @@ export function MachineView({
                 contentStyle={
                   dark
                     ? {
-                        backgroundColor: "#020617",
-                        border: "1px solid #334155",
-                        color: "#e2e8f0",
+                        backgroundColor: "#09090b",
+                        border: "1px solid #3f3f46",
+                        color: "#e4e4e7",
                       }
                     : undefined
                 }
-                itemStyle={dark ? { color: "#e2e8f0" } : undefined}
-                labelStyle={dark ? { color: "#94a3b8" } : undefined}
+                itemStyle={dark ? { color: "#e4e4e7" } : undefined}
+                labelStyle={dark ? { color: "#a1a1aa" } : undefined}
                 formatter={(value, name) => [
                   `${fmt(Number(value))} cycles`,
                   name === "predicted" ? "Predicted RUL" : "True RUL",
