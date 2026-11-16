@@ -21,6 +21,8 @@ fn test_state() -> Arc<AppState> {
     )
     .expect("preprocessing.json must load");
     Arc::new(AppState {
+        demo_data: None,
+        platform_data: None,
         preprocessing,
         model: Mutex::new(None), // no ONNX yet — evening Kaggle run
         model_path: Some("ml/artifacts/cmapss_lstm.onnx".to_string()),
