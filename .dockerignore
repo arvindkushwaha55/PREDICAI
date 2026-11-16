@@ -1,0 +1,8 @@
+.git
+.venv
+edge/target
+dashboard/node_modules
+dashboard/dist
+platform/data
+**/__pycache__
+*.db
