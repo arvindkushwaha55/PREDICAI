@@ -20,6 +20,14 @@ export function useApiHealth(): ApiHealthState {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
+    if (API_BASE === null) {
+      /* No API configured for this build: report offline without any
+         network request (keeps the browser console clean). */
+      setHealth(null);
+      setError(null);
+      setStatus("offline");
+      return;
+    }
     setStatus("checking");
     fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) })
       .then(async (res) => {
@@ -83,6 +91,7 @@ export function LiveApiPanel({ api }: { api: ApiHealthState }) {
     api.status === "live" && api.health?.model_loaded === true && !running;
 
   async function runPrediction() {
+    if (API_BASE === null) return;
     setRunning(true);
     setPredictError(null);
     setResult(null);
