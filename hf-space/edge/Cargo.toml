@@ -1,0 +1,33 @@
+[package]
+name = "predicai-edge"
+version = "0.1.0"
+edition = "2021"
+description = "PREDICAI Rust edge engine — ONNX Runtime RUL inference + Axum API (NASA C-MAPSS FD001)"
+license = "MIT"
+
+# Phase D (plan.md): ort is pinned to an EXACT release candidate — 2.0 has
+# no stable crates.io release (latest seen: 2.0.0-rc.15, Oct 2026).
+# All ort calls live in src/model.rs only, so an API change touches one file.
+# Fallback if ort blocks: tract (pure Rust), per plan Risk R-3.
+[dependencies]
+axum = "0.8"
+tower-http = { version = "0.6", features = ["cors"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# load-dynamic: ort-sys must NOT download prebuilt binaries at build time
+# (the pyke CDN returns 403 from this VM). The ONNX Runtime shared library
+# is supplied at runtime via ORT_DYLIB_PATH — here it comes from the
+# Python `onnxruntime` wheel in ../.venv (libonnxruntime.so.1.32.0).
+# On the owner's Windows machine either route works; keep load-dynamic so
+# both environments use the same code path.
+ort = { version = "=2.0.0-rc.15", features = ["load-dynamic", "ndarray"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+tempfile = "3"
