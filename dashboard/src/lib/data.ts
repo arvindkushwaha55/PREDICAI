@@ -3,13 +3,17 @@ import type { DemoData } from "./types";
 
 export const data = rawData as unknown as DemoData;
 
-/* Live API access: during `npm run dev` the dashboard calls the same-origin
-   /api/* path and Vite proxies it to the Rust API running on the same
-   machine (the API sends no CORS headers, so direct cross-origin browser
-   calls are blocked). Set VITE_API_BASE to override the base URL. The
-   API's address is never shown in the UI. */
-export const API_BASE: string =
-  (import.meta.env.VITE_API_BASE as string | undefined) ?? "/api";
+/* Live API access: the base URL comes from VITE_API_BASE (set at build
+   time for the hosted site, pointing at the deployed backend). During
+   `npm run dev` it defaults to the same-origin /api path, which Vite
+   proxies to the Rust API running on the same machine. In a production
+   build WITHOUT VITE_API_BASE there is no API to call: API_BASE is null
+   and the app makes no network requests at all (no console noise), it
+   simply reports the API as offline. The API's address is never shown
+   in the UI. */
+export const API_BASE: string | null =
+  (import.meta.env.VITE_API_BASE as string | undefined) ??
+  (import.meta.env.DEV ? "/api" : null);
 
 export type PolicyLevel = "MONITOR" | "INSPECTION" | "REVIEW";
 
