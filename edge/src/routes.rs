@@ -15,11 +15,13 @@ use crate::preprocess::Preprocessing;
 use crate::types::{ErrorResponse, HealthResponse, PredictRequest, PredictResponse};
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{header, HeaderValue, Method, StatusCode},
+    response::{IntoResponse, Response},
     routing::get,
     Json, Router,
 };
 use std::sync::{Arc, Mutex};
+use tower_http::cors::CorsLayer;
 
 pub struct AppState {
     pub preprocessing: Preprocessing,
@@ -27,6 +29,11 @@ pub struct AppState {
     pub model: Mutex<Option<RulModel>>,
     pub model_path: Option<String>,
     pub store: Store,
+    /// Raw exported dashboard data, served verbatim when present so the
+    /// hosted dashboard can load its data from this backend instead of
+    /// shipping data files with the static site.
+    pub demo_data: Option<String>,
+    pub platform_data: Option<String>,
 }
 
 pub type SharedState = Arc<AppState>;
@@ -36,11 +43,49 @@ fn err(status: StatusCode, error: &str, detail: String) -> (StatusCode, Json<Err
 }
 
 pub fn router(state: SharedState) -> Router {
+    /* The hosted dashboard (GitHub Pages) and the local dev dashboard are
+       the only browser origins allowed to call this API. */
+    let cors = CorsLayer::new()
+        .allow_origin([
+            HeaderValue::from_static("https://arvindkushwaha55.github.io"),
+            HeaderValue::from_static("http://localhost:5173"),
+            HeaderValue::from_static("http://127.0.0.1:5173"),
+        ])
+        .allow_methods([Method::GET, Method::POST])
+        .allow_headers([header::CONTENT_TYPE]);
     Router::new()
         .route("/health", get(health))
         .route("/predict_rul", axum::routing::post(predict_rul))
         .route("/machines/{id}/history", get(machine_history))
+        .route("/data/demo", get(demo_data))
+        .route("/data/platform", get(platform_data))
+        .layer(cors)
         .with_state(state)
+}
+
+fn serve_json(body: &Option<String>) -> Response {
+    match body {
+        Some(text) => (
+            StatusCode::OK,
+            [(header::CONTENT_TYPE, "application/json")],
+            text.clone(),
+        )
+            .into_response(),
+        None => err(
+            StatusCode::NOT_FOUND,
+            "data_not_configured",
+            "this server was started without the exported dashboard data files".to_string(),
+        )
+        .into_response(),
+    }
+}
+
+async fn demo_data(State(state): State<SharedState>) -> Response {
+    serve_json(&state.demo_data)
+}
+
+async fn platform_data(State(state): State<SharedState>) -> Response {
+    serve_json(&state.platform_data)
 }
 
 async fn health(State(state): State<SharedState>) -> Json<HealthResponse> {
@@ -67,7 +112,7 @@ async fn predict_rul(
         return Err(err(
             StatusCode::SERVICE_UNAVAILABLE,
             "model_not_loaded",
-            "cmapss_lstm.onnx is not available yet — run the evening Kaggle training and place the ONNX file at ml/artifacts/cmapss_lstm.onnx, then restart the server".to_string(),
+            "the ONNX model is not loaded on this server".to_string(),
         ));
     };
 

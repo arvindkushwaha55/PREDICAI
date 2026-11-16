@@ -56,19 +56,58 @@ async fn main() -> anyhow::Result<()> {
     let db_path = default_path("PREDICAI_DB", "../maintenance/predicai.db");
     let store = Store::open(&db_path)?;
 
+    /* Exported dashboard data, served at /data/demo and /data/platform
+       when the files exist (the hosted deployment bakes them in). A
+       missing file is not fatal: those routes answer 404 and the rest
+       of the API works as before. */
+    let load_data = |env: &str, fallback: &str| -> Option<String> {
+        let path = default_path(env, fallback);
+        match std::fs::read_to_string(&path) {
+            Ok(text) => {
+                tracing::info!("dashboard data loaded: {}", path.display());
+                Some(text)
+            }
+            Err(_) => {
+                tracing::warn!("dashboard data not found (route will 404): {}", path.display());
+                None
+            }
+        }
+    };
+    let demo_data = load_data("PREDICAI_DEMO_DATA", "../dashboard/src/data/demo_data.json");
+    let platform_data = load_data(
+        "PREDICAI_PLATFORM_DATA",
+        "../dashboard/src/data/platform_data.json",
+    );
+
+    /* /health reports only the model file NAME, never a server path. */
+    let model_name = model_path
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned());
+
     let state = Arc::new(AppState {
         preprocessing,
         model: Mutex::new(model),
-        model_path: Some(model_path.display().to_string()),
+        model_path: model_name,
         store,
+        demo_data,
+        platform_data,
     });
 
-    let port: u16 = std::env::var("PREDICAI_PORT")
+    /* Hosted platforms inject PORT; PREDICAI_PORT stays the local
+       override. Binding stays on 127.0.0.1 unless PREDICAI_BIND says
+       otherwise (the hosted deployment sets 0.0.0.0). */
+    let port: u16 = std::env::var("PORT")
         .ok()
         .and_then(|v| v.parse().ok())
+        .or_else(|| {
+            std::env::var("PREDICAI_PORT")
+                .ok()
+                .and_then(|v| v.parse().ok())
+        })
         .unwrap_or(8080);
-    let listener = tokio::net::TcpListener::bind(("127.0.0.1", port)).await?;
-    tracing::info!("predicai-edge listening on http://127.0.0.1:{port}");
+    let bind = std::env::var("PREDICAI_BIND").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let listener = tokio::net::TcpListener::bind((bind.as_str(), port)).await?;
+    tracing::info!("predicai-edge listening on http://{bind}:{port}");
     axum::serve(listener, router(state)).await?;
     Ok(())
 }
